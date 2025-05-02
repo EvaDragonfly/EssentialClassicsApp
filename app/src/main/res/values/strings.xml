@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="hello">Hey there, </string>
+    <string name="create">Create an account </string>
+    <string name="email">Email </string>
+    <string name="password">Password </string>
+    <string name="hide_password">hide password</string>
+    <string name="show_password">Show password</string>
+    <string name="terms_and_conditions">By continuing you accept our Privacy Policy and Term of Use</string>
+    <string name="terms_and_conditions_header">Terms of Use</string>
+    <string name="register">Sign Up</string>
+    <string name="login">"Sign In"</string>
+    <string name="login_text">Essential Classics</string>
+    <string name="forgot_password">Forgot your password?</string>
+    <string name="change_password">Change password</string>
+    <string name="repeat_password">Repeat password</string>
+    <string name="resend_email">Haven\'t received an email?</string>
+</resources>
