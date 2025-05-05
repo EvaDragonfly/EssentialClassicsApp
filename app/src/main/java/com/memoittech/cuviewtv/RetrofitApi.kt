@@ -192,9 +192,10 @@ interface RetrofitApi {
         @Header("Authorization") token : String,
     ) : Call<MoodsResponse>
 
-    @GET("/api/v1/ec_playlists/mood_tracks/{id}/")
+    @GET("/api/v1/ec_playlists/mood_tracks/{moodId}/")
     fun getMoodTracks(
         @Header("Authorization") token : String,
+        @Path("moodId") moodId : Int
     ) : Call<MoodTracksResponse>
 }
 

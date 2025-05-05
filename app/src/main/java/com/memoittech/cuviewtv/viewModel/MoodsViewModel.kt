@@ -38,9 +38,9 @@ class MoodsViewModel : ViewModel() {
         }
     }
 
-    fun getMoodTracks(mood_id : Int){
+    fun getMoodTracks(moodId : Int){
         viewModelScope.launch {
-            ApiConstants.retrofit.getMoodTracks("Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<MoodTracksResponse>{
+            ApiConstants.retrofit.getMoodTracks("Token ${TokenManager.getToken()}", moodId).enqueue(object : retrofit2.Callback<MoodTracksResponse>{
                 override fun onResponse(
                     call: Call<MoodTracksResponse>,
                     response: Response<MoodTracksResponse>

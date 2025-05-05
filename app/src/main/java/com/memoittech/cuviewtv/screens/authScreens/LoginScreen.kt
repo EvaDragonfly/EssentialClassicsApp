@@ -94,10 +94,6 @@ fun LoginScreen (navController: NavController) {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                     if(!response.isSuccessful){
                         alertText.value = "Something went wrong, Please try again"
-                        println(response.body())
-                        println(response.errorBody())
-                        println(response.message())
-                        println(response.toString())
                         dialogStatus.value = true
                     } else {
                         val key = response.body()?.string()

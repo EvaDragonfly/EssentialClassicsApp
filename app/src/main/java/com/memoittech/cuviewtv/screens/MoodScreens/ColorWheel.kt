@@ -1,8 +1,7 @@
-package com.memoittech.cuviewtv.screens.appScreens
+package com.memoittech.cuviewtv.screens.MoodScreens
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -19,14 +18,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.memoittech.cuviewtv.model.moodList
-import com.memoittech.cuviewtv.viewModel.MoodsViewModel
 import kotlin.math.*
 
 @Composable
 fun SmoothColorWheel(
     modifier: Modifier = Modifier,
+    onSelect : (Int) -> Unit,
     onColorSelected: (Color) -> Unit = {},
     onZoneSelected: (Int) -> Unit = {}
 ) {
@@ -74,6 +73,9 @@ fun SmoothColorWheel(
                                 onColorSelected(color)
                                 onZoneSelected(zone)
                             }
+                        },
+                        onDragEnd = {
+                            onSelect(selectedZone)
                         }
                     )
                 }
@@ -120,19 +122,6 @@ fun SmoothColorWheel(
             }
         }
 
-//        if (selectedZone != -1) {
-//            Box(
-//                modifier = Modifier.fillMaxSize(),
-//                contentAlignment = Alignment.Center
-//            ) {
-//                Text(
-//                    text = "Zone ${selectedZone + 1}",
-//                    color = Color.White,
-//                    fontSize = 18.sp,
-//                    fontWeight = FontWeight.Bold
-//                )
-//            }
-//        }
     }
 }
 
@@ -186,7 +175,7 @@ private fun lerp(start: Float, end: Float, fraction: Float): Float {
 }
 
 @Composable
-fun ColorWheelExample() {
+fun ColorWheelExample(navController: NavController) {
 
     var selectedColor by remember { mutableStateOf(Color.Red) }
     var selectedZone by remember { mutableStateOf(1) }
@@ -228,11 +217,12 @@ fun ColorWheelExample() {
                 modifier = Modifier
                     .size(300.dp)
                     .padding(16.dp),
+                onSelect = {
+                    navController.navigate("mood_details/${moods.get(it).id}")
+                },
                 onColorSelected = { selectedColor = it },
                 onZoneSelected = {
                     selectedZone = it + 1
-                    println(it)
-                    println(selectedZone)
                     selectedMood = moods.get(it) },
             )
 
@@ -257,8 +247,8 @@ fun ColorWheelExample() {
     }
 }
 
-@Preview
-@Composable
-fun PrevMoods(){
-    ColorWheelExample()
-}
+//@Preview
+//@Composable
+//fun PrevMoods(){
+//    ColorWheelExample()
+//}

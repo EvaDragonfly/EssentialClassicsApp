@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.memoittech.cuviewtv.screens.MoodScreens.MoodDetailsScreen
 import com.memoittech.cuviewtv.screens.SliderScreens.OpenScreen
 import com.memoittech.cuviewtv.screens.authScreens.EmailConfirmationScreen
 import com.memoittech.cuviewtv.screens.authScreens.ForgotPasswordScreen
@@ -18,7 +19,7 @@ import com.memoittech.cuviewtv.screens.authScreens.SignUpScreen
 import com.memoittech.cuviewtv.screens.authScreens.TermsAndConditionsScreen
 import com.memoittech.cuviewtv.screens.appScreens.FavouritesScreen
 import com.memoittech.cuviewtv.screens.appScreens.MainScreen
-import com.memoittech.cuviewtv.screens.appScreens.MoodsScreen
+import com.memoittech.cuviewtv.screens.MoodScreens.MoodsScreen
 import com.memoittech.cuviewtv.screens.appScreens.PlayerScreen
 import com.memoittech.cuviewtv.screens.searchScreens.SearchScreen
 import com.memoittech.cuviewtv.screens.appScreens.SplashScreen
@@ -49,6 +50,16 @@ fun MyNavigations(){
 
         composable(route = "moods"){
             MoodsScreen(navController)
+        }
+
+        composable(
+            route = "mood_details/{id}",
+            arguments = listOf(
+                navArgument("id") { type = NavType.IntType }
+            )
+        ){ backStackEntry ->
+            val id = backStackEntry.arguments?.getInt("id")
+            id?.let { MoodDetailsScreen( id = it, navController) }
         }
 
         composable(

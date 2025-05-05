@@ -1,4 +1,4 @@
-package com.memoittech.cuviewtv.screens.appScreens
+package com.memoittech.cuviewtv.screens.MoodScreens
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Surface
@@ -12,7 +12,7 @@ fun MoodsScreen(navController: NavController){
 
     Surface(modifier = Modifier.fillMaxSize()
     ) {
-        ColorWheelExample()
+        ColorWheelExample(navController)
     }
 
 }

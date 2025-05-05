@@ -13,7 +13,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.screens.SliderScreens.OpenScreen
 import com.memoittech.cuviewtv.screens.appScreens.FavouritesScreen
-import com.memoittech.cuviewtv.screens.appScreens.MoodsScreen
+import com.memoittech.cuviewtv.screens.MoodScreens.MoodsScreen
 import com.memoittech.cuviewtv.screens.searchScreens.SearchScreen
 
 

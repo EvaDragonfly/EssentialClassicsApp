@@ -228,11 +228,11 @@ fun CheckBoxComponent(value: String, onTextSelected : (String)->Unit){
 
 }
 
-@Preview
-@Composable
-fun previewComponent() {
-    CheckBoxComponent("value 1", {})
-}
+//@Preview
+//@Composable
+//fun previewComponent() {
+//    CheckBoxComponent("value 1", {})
+//}
 
 
 @Composable

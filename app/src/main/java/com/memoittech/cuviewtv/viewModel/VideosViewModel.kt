@@ -67,7 +67,7 @@ class VideosViewModel : ViewModel(){
     }
 
 
-    fun getVideoDetails(id : Int) {
+    fun getVideoDetails(id: Int) {
         viewModelScope.launch {
             ApiConstants.retrofit.getVideo(id, "Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<VideoDetailsResponse>{
                 override fun onResponse(call: Call<VideoDetailsResponse>, response: Response<VideoDetailsResponse>) =

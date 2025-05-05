@@ -1,4 +1,4 @@
-package com.memoittech.cuviewtv.screens.appScreens
+package com.memoittech.cuviewtv.screens.MoodScreens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,16 +14,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -38,44 +34,53 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.components.PlayerComponent
-import com.memoittech.cuviewtv.components.VideoTrackItem
-import com.memoittech.cuviewtv.components.formatSecondsToTime
+import com.memoittech.cuviewtv.model.VideoTrack
 import com.memoittech.cuviewtv.ui.theme.DarkBg2
-import com.memoittech.cuviewtv.ui.theme.GrayBlueLight
-import com.memoittech.cuviewtv.viewModel.TracksViewModel
 import com.memoittech.cuviewtv.viewModel.VideosViewModel
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 
+
 @Composable
-fun PlayerScreen(
-    navController: NavController,
-    id: Int
-) {
+fun MoodDetailsScreen(id : Int, navController: NavController){
 
     val videoViewModel : VideosViewModel = viewModel()
-    val trackViewModel : TracksViewModel = viewModel()
+
+    val youTubePlayerInstance = remember { mutableStateOf<YouTubePlayer?>(null) }
+
+    var video_id = remember { mutableStateOf<Int?>(null) }
+
+    var selected_track_id = remember { mutableStateOf<Int?>(null) }
+
+    var selected_video_id = remember { mutableStateOf<Int?>(null) }
+
+    LaunchedEffect(video_id.value) {
+        video_id.value?.let { videoViewModel.getVideoDetails(it) }
+        video_id.value?.let { videoViewModel.getVideoTracks(it) }
+    }
 
     val videoDetails = videoViewModel.videodetailResponse
     val videoTracks = videoViewModel.videoTracksResponse
 
-    var selectedTrack by remember { mutableStateOf(0) }
-
-    val youTubePlayerInstance = remember { mutableStateOf<YouTubePlayer?>(null) }
-
-    LaunchedEffect(key1 = id) {
-        videoViewModel.getVideoDetails(id)
-        videoViewModel.getVideoTracks(id)
+    LaunchedEffect(selected_track_id.value) {
+        if (videoTracks != null) {
+            var track = videoTracks.results.find { it.track.id === selected_track_id.value }
+            if (track!=null){
+                youTubePlayerInstance.value?.seekTo(track.starts_at.toFloat())
+            } else {
+                selected_video_id.value?.let { videoViewModel.getVideoDetails(it) }
+            }
+        }
     }
 
-    fun onFavouriteClick(){
-        videoViewModel.addFavoriteVideo(id, false)
+    LaunchedEffect(videoDetails) {
+        youTubePlayerInstance.value?.loadVideo(videoDetails?.youtube_id.toString(), 0f)
     }
+
 
     Surface(
         modifier = Modifier.fillMaxSize()
             .background(DarkBg2)
     ){
-        videoDetails?.let {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -103,7 +108,9 @@ fun PlayerScreen(
                             horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ){
                             Image(
-                                modifier = Modifier.clickable { onFavouriteClick() },
+                                modifier = Modifier.clickable {
+//                                    onFavouriteClick()
+                                                              },
                                 painter = painterResource(R.drawable.favoritewhite),
                                 contentDescription = "add favorite"
                             )
@@ -118,10 +125,13 @@ fun PlayerScreen(
                         }
                     }
 
-                    PlayerComponent(videoDetails.youtube_id){ player ->
-                        youTubePlayerInstance.value = player
+                    videoDetails?.youtube_id?.let {
+                        PlayerComponent(it){ player ->
+                            youTubePlayerInstance.value = player
+                        }
                     }
 
+                    videoDetails?.let {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -129,15 +139,16 @@ fun PlayerScreen(
                         ,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        Text(
-                            text = videoDetails.title,
-                            modifier = Modifier.fillMaxWidth(),
-                            fontSize = 16.sp,
-                            color = Color.White,
-                            textAlign = TextAlign.Center,
-                            fontWeight = FontWeight.W600,
-                            maxLines = 2
-                        )
+                            Text(
+                                text = it.title,
+                                modifier = Modifier.fillMaxWidth(),
+                                fontSize = 16.sp,
+                                color = Color.White,
+                                textAlign = TextAlign.Center,
+                                fontWeight = FontWeight.W600,
+                                maxLines = 2
+                            )
+
 
                         Text(
                             text = videoDetails.title,
@@ -150,18 +161,7 @@ fun PlayerScreen(
                             fontStyle = FontStyle.Italic
                         )
 
-                        Text(
-                            text = videoTracks?.results?.size.toString() + ". " + videoDetails?.let {
-                                formatSecondsToTime(
-                                    it.duration)
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            fontSize = 13.sp,
-                            color = Color.White,
-                            textAlign = TextAlign.Center,
-                            fontWeight = FontWeight.W400,
-                            maxLines = 2,
-                        )
+                    }
                     }
 
                     Box(
@@ -179,41 +179,21 @@ fun PlayerScreen(
                             )
                     )
 
-                    LazyColumn(modifier = Modifier
-                        .padding(20.dp, 0.dp)
-                        .background(Color.Transparent)) {
-                        item {
-                            Text(
-                                text = videoDetails.description,
-                                modifier = Modifier.fillMaxWidth(),
-                                fontSize = 13.sp,
-                                color = GrayBlueLight,
-                                textAlign = TextAlign.Center,
-                                fontWeight = FontWeight.W400
-                            )
+                    MoodTracksComponent(
+                        id,
+                        videoDetails?.description.toString(),
+                        {
+                            it -> video_id.value = it
+                            println("from func "+ it)
+                        },
+                        {
+                            it ->
+                            selected_track_id.value = it.track.id
+                            selected_video_id.value = it.video_id
                         }
-                        videoTracks?.let {
-                            items(items = it.results){ it->
-                                VideoTrackItem(
-                                    track = it,
-                                    {
-                                        youTubePlayerInstance.value?.seekTo(it.starts_at.toFloat())
-                                        selectedTrack = it.position
-                                    },
-                                    {
-                                        navController.navigate(
-                                            "track_details${it.track.id}"
-                                        )
-                                    },
-                                    {
-                                        trackViewModel.addFavoriteTrack(it.track.id, false)
-                                    }
-                                )
-                            }
-                        }
-                    }
+                    )
+
                 }
             }
         }
     }
-}

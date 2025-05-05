@@ -368,7 +368,7 @@ fun VerticalTrackItem(track : Track, onClick : () -> Unit){
                             )
                         },
                         onClick = {
-                            expanded.value = false
+                            expanded.value=false
                         }
                     )
                 }
@@ -380,7 +380,7 @@ fun VerticalTrackItem(track : Track, onClick : () -> Unit){
 
 
 @Composable
-fun VideoTrackItem(track : VideoTrack, onClick : () -> Unit){
+fun VideoTrackItem(track : VideoTrack, onClick : () -> Unit, onMove : () -> Unit, onFavoriteClick : () -> Unit){
 
     var expanded = remember { mutableStateOf(false) }
 
@@ -477,6 +477,21 @@ fun VideoTrackItem(track : VideoTrack, onClick : () -> Unit){
                         },
                         onClick = {
                             expanded.value = false
+                            onMove()
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center,
+                                text = "Add to favorites",
+                                color = DarkBg2
+                            )
+                        },
+                        onClick = {
+                            expanded.value = false
+                            onFavoriteClick()
                         }
                     )
                 }
