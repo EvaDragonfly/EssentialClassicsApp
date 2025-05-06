@@ -23,7 +23,6 @@ import com.memoittech.cuviewtv.ui.theme.DarkBg2
 @Composable
 fun OpenScreen (navController : NavController) {
 
-
     Scaffold(
 
         content = {

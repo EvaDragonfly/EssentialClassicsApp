@@ -1,6 +1,12 @@
 package com.memoittech.cuviewtv.screens.searchScreens
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -10,9 +16,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.memoittech.cuviewtv.components.VerticalVideoItem
+import com.memoittech.cuviewtv.components.VideoOvalItem
+import com.memoittech.cuviewtv.ui.theme.DarkBg2
 import com.memoittech.cuviewtv.viewModel.VideosViewModel
 import kotlinx.coroutines.flow.debounce
 
@@ -27,12 +36,7 @@ fun VideosComponent(navController: NavController , q : String){
 
     videosViewModel.getVideosList(limit, offset, ordering, q)
 
-    fun onVideoClick(id : Int){
-        navController.navigate("player/${id}")
-    }
-
     LaunchedEffect(q) {
-        println(q)
         snapshotFlow{ q }
             .debounce(2000) // Wait for 2 seconds of inactivity
             .collect { value ->
@@ -42,15 +46,33 @@ fun VideosComponent(navController: NavController , q : String){
             }
     }
 
-    Column() {
-        videosViewModel.videosResponse?.let {
-            LazyColumn (){
-                items(items = it.results){item ->
-                    VerticalVideoItem(item, { onVideoClick(item.id) })
+
+    videosViewModel.videosResponse?.let {
+        LazyColumn (
+            modifier = Modifier
+            .background(DarkBg2)
+            .padding(0.dp, 10.dp),
+            verticalArrangement = Arrangement.Center){
+            items(items = it.results.chunked(2)) { rowItem ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp, 5.dp),
+                    horizontalArrangement = Arrangement.SpaceAround
+                )
+                {
+                    for (it in rowItem) {
+                        VideoOvalItem(video = it, {
+                            navController.navigate("player/${it.id}")
+                        })
+                    }
+                    if (rowItem.size < 2) {
+                        Spacer(modifier = Modifier.weight(1f)) // Fill empty space if only 1 item in the last row
+                    }
                 }
             }
         }
     }
-
 }
+
 

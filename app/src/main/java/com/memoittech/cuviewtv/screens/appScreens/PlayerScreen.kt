@@ -202,7 +202,7 @@ fun PlayerScreen(
                                     },
                                     {
                                         navController.navigate(
-                                            "track_details${it.track.id}"
+                                            "track_details/${it.track.id}"
                                         )
                                     },
                                     {

@@ -15,14 +15,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.memoittech.cuviewtv.components.VerticalTrackItem
 import com.memoittech.cuviewtv.model.MoodTrack
 import com.memoittech.cuviewtv.ui.theme.GrayBlueLight
 import com.memoittech.cuviewtv.viewModel.MoodsViewModel
+import com.memoittech.cuviewtv.viewModel.TracksViewModel
 
 
 @Composable
 fun MoodTracksComponent(
+    navController: NavController,
     id : Int,
     description : String,
     getVideoId: (Int) -> Unit,
@@ -30,6 +33,8 @@ fun MoodTracksComponent(
 ) {
 
     val viewModel : MoodsViewModel = viewModel()
+
+    val trackViewModel : TracksViewModel = viewModel()
 
     LaunchedEffect(Unit) {
         viewModel.getMoodTracks(id)
@@ -40,7 +45,6 @@ fun MoodTracksComponent(
     LaunchedEffect(tracks) {
         tracks?.first()?.let {
             getVideoId(it.video_id)
-            println("video id from tracks " + it.video_id)
         }
     }
 
@@ -65,6 +69,14 @@ fun MoodTracksComponent(
                     track = item.track,
                     {
                         onTrackClick(item)
+                    },
+                    {
+                        navController.navigate(
+                            "track_details/${item.track.id}"
+                        )
+                    },
+                    {
+                        trackViewModel.addFavoriteTrack(item.track.id, false)
                     }
                 )
             }

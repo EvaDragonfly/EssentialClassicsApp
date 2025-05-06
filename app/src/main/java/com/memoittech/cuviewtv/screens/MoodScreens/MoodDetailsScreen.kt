@@ -1,5 +1,6 @@
 package com.memoittech.cuviewtv.screens.MoodScreens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -67,13 +68,33 @@ fun MoodDetailsScreen(id : Int, navController: NavController){
             if (track!=null){
                 youTubePlayerInstance.value?.seekTo(track.starts_at.toFloat())
             } else {
-                selected_video_id.value?.let { videoViewModel.getVideoDetails(it) }
+                selected_video_id.value?.let {
+                    videoViewModel.getVideoDetails(it)
+                    videoViewModel.getVideoTracks(it)
+                }
             }
         }
     }
 
     LaunchedEffect(videoDetails) {
         youTubePlayerInstance.value?.loadVideo(videoDetails?.youtube_id.toString(), 0f)
+
+    }
+
+    LaunchedEffect(videoTracks) {
+        if(selected_track_id.value!=null && videoTracks!=null){
+            Log.d("My_Tag", selected_track_id.toString())
+            Log.d("My_Tag", selected_video_id.toString())
+            Log.d("My_Tag", videoTracks.toString())
+
+            var track = videoTracks?.results?.find { it.track.id === selected_track_id.value }
+            Log.d("My_Tag", videoTracks.toString())
+            Log.d("My_Tag", track.toString())
+            Log.d("My_Tag", track?.starts_at.toString())
+            if (track!=null){
+                youTubePlayerInstance.value?.seekTo(track.starts_at.toFloat())
+            }
+        }
     }
 
 
@@ -180,11 +201,11 @@ fun MoodDetailsScreen(id : Int, navController: NavController){
                     )
 
                     MoodTracksComponent(
+                        navController,
                         id,
                         videoDetails?.description.toString(),
                         {
                             it -> video_id.value = it
-                            println("from func "+ it)
                         },
                         {
                             it ->

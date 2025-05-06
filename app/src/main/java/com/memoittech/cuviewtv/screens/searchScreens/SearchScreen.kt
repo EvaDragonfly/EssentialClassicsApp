@@ -81,7 +81,7 @@ fun SearchScreen(navController: NavController, index : Int){
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = DarkBg2)
-                .padding(20.dp, 10.dp)
+                .padding(10.dp)
         ) {
             Row(
                 modifier = Modifier

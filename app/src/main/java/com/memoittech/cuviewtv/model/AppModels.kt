@@ -183,7 +183,6 @@ data class TrackDetailsResponse(
     val data : TrackDetailsData
 ){}
 
-
 data class VideoDetailsData(
     val id: Int,
     val youtube_id: String,
@@ -218,6 +217,24 @@ data class Mood(
     val title: String
 ){}
 
+data class TrackVideoWrapper(
+    val video : Video,
+    val position: Int,
+    val starts_at: Int,
+    val ends_at: Int
+){}
+
+data class TrackVideosData(
+    val count: Int,
+    val next: String?,
+    val previous: String?,
+    val results: List<TrackVideoWrapper>
+){}
+
+data class TrackVideosResponse(
+    val code: Int,
+    val data : TrackVideosData
+){}
 
 data class MoodsResponse(
     val code : Int,

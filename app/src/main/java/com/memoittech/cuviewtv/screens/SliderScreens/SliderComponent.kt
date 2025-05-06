@@ -131,7 +131,7 @@ fun SliderComponent(navController: NavController){
                                     ).asComposeRenderEffect()
                                 },
                             model = ImageRequest.Builder(LocalContext.current)
-                                .data("https://img.cugate.com/?o=member&i=${videos.results?.get(page)}&s=300")
+                                .data("https://img.youtube.com/vi/${videos.results?.get(page)}/maxresdefault.jpg")
                                 .crossfade(true)
                                 .build(),
                             placeholder = painterResource(id= R.drawable.some_image),
@@ -157,7 +157,7 @@ fun SliderComponent(navController: NavController){
                                             .fillMaxSize()
                                             .clip(RoundedCornerShape(6.dp)),
                                         model = ImageRequest.Builder(LocalContext.current)
-                                            .data("https://img.cugate.com/?o=member&i=${videos.results?.get(page)}&s=300")
+                                            .data("https://img.youtube.com/vi/${videos.results?.get(page)}/maxresdefault.jpg")
                                             .crossfade(true)
                                             .build(),
                                         placeholder = painterResource(id= R.drawable.some_image),

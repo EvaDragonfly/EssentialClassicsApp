@@ -56,8 +56,6 @@ fun EmailConfirmationScreen(navController: NavController, email : String) {
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, response: Throwable) {
-                    println("failure")
-                    println(response)
                     alertText.value ="Something went wrong, Please try again"
                     dialogStatus.value = true
                 }

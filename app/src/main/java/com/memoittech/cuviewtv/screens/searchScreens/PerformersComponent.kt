@@ -34,8 +34,6 @@ fun PerformersComponent( navController: NavController, q : String){
         navController.navigate("member_details/${id}")
     }
 
-    println(performersViewModel.performersResponse?.results)
-
     LaunchedEffect(q) {
         snapshotFlow{ q }
             .debounce(2000) // Wait for 2 seconds of inactivity

@@ -112,7 +112,7 @@ fun VideoOvalItem(video : Video, onClick : () -> Unit){
                     .width(170.dp)
                     .clip(RoundedCornerShape(8.dp)),
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data("https://img.cugate.com/?o=member&i=${video.id}&s=300")
+                    .data("https://img.youtube.com/vi/${video.youtube_id}/maxresdefault.jpg")
                     .crossfade(true)
                     .build(),
                 placeholder = painterResource(id=R.drawable.some_image),
@@ -235,59 +235,8 @@ fun MemberVerticalItem(member : Member, onClick : () -> Unit){
 }
 
 
-
 @Composable
-fun VerticalVideoItem(video : Video, onClick : () -> Unit){
-    Card (modifier = Modifier
-        .height(100.dp)
-        .padding(10.dp)
-        .clickable { onClick() }
-    ){
-        Surface() {
-            Row(modifier = Modifier.fillMaxSize()
-                .padding(5.dp)
-            ) {
-                AsyncImage(
-                    modifier = Modifier
-                        .width(90.dp)
-                        .height(90.dp),
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data("https://img.cugate.com/?o=CUTV_VIDEO&i=${video.id}&s=300")
-                        .crossfade(true)
-                        .build(),
-                    placeholder = painterResource(id=R.drawable.some_image),
-                    error = painterResource(id=R.drawable.some_image),
-                    contentDescription = "Video thumbnail",
-                    contentScale = ContentScale.Crop
-                )
-                Column( modifier = Modifier.padding(10.dp, 5.dp)
-                    .align(Alignment.CenterVertically),) {
-                    Text(
-                        text = video.title,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Normal,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        color = Color.Cyan
-                    )
-                    Text(
-                        text = video.description,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Light,
-                        color = Color.Green,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
-            }
-        }
-    }
-}
-
-
-
-@Composable
-fun VerticalTrackItem(track : Track, onClick : () -> Unit){
+fun VerticalTrackItem(track : Track, onClick : () -> Unit, onMove : () -> Unit, onFavoriteClick : () -> Unit){
     var expanded = remember { mutableStateOf(false) }
 
     Box (modifier = Modifier
@@ -368,6 +317,21 @@ fun VerticalTrackItem(track : Track, onClick : () -> Unit){
                             )
                         },
                         onClick = {
+                            onMove()
+                            expanded.value=false
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center,
+                                text = "Go to Track",
+                                color = DarkBg2
+                            )
+                        },
+                        onClick = {
+                            onFavoriteClick()
                             expanded.value=false
                         }
                     )
@@ -587,7 +551,7 @@ fun HorizontalVideoItem(video : Video, onClick: () -> Unit){
 //    MemberHorizontalItem(Member(9, "dadsaaas sdasda xcaccs", 3), {})
 //}
 
-//
+
 //@Preview
 //@Composable
 //fun memberPreview(){
@@ -598,14 +562,14 @@ fun HorizontalVideoItem(video : Video, onClick: () -> Unit){
 //@Preview
 //@Composable
 //fun memberPreview(){
-//    VideoTrackItem(VideoTrack(Track(3, "johan sd sebastian bach", "fgjf", listOf(Member_title("dcfcn"), Member_title("dcfcn jhbuhdsc cdsc sxcsdc dscsdcvsvd sdcsdcsdcv sdvcsdvcsdv dvsdvsd")), listOf(Member_title("dcfcn dfhsbudcys dchasudca dcahcb dhab ahdba"), Member_title("dcfcn")), 6), 1, 0, 154 ), {})
+//    VideoTrackItem(VideoTrack(Track(3, "johan sd sebastian bach", "fgjf", listOf(Member_title("dcfcn"), Member_title("dcfcn jhbuhdsc cdsc sxcsdc dscsdcvsvd sdcsdcsdcv sdvcsdvcsdv dvsdvsd")), listOf(Member_title("dcfcn dfhsbudcys dchasudca dcahcb dhab ahdba"), Member_title("dcfcn")), 6), 1, 0, 154 ), {}, {}, {})
 //}
 
 
 @Preview
 @Composable
 fun memberPreview(){
-    VerticalTrackItem(Track(3, "johan sd sebastian bach", "fgjf", listOf(Member_title("dcfcn"), Member_title("dcfcn jhbuhdsc cdsc sxcsdc dscsdcvsvd sdcsdcsdcv sdvcsdvcsdv dvsdvsd")), listOf(Member_title("dcfcn dfhsbudcys dchasudca dcahcb dhab ahdba"), Member_title("dcfcn")), 6),  {})
+    VerticalTrackItem(Track(3, "johan sd sebastian bach", "fgjf", listOf(Member_title("dcfcn"), Member_title("dcfcn jhbuhdsc cdsc sxcsdc dscsdcvsvd sdcsdcsdcv sdvcsdvcsdv dvsdvsd")), listOf(Member_title("dcfcn dfhsbudcys dchasudca dcahcb dhab ahdba"), Member_title("dcfcn")), 6),  {}, {}, {})
 }
 
 //

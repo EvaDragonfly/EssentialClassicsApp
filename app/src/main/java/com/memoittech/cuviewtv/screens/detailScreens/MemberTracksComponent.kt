@@ -15,11 +15,14 @@ import com.memoittech.cuviewtv.components.HorizontalTrackItem
 import com.memoittech.cuviewtv.components.VerticalTrackItem
 import com.memoittech.cuviewtv.ui.theme.Violet
 import com.memoittech.cuviewtv.viewModel.MembersViewModel
+import com.memoittech.cuviewtv.viewModel.TracksViewModel
 
 @Composable
 fun MemberTracksComponent( navController: NavController, id: Int){
 
     val viewModel : MembersViewModel = viewModel()
+
+    val tracksViewModel : TracksViewModel = viewModel()
 
     LaunchedEffect(Unit) {
         viewModel.getMemberTracks(id)
@@ -34,9 +37,20 @@ fun MemberTracksComponent( navController: NavController, id: Int){
     ) {
         memberTracks?.let {
             items(items = memberTracks.results){item ->
-                VerticalTrackItem(track = item.track, {
+                VerticalTrackItem(
+                    track = item.track,
+                    {
                     navController.navigate("track_details/${item.track.id}")
-                })
+                    },
+                    {
+                        navController.navigate(
+                            "track_details/${item.track.id}"
+                        )
+                    },
+                    {
+                        tracksViewModel.addFavoriteTrack(item.track.id, false)
+                    }
+                )
             }
         }
     }

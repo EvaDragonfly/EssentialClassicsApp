@@ -13,6 +13,8 @@ import com.memoittech.cuviewtv.model.FavoriteVideosData
 import com.memoittech.cuviewtv.model.FavoriteVideosResponse
 import com.memoittech.cuviewtv.model.TrackDetailsData
 import com.memoittech.cuviewtv.model.TrackDetailsResponse
+import com.memoittech.cuviewtv.model.TrackVideosData
+import com.memoittech.cuviewtv.model.TrackVideosResponse
 import com.memoittech.cuviewtv.model.TracksData
 import com.memoittech.cuviewtv.model.TracksResponse
 import com.memoittech.cuviewtv.model.VideoResponse
@@ -32,7 +34,7 @@ class TracksViewModel : ViewModel(){
 
     var trackdetailResponse by mutableStateOf<TrackDetailsData?>(null)
 
-    var trackVideosResponse by mutableStateOf<VideosData?>(null)
+    var trackVideosResponse by mutableStateOf<TrackVideosData?>(null)
 
     var errorMessage : String by mutableStateOf("")
 
@@ -110,15 +112,15 @@ class TracksViewModel : ViewModel(){
 
     fun getTrackVideos(id : Int){
         viewModelScope.launch {
-            ApiConstants.retrofit.getTrackVideos(id, "Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<VideoResponse>{
-                override fun onResponse(call: Call<VideoResponse>, response: Response<VideoResponse>) =
+            ApiConstants.retrofit.getTrackVideos(id, "Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<TrackVideosResponse>{
+                override fun onResponse(call: Call<TrackVideosResponse>, response: Response<TrackVideosResponse>) =
                     if(!response.isSuccessful){
                         errorMessage = response.message()
                     } else {
                         trackVideosResponse = response.body()?.data
                     }
 
-                override fun onFailure(call: Call<VideoResponse>, response: Throwable) {
+                override fun onFailure(call: Call<TrackVideosResponse>, response: Throwable) {
                     errorMessage = response.toString()
                 }
 

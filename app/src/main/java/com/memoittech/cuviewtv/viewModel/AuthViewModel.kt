@@ -79,9 +79,6 @@ class AuthViewModel(application : Application) : AndroidViewModel(application) {
             ApiConstants.retrofit.logout("Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<ResponseBody>{
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                     if(!response.isSuccessful){
-                        println(response.message())
-                        println(response.errorBody()?.string())
-                        println(response.body()?.string())
                         navController.navigate("main")
                     } else {
                         TokenManager.clearToken()
@@ -91,7 +88,6 @@ class AuthViewModel(application : Application) : AndroidViewModel(application) {
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, response: Throwable) {
-                    println("here" + response.message)
                     navController.navigate("main")
                     navController.navigate("main")
                 }
@@ -106,7 +102,6 @@ class AuthViewModel(application : Application) : AndroidViewModel(application) {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                     if(!response.isSuccessful){
                         setAlertMessage("Password is not changed")
-                        println(response.errorBody()?.string())
                     } else {
                         setAlertMessage("Password has changed")
                         onClick()
@@ -114,7 +109,6 @@ class AuthViewModel(application : Application) : AndroidViewModel(application) {
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, response: Throwable) {
-                    println(response.message)
                 }
 
             })

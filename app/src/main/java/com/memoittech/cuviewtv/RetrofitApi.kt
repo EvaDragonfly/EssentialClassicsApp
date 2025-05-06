@@ -10,6 +10,7 @@ import com.memoittech.cuviewtv.model.MembersResponse
 import com.memoittech.cuviewtv.model.MoodTracksResponse
 import com.memoittech.cuviewtv.model.MoodsResponse
 import com.memoittech.cuviewtv.model.TrackDetailsResponse
+import com.memoittech.cuviewtv.model.TrackVideosResponse
 import com.memoittech.cuviewtv.model.TracksResponse
 import com.memoittech.cuviewtv.model.User
 import com.memoittech.cuviewtv.model.UserResponse
@@ -125,7 +126,7 @@ interface RetrofitApi {
     fun getTrackVideos(
         @Path("id") id: Int,
         @Header("Authorization") token : String
-    ) : Call<VideoResponse>
+    ) : Call<TrackVideosResponse>
 
     @GET("/api/v1/ec_playlists/videos/{id}/")
     fun getVideo(

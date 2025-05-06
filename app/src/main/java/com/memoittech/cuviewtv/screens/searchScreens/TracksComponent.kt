@@ -45,7 +45,18 @@ fun TracksComponent(navController: NavController , q : String){
         tracksViewModel.tracksResponse?.let {
             LazyColumn (){
                 items(items = it.results){item ->
-                    VerticalTrackItem(item, { onTrackClick(item.id) })
+                    VerticalTrackItem(
+                        item,
+                        { onTrackClick(item.id) },
+                        {
+                            navController.navigate(
+                                "track_details/${item.id}"
+                            )
+                        },
+                        {
+                            tracksViewModel.addFavoriteTrack(item.id, false)
+                        }
+                    )
                 }
             }
         }

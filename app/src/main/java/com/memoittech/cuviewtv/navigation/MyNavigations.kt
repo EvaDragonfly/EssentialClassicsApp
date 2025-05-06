@@ -24,7 +24,7 @@ import com.memoittech.cuviewtv.screens.appScreens.PlayerScreen
 import com.memoittech.cuviewtv.screens.searchScreens.SearchScreen
 import com.memoittech.cuviewtv.screens.appScreens.SplashScreen
 import com.memoittech.cuviewtv.screens.detailScreens.MemberDetailsScreen
-import com.memoittech.cuviewtv.screens.detailScreens.TrackDetailsScreen
+import com.memoittech.cuviewtv.screens.trackScreens.TrackScreen
 
 
 @RequiresApi(Build.VERSION_CODES.S)
@@ -103,7 +103,7 @@ fun MyNavigations(){
             )
         ) { backStackEntry ->
             val id = backStackEntry.arguments?.getInt("id")
-            id?.let { TrackDetailsScreen(navController, id = it) }
+            id?.let { TrackScreen(id = it, navController) }
         }
 
         composable( route = "sign_up" ){
