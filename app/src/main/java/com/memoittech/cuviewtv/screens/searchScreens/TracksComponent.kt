@@ -47,6 +47,7 @@ fun TracksComponent(navController: NavController , q : String){
                 items(items = it.results){item ->
                     VerticalTrackItem(
                         item,
+                        0,
                         { onTrackClick(item.id) },
                         {
                             navController.navigate(

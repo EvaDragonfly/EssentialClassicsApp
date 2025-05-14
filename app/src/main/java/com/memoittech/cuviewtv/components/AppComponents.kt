@@ -42,7 +42,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.model.Member
-import com.memoittech.cuviewtv.model.Member_title
+import com.memoittech.cuviewtv.model.Member_Wrapper
 import com.memoittech.cuviewtv.model.Track
 import com.memoittech.cuviewtv.model.Video
 import com.memoittech.cuviewtv.model.VideoTrack
@@ -236,12 +236,14 @@ fun MemberVerticalItem(member : Member, onClick : () -> Unit){
 
 
 @Composable
-fun VerticalTrackItem(track : Track, onClick : () -> Unit, onMove : () -> Unit, onFavoriteClick : () -> Unit){
+fun VerticalTrackItem(track : Track, active_track_id : Int, onClick : () -> Unit, onMove : () -> Unit, onFavoriteClick : () -> Unit){
     var expanded = remember { mutableStateOf(false) }
+
+    val backgroundColor = if (track.id == active_track_id) Violet else DarkBg2
 
     Box (modifier = Modifier
         .fillMaxWidth()
-        .background(DarkBg2)
+        .background(backgroundColor)
         .clickable { onClick() },
     ){
         Row(modifier = Modifier.fillMaxWidth()
@@ -326,7 +328,7 @@ fun VerticalTrackItem(track : Track, onClick : () -> Unit, onMove : () -> Unit, 
                             Text(
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.Center,
-                                text = "Go to Track",
+                                text = "Add to favorites",
                                 color = DarkBg2
                             )
                         },
@@ -562,14 +564,14 @@ fun HorizontalVideoItem(video : Video, onClick: () -> Unit){
 //@Preview
 //@Composable
 //fun memberPreview(){
-//    VideoTrackItem(VideoTrack(Track(3, "johan sd sebastian bach", "fgjf", listOf(Member_title("dcfcn"), Member_title("dcfcn jhbuhdsc cdsc sxcsdc dscsdcvsvd sdcsdcsdcv sdvcsdvcsdv dvsdvsd")), listOf(Member_title("dcfcn dfhsbudcys dchasudca dcahcb dhab ahdba"), Member_title("dcfcn")), 6), 1, 0, 154 ), {}, {}, {})
+//    VideoTrackItem(VideoTrack(Track(3, "johan sd sebastian bach", "fgjf",  listOf(Member_Wrapper(3, "dcfcn"), Member_Wrapper(5,"dcfcn jhbuhdsc cdsc sxcsdc dscsdcvsvd sdcsdcsdcv sdvcsdvcsdv dvsdvsd")), listOf(Member_Wrapper(6,"dcfcn dfhsbudcys dchasudca dcahcb dhab ahdba"), Member_Wrapper(7, "dcfcn")), 6), 1, 0, 154 ), {}, {}, {})
 //}
 
 
 @Preview
 @Composable
 fun memberPreview(){
-    VerticalTrackItem(Track(3, "johan sd sebastian bach", "fgjf", listOf(Member_title("dcfcn"), Member_title("dcfcn jhbuhdsc cdsc sxcsdc dscsdcvsvd sdcsdcsdcv sdvcsdvcsdv dvsdvsd")), listOf(Member_title("dcfcn dfhsbudcys dchasudca dcahcb dhab ahdba"), Member_title("dcfcn")), 6),  {}, {}, {})
+    VerticalTrackItem(Track(3, "johan sd sebastian bach", "fgjf", listOf(Member_Wrapper(3, "dcfcn"), Member_Wrapper(5,"dcfcn jhbuhdsc cdsc sxcsdc dscsdcvsvd sdcsdcsdcv sdvcsdvcsdv dvsdvsd")), listOf(Member_Wrapper(6,"dcfcn dfhsbudcys dchasudca dcahcb dhab ahdba"), Member_Wrapper(7, "dcfcn")), 6, true), 3, {}, {}, {})
 }
 
 //

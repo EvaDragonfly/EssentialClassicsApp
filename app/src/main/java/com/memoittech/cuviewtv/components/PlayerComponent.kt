@@ -16,6 +16,7 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTube
 @Composable
 fun PlayerComponent(
     youtube_id : String,
+    start_at : Float,
     onReady: (YouTubePlayer) -> Unit
 ){
     AndroidView(
@@ -29,7 +30,7 @@ fun PlayerComponent(
 
             view.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
                 override fun onReady(youTubePlayer: YouTubePlayer) {
-                    youTubePlayer.loadVideo(youtube_id, 0f) // load but don't play
+                    youTubePlayer.loadVideo(youtube_id, start_at) // load but don't play
                     onReady(youTubePlayer)
                 }
             })

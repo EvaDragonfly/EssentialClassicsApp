@@ -8,7 +8,6 @@ import com.memoittech.cuviewtv.model.MemberTracksResponse
 import com.memoittech.cuviewtv.model.MemberVideosReponse
 import com.memoittech.cuviewtv.model.MembersResponse
 import com.memoittech.cuviewtv.model.MoodTracksResponse
-import com.memoittech.cuviewtv.model.MoodsResponse
 import com.memoittech.cuviewtv.model.TrackDetailsResponse
 import com.memoittech.cuviewtv.model.TrackVideosResponse
 import com.memoittech.cuviewtv.model.TracksResponse
@@ -188,10 +187,6 @@ interface RetrofitApi {
         @Query("ordering") ordering : String,
     ) : Call<FavouriteMembersResponse>
 
-    @GET("/api/v1/ec_playlists/moods/")
-    fun getMoods(
-        @Header("Authorization") token : String,
-    ) : Call<MoodsResponse>
 
     @GET("/api/v1/ec_playlists/mood_tracks/{moodId}/")
     fun getMoodTracks(

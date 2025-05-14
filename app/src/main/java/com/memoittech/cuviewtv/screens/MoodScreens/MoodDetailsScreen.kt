@@ -15,88 +15,76 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.components.PlayerComponent
-import com.memoittech.cuviewtv.model.VideoTrack
+import com.memoittech.cuviewtv.components.VerticalTrackItem
+import com.memoittech.cuviewtv.model.MoodTrack
 import com.memoittech.cuviewtv.ui.theme.DarkBg2
-import com.memoittech.cuviewtv.viewModel.VideosViewModel
+
+import com.memoittech.cuviewtv.viewModel.MoodsViewModel
+import com.memoittech.cuviewtv.viewModel.TracksViewModel
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 
 
 @Composable
 fun MoodDetailsScreen(id : Int, navController: NavController){
 
-    val videoViewModel : VideosViewModel = viewModel()
-
     val youTubePlayerInstance = remember { mutableStateOf<YouTubePlayer?>(null) }
 
-    var video_id = remember { mutableStateOf<Int?>(null) }
+    var track by remember { mutableStateOf<MoodTrack?>(null) }
 
-    var selected_track_id = remember { mutableStateOf<Int?>(null) }
+    val viewModel : MoodsViewModel = viewModel()
 
-    var selected_video_id = remember { mutableStateOf<Int?>(null) }
+    val trackViewModel : TracksViewModel = viewModel()
 
-    LaunchedEffect(video_id.value) {
-        video_id.value?.let { videoViewModel.getVideoDetails(it) }
-        video_id.value?.let { videoViewModel.getVideoTracks(it) }
+    LaunchedEffect(id) {
+        viewModel.getMoodTracks(id)
     }
 
-    val videoDetails = videoViewModel.videodetailResponse
-    val videoTracks = videoViewModel.videoTracksResponse
+    val tracks = viewModel.moodTracksResponse?.data
 
-    LaunchedEffect(selected_track_id.value) {
-        if (videoTracks != null) {
-            var track = videoTracks.results.find { it.track.id === selected_track_id.value }
-            if (track!=null){
-                youTubePlayerInstance.value?.seekTo(track.starts_at.toFloat())
-            } else {
-                selected_video_id.value?.let {
-                    videoViewModel.getVideoDetails(it)
-                    videoViewModel.getVideoTracks(it)
-                }
-            }
+    LaunchedEffect(tracks) {
+        if (tracks != null) {
+            track = tracks.get(0)
+            track?.starts_at?.toFloat()
+                ?.let { youTubePlayerInstance.value?.loadVideo(track?.video_id.toString(), it) }
         }
     }
 
-    LaunchedEffect(videoDetails) {
-        youTubePlayerInstance.value?.loadVideo(videoDetails?.youtube_id.toString(), 0f)
 
+    fun onTrackClick(item: MoodTrack){
+        if(item.video_id == track?.video_id){
+            youTubePlayerInstance.value?.seekTo(item.starts_at.toFloat())
+        } else {
+            youTubePlayerInstance.value?.loadVideo(item?.video_id.toString(), item.starts_at.toFloat())
+        }
+        track = item
     }
 
-    LaunchedEffect(videoTracks) {
-        if(selected_track_id.value!=null && videoTracks!=null){
-            Log.d("My_Tag", selected_track_id.toString())
-            Log.d("My_Tag", selected_video_id.toString())
-            Log.d("My_Tag", videoTracks.toString())
-
-            var track = videoTracks?.results?.find { it.track.id === selected_track_id.value }
-            Log.d("My_Tag", videoTracks.toString())
-            Log.d("My_Tag", track.toString())
-            Log.d("My_Tag", track?.starts_at.toString())
-            if (track!=null){
-                youTubePlayerInstance.value?.seekTo(track.starts_at.toFloat())
-            }
+    fun onFavoriteClick(item: MoodTrack){
+        if(item.track.is_favorite){
+            trackViewModel.addFavoriteTrack(item.track.id, true)
+        } else {
+            trackViewModel.addFavoriteTrack(item.track.id, false)
         }
     }
-
 
     Surface(
         modifier = Modifier.fillMaxSize()
@@ -146,44 +134,46 @@ fun MoodDetailsScreen(id : Int, navController: NavController){
                         }
                     }
 
-                    videoDetails?.youtube_id?.let {
-                        PlayerComponent(it){ player ->
-                            youTubePlayerInstance.value = player
+                    track?.video_id?.let {
+                        track?.starts_at?.toFloat()?.let { it1 ->
+                            PlayerComponent(it, it1){ player ->
+                                youTubePlayerInstance.value = player
+                            }
                         }
                     }
 
-                    videoDetails?.let {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(20.dp, 15.dp)
-                        ,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                            Text(
-                                text = it.title,
-                                modifier = Modifier.fillMaxWidth(),
-                                fontSize = 16.sp,
-                                color = Color.White,
-                                textAlign = TextAlign.Center,
-                                fontWeight = FontWeight.W600,
-                                maxLines = 2
-                            )
-
-
-                        Text(
-                            text = videoDetails.title,
-                            modifier = Modifier.fillMaxWidth(),
-                            fontSize = 15.sp,
-                            color = Color.White,
-                            textAlign = TextAlign.Center,
-                            fontWeight = FontWeight.W400,
-                            maxLines = 2,
-                            fontStyle = FontStyle.Italic
-                        )
-
-                    }
-                    }
+//                    videoDetails?.let {
+//                    Column(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(20.dp, 15.dp)
+//                        ,
+//                        verticalArrangement = Arrangement.Center
+//                    ) {
+//                            Text(
+//                                text = it.title,
+//                                modifier = Modifier.fillMaxWidth(),
+//                                fontSize = 16.sp,
+//                                color = Color.White,
+//                                textAlign = TextAlign.Center,
+//                                fontWeight = FontWeight.W600,
+//                                maxLines = 2
+//                            )
+//
+//
+//                        Text(
+//                            text = videoDetails.title,
+//                            modifier = Modifier.fillMaxWidth(),
+//                            fontSize = 15.sp,
+//                            color = Color.White,
+//                            textAlign = TextAlign.Center,
+//                            fontWeight = FontWeight.W400,
+//                            maxLines = 2,
+//                            fontStyle = FontStyle.Italic
+//                        )
+//
+//                    }
+//                    }
 
                     Box(
                         modifier = Modifier
@@ -200,20 +190,31 @@ fun MoodDetailsScreen(id : Int, navController: NavController){
                             )
                     )
 
-                    MoodTracksComponent(
-                        navController,
-                        id,
-                        videoDetails?.description.toString(),
-                        {
-                            it -> video_id.value = it
-                        },
-                        {
-                            it ->
-                            selected_track_id.value = it.track.id
-                            selected_video_id.value = it.video_id
+                    LazyColumn(modifier = Modifier
+                        .padding(10.dp, 0.dp)
+                        .background(Color.Transparent)) {
+                        tracks?.let {
+                            items(items = it) { item ->
+                                track?.track?.let { it1 ->
+                                    VerticalTrackItem(
+                                        track = item.track,
+                                        active_track_id = it1.id,
+                                        {
+                                            onTrackClick(item)
+                                        },
+                                        {
+                                            navController.navigate(
+                                                "track_details/${item.track.id}"
+                                            )
+                                        },
+                                        {
+                                            onFavoriteClick(item)
+                                        }
+                                    )
+                                }
+                            }
                         }
-                    )
-
+                    }
                 }
             }
         }

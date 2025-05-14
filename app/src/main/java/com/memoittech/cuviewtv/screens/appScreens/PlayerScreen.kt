@@ -118,7 +118,7 @@ fun PlayerScreen(
                         }
                     }
 
-                    PlayerComponent(videoDetails.youtube_id){ player ->
+                    PlayerComponent(videoDetails.youtube_id, 0f){ player ->
                         youTubePlayerInstance.value = player
                     }
 

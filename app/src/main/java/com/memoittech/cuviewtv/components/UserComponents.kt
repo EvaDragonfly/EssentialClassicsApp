@@ -262,7 +262,6 @@ fun ClickableTextComponent(value: String, onTextSelected : (String)->Unit){
         onClick = { offset ->
         annotatedString.getStringAnnotations(offset, offset)
             .firstOrNull()?.also {span ->
-                Log.d("ClickableTextComponent", "{$span}")
                 if ((span.item == termsAndConditionsText) || (span.item == privacyPolicyText)){
                     onTextSelected(span.item)
                 }
@@ -324,7 +323,6 @@ fun ClickableLoginTextComponent(tryingToLogin : Boolean = true, onTextSelected :
         onClick = { offset ->
         annotatedString.getStringAnnotations(offset, offset)
             .firstOrNull()?.also {span ->
-                Log.d("ClickableTextComponent", "{$span}")
                 if (span.item == loginText){
                     onTextSelected(span.item)
                 }

@@ -1,5 +1,6 @@
 package com.memoittech.cuviewtv.model
 
+import androidx.compose.runtime.MutableState
 import com.google.gson.annotations.SerializedName
 
 data class Member(
@@ -21,7 +22,8 @@ data class MembersResponse(
     val data : MembersData
 ) {}
 
-data class Member_title(
+data class Member_Wrapper(
+    val member_id : Int,
     val member_title : String
 ){}
 
@@ -46,10 +48,11 @@ data class Track(
     val id : Int,
     val title : String,
     val part : String,
-    val performers : List<Member_title>,
-    val composers : List<Member_title>,
-    val position : Int
-){}
+    val performers : List<Member_Wrapper>,
+    val composers : List<Member_Wrapper>,
+    val position : Int,
+    val is_favorite: Boolean
+) {}
 
 data class TracksData (
     val count : Int,
@@ -173,8 +176,8 @@ data class TrackDetailsData(
     val title : String,
     val part : String,
     val duration : Int,
-    val performers : List<Member_title>,
-    val composers : List<Member_title>,
+    val performers : List<Member_Wrapper>,
+    val composers : List<Member_Wrapper>,
     val is_favorite : Boolean
 ){}
 
@@ -236,14 +239,9 @@ data class TrackVideosResponse(
     val data : TrackVideosData
 ){}
 
-data class MoodsResponse(
-    val code : Int,
-    val data : List<Mood>
-){}
-
 data class MoodTrack(
     val track : Track,
-    val video_id : Int,
+    val video_id : String,
     val position: Int,
     val starts_at: Int,
     val ends_at: Int
