@@ -3,6 +3,7 @@ package com.memoittech.cuviewtv.navigation
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -28,12 +29,15 @@ import com.memoittech.cuviewtv.screens.favoritesScreens.FavoriteTracksScreen
 import com.memoittech.cuviewtv.screens.favoritesScreens.FavoriteVideosScreen
 import com.memoittech.cuviewtv.screens.favoritesScreens.FavoritesScreen
 import com.memoittech.cuviewtv.screens.trackScreens.TrackScreen
+import com.memoittech.cuviewtv.viewModel.AppViewModels
 
 
 @RequiresApi(Build.VERSION_CODES.S)
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun MyNavigations(){
+
+    val appViewModel : AppViewModels = viewModel()
 
     val navController = rememberNavController()
 
@@ -44,7 +48,7 @@ fun MyNavigations(){
         }
 
         composable(route = "main"){
-            MainScreen(navController)
+            MainScreen(navController, appViewModel)
         }
 
         composable( route = "favourites"){
@@ -75,18 +79,12 @@ fun MyNavigations(){
                 id?.let { PlayerScreen(navController, id = it) }
         }
 
-        composable(
-            route = "search/{index}",
-            arguments = listOf(
-                navArgument("index") { type = NavType.IntType }
-            )
-        ){backStackEntry ->
-            val id = backStackEntry.arguments?.getInt("index")
-            id?.let { SearchScreen(navController, index = it) }
+        composable(route = "search"){backStackEntry ->
+            SearchScreen(navController, appViewModel)
         }
 
         composable( route = "slider" ){
-            OpenScreen(navController)
+            OpenScreen(navController, appViewModel)
         }
 
         composable(

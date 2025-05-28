@@ -15,24 +15,26 @@ import com.memoittech.cuviewtv.screens.SliderScreens.OpenScreen
 import com.memoittech.cuviewtv.screens.MoodScreens.MoodsScreen
 import com.memoittech.cuviewtv.screens.favoritesScreens.FavoritesScreen
 import com.memoittech.cuviewtv.screens.searchScreens.SearchScreen
+import com.memoittech.cuviewtv.viewModel.AppViewModels
 
 
 @RequiresApi(Build.VERSION_CODES.S)
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun BottomNavGraph(bottomNavController: NavHostController, rootNavController : NavController, modifier: Modifier = Modifier){
+fun BottomNavGraph(bottomNavController: NavHostController, rootNavController : NavController, appViewModel: AppViewModels,
+                   modifier: Modifier = Modifier){
     NavHost(navController = bottomNavController,
         startDestination = BottomBarScreen.Slider.route,
         modifier = modifier
         ){
             composable(route = BottomBarScreen.Slider.route){
-                OpenScreen(rootNavController)
+                OpenScreen(rootNavController, appViewModel)
             }
             composable(route = BottomBarScreen.Moods.route){
                 MoodsScreen(rootNavController)
             }
             composable(route = BottomBarScreen.Search.route){
-                SearchScreen(rootNavController, 0)
+                SearchScreen(rootNavController, appViewModel)
             }
             composable(route = BottomBarScreen.Favorite.route){
                 FavoritesScreen(rootNavController)
@@ -44,30 +46,25 @@ sealed class BottomBarScreen(
     val route: String,
     val title: String,
     val icon: Int,
-    val iconActive : Int
 ) {
     object Slider : BottomBarScreen(
         route = "slider",
         title = "Main",
         icon = R.drawable.main,
-        iconActive = R.drawable.mainactive
     )
     object Moods : BottomBarScreen(
         route = "moods",
         title = "Moods",
         icon = R.drawable.moods,
-        iconActive = R.drawable.moodsactive
     )
     object Search : BottomBarScreen(
         route = "search",
         title = "Search",
         icon = R.drawable.search,
-        iconActive = R.drawable.searchactive
     )
     object Favorite : BottomBarScreen(
         route = "favorites",
         title = "Favorites",
         icon = R.drawable.collection,
-        iconActive = R.drawable.collectionactive
     )
 }

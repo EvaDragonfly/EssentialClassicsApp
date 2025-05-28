@@ -24,11 +24,12 @@ import androidx.navigation.NavController
 import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.components.VideoOvalItem
 import com.memoittech.cuviewtv.ui.theme.GrayBlue
+import com.memoittech.cuviewtv.viewModel.AppViewModels
 import com.memoittech.cuviewtv.viewModel.VideosViewModel
 
 
 @Composable
-fun SliderVideosComponent(navController: NavController) {
+fun SliderVideosComponent(navController: NavController, appViewModel: AppViewModels) {
 
     val viewModels : VideosViewModel = viewModel()
 
@@ -53,7 +54,10 @@ fun SliderVideosComponent(navController: NavController) {
             )
             Row(
                 modifier = Modifier
-                    .clickable { navController.navigate("search/${3}") },
+                    .clickable {
+                        appViewModel.onIndexChanged(3)
+                        navController.navigate("search")
+                               },
                 verticalAlignment = Alignment.CenterVertically
             ){
                 Text(

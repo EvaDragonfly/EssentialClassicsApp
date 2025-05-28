@@ -15,13 +15,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.memoittech.cuviewtv.ui.theme.DarkBg2
+import com.memoittech.cuviewtv.viewModel.AppViewModels
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @OptIn(ExperimentalPagerApi::class)
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
-fun OpenScreen (navController : NavController) {
+fun OpenScreen (navController : NavController, appViewModel: AppViewModels) {
 
     Scaffold(
 
@@ -36,15 +37,15 @@ fun OpenScreen (navController : NavController) {
                     modifier = Modifier.padding(5.dp)
                 ) {
                     item {
-                        SliderComposersComponent(navController)
+                        SliderComposersComponent(navController, appViewModel)
                     }
 
                     item {
-                        SliderPerformersComponent(navController)
+                        SliderPerformersComponent(navController, appViewModel)
                     }
 
                     item {
-                        SliderVideosComponent(navController)
+                        SliderVideosComponent(navController, appViewModel)
                     }
                 }
             }

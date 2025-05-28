@@ -36,6 +36,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.components.SearchComponent
@@ -43,16 +44,14 @@ import com.memoittech.cuviewtv.components.Separator
 import com.memoittech.cuviewtv.ui.theme.DarkBg2
 import com.memoittech.cuviewtv.ui.theme.Rose
 import com.memoittech.cuviewtv.ui.theme.Violet
+import com.memoittech.cuviewtv.viewModel.AppViewModels
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(navController: NavController, index : Int){
+fun SearchScreen(navController: NavController, appViewModel: AppViewModels){
 
     var text by remember { mutableStateOf("") }
-
-    val backStackEntry = navController.currentBackStackEntry
-    val savedIndex = backStackEntry?.savedStateHandle?.get<Int>("search_index")
 
     var searchItems = remember {
         mutableStateListOf(
@@ -63,13 +62,12 @@ fun SearchScreen(navController: NavController, index : Int){
         )
     }
 
-    var currentComponent by rememberSaveable {
-        mutableStateOf(savedIndex ?: index)
-    }
+    val index = appViewModel.index
 
-//    var currentComponent by remember { mutableStateOf(index) }
-    var selectedOption by remember { mutableStateOf(searchItems [index]) }
+    println(index)
 
+    var currentComponent = index
+    var selectedOption = searchItems.getOrNull(index) ?: 0
 
     Surface(
         modifier = Modifier
@@ -116,7 +114,7 @@ fun SearchScreen(navController: NavController, index : Int){
                                     .clickable {
                                         selectedOption = it;
                                         currentComponent = it.first
-                                        navController.previousBackStackEntry?.savedStateHandle?.set("index", it.first)
+                                        appViewModel.onIndexChanged(it.first)
                                                },
                                 contentAlignment = Alignment.Center
                             ){

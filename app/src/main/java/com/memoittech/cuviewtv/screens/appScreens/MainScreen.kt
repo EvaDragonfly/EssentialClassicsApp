@@ -31,12 +31,13 @@ import com.memoittech.cuviewtv.navigation.BottomBarScreen
 import com.memoittech.cuviewtv.navigation.BottomNavGraph
 import com.memoittech.cuviewtv.ui.theme.DarkBg2
 import com.memoittech.cuviewtv.ui.theme.GrayBlue
+import com.memoittech.cuviewtv.viewModel.AppViewModels
 
 
 @RequiresApi(Build.VERSION_CODES.S)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun MainScreen(navController: NavHostController){
+fun MainScreen(navController: NavHostController, appViewModel: AppViewModels){
 
     val bottomNavController = rememberNavController()
 
@@ -48,6 +49,7 @@ fun MainScreen(navController: NavHostController){
         BottomNavGraph(
             bottomNavController = bottomNavController,
             rootNavController = navController,
+            appViewModel = appViewModel,
             modifier = Modifier.padding(innerPadding)
         )
     }

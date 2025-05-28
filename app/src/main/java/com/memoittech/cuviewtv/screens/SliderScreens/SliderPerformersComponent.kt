@@ -24,11 +24,12 @@ import androidx.navigation.NavController
 import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.components.MemberOvalItem
 import com.memoittech.cuviewtv.ui.theme.GrayBlue
+import com.memoittech.cuviewtv.viewModel.AppViewModels
 import com.memoittech.cuviewtv.viewModel.MembersViewModel
 
 
 @Composable
-fun SliderPerformersComponent (navController: NavController){
+fun SliderPerformersComponent (navController: NavController, appViewModel: AppViewModels){
 
     val viewModel : MembersViewModel = viewModel()
 
@@ -53,7 +54,10 @@ fun SliderPerformersComponent (navController: NavController){
             )
             Row(
                 modifier = Modifier
-                .clickable { navController.navigate("search/${0}") },
+                .clickable {
+                    appViewModel.onIndexChanged(0)
+                    navController.navigate("search")
+                           },
                 verticalAlignment = Alignment.CenterVertically
             ){
                 Text(
