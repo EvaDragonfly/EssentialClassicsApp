@@ -1,22 +1,29 @@
 package com.memoittech.cuviewtv.viewModel
 
+import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.memoittech.cuviewtv.ApiConstants
 import com.memoittech.cuviewtv.TokenManager
+import com.memoittech.cuviewtv.model.FavoriteTrack
 import com.memoittech.cuviewtv.model.FavoriteTracksData
 import com.memoittech.cuviewtv.model.FavoriteTracksResponse
 import com.memoittech.cuviewtv.model.FavoriteVideosData
 import com.memoittech.cuviewtv.model.FavoriteVideosResponse
+import com.memoittech.cuviewtv.model.Track
 import com.memoittech.cuviewtv.model.TrackDetailsData
 import com.memoittech.cuviewtv.model.TrackDetailsResponse
+import com.memoittech.cuviewtv.model.TrackVideoWrapper
 import com.memoittech.cuviewtv.model.TrackVideosData
 import com.memoittech.cuviewtv.model.TrackVideosResponse
 import com.memoittech.cuviewtv.model.TracksData
 import com.memoittech.cuviewtv.model.TracksResponse
+import com.memoittech.cuviewtv.model.Video
 import com.memoittech.cuviewtv.model.VideoResponse
 import com.memoittech.cuviewtv.model.VideosData
 import kotlinx.coroutines.launch
@@ -26,29 +33,54 @@ import retrofit2.Response
 
 class TracksViewModel : ViewModel(){
 
-    var tracksResponse by mutableStateOf<TracksData?>(null)
+    var tracks = mutableStateListOf<Track>()
+    var favouriteTracks = mutableStateListOf<FavoriteTrack>()
+    var trackVideos = mutableStateListOf<TrackVideoWrapper?>()
 
-    var favouriteTracksResponse by mutableStateOf<FavoriteTracksData?>(null)
+    var isLoading = false
+    private var currentOffsetTracks = 0
+    private val pageSizeTracks = 20
+
+    var isFavTracksLoading = false
+    private var currentOffsetFavTracks = 0
+    private val pageSizeFavTracks = 20
+
+    var isTrackVideosLoading = false
+    private var currentOffsetTrackVideos = 0
+    private val pageSizeTrackVideos = 20
 
     var favouriteTrackResponse by mutableStateOf<ResponseBody?>(null)
 
     var trackdetailResponse by mutableStateOf<TrackDetailsData?>(null)
 
-    var trackVideosResponse by mutableStateOf<TrackVideosData?>(null)
-
     var errorMessage : String by mutableStateOf("")
 
-    fun getTracksList(limit : Int, offset : Int, ordering : String, q : String ) {
+    fun getTracksList(ordering : String, q : String, index : Int ) {
+
+        if (isLoading) return
+        isLoading = true
+
         viewModelScope.launch {
-            ApiConstants.retrofit.getTracks(limit, offset, ordering, q, "Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<TracksResponse>{
-                override fun onResponse(call: Call<TracksResponse>, response: Response<TracksResponse>) =
-                    if(!response.isSuccessful){
+            ApiConstants.retrofit.getTracks(pageSizeTracks, currentOffsetTracks, ordering, q, "Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<TracksResponse>{
+                override fun onResponse(call: Call<TracksResponse>, response: Response<TracksResponse>) {
+                    isLoading = false
+                    if (!response.isSuccessful) {
                         errorMessage = response.message()
                     } else {
-                        tracksResponse = response.body()?.data
+                        val newTracks = response.body()?.data?.results ?: emptyList()
+                        if (index == 1){
+                            tracks.addAll(newTracks)
+                            currentOffsetTracks += tracks.size
+                        } else {
+                            tracks.clear()
+                            currentOffsetTracks = 0
+                            tracks.addAll(newTracks)
+                        }
                     }
 
+                }
                 override fun onFailure(call: Call<TracksResponse>, response: Throwable) {
+                    isLoading = false
                     errorMessage = response.toString()
                 }
 
@@ -56,17 +88,25 @@ class TracksViewModel : ViewModel(){
         }
     }
 
-    fun getFavoriteTracks(limit : Int, offset : Int, ordering : String) {
+    fun getFavoriteTracks( ordering : String) {
+
+        if (isFavTracksLoading) return
+        isFavTracksLoading = true
+
         viewModelScope.launch {
-            ApiConstants.retrofit.getFavoriteTracks("Token ${TokenManager.getToken()}", limit, offset, ordering).enqueue(object : retrofit2.Callback<FavoriteTracksResponse>{
-                override fun onResponse(call: Call<FavoriteTracksResponse>, response: Response<FavoriteTracksResponse>) =
-                    if(!response.isSuccessful){
+            ApiConstants.retrofit.getFavoriteTracks("Token ${TokenManager.getToken()}", pageSizeFavTracks, currentOffsetFavTracks, ordering).enqueue(object : retrofit2.Callback<FavoriteTracksResponse>{
+                override fun onResponse(call: Call<FavoriteTracksResponse>, response: Response<FavoriteTracksResponse>) {
+                    isFavTracksLoading = false
+                    if (!response.isSuccessful) {
                         errorMessage = response.message()
                     } else {
-                        favouriteTracksResponse  = response.body()?.data
+                        val newTracks = response.body()?.data?.results ?: emptyList()
+                        favouriteTracks.addAll(newTracks)
+                        currentOffsetFavTracks += newTracks.size
                     }
-
+                }
                 override fun onFailure(call: Call<FavoriteTracksResponse>, response: Throwable) {
+                    isFavTracksLoading = false
                     errorMessage = response.toString()
                 }
 
@@ -111,16 +151,25 @@ class TracksViewModel : ViewModel(){
     }
 
     fun getTrackVideos(id : Int){
+
+        if (isTrackVideosLoading) return
+        isTrackVideosLoading = true
+
         viewModelScope.launch {
-            ApiConstants.retrofit.getTrackVideos(id, "Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<TrackVideosResponse>{
-                override fun onResponse(call: Call<TrackVideosResponse>, response: Response<TrackVideosResponse>) =
-                    if(!response.isSuccessful){
+            ApiConstants.retrofit.getTrackVideos(id, pageSizeTrackVideos, currentOffsetTrackVideos, "Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<TrackVideosResponse>{
+                override fun onResponse(call: Call<TrackVideosResponse>, response: Response<TrackVideosResponse>) {
+                    isTrackVideosLoading = false
+                    if (!response.isSuccessful) {
                         errorMessage = response.message()
                     } else {
-                        trackVideosResponse = response.body()?.data
+                        val newTracks = response.body()?.data?.results ?: emptyList()
+                        trackVideos.addAll(newTracks)
+                        currentOffsetTrackVideos += newTracks.size
                     }
+                }
 
                 override fun onFailure(call: Call<TrackVideosResponse>, response: Throwable) {
+                    isTrackVideosLoading = false
                     errorMessage = response.toString()
                 }
 

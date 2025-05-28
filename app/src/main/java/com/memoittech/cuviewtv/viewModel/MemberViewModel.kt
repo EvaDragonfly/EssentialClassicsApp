@@ -1,22 +1,23 @@
 package com.memoittech.cuviewtv.viewModel
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.memoittech.cuviewtv.ApiConstants
 import com.memoittech.cuviewtv.TokenManager
-import com.memoittech.cuviewtv.model.FavoriteMembersData
+import com.memoittech.cuviewtv.model.FavouriteMember
 import com.memoittech.cuviewtv.model.FavouriteMembersResponse
+import com.memoittech.cuviewtv.model.Member
 import com.memoittech.cuviewtv.model.MemberDetailsData
 import com.memoittech.cuviewtv.model.MemberDetailsResponse
-import com.memoittech.cuviewtv.model.MemberTracksData
 import com.memoittech.cuviewtv.model.MemberTracksResponse
-import com.memoittech.cuviewtv.model.MemberVideosData
 import com.memoittech.cuviewtv.model.MemberVideosReponse
-import com.memoittech.cuviewtv.model.MembersData
 import com.memoittech.cuviewtv.model.MembersResponse
+import com.memoittech.cuviewtv.model.TrackWrapper
+import com.memoittech.cuviewtv.model.VideoWrapper
 import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -25,26 +26,63 @@ import retrofit2.Response
 
 
 class MembersViewModel : ViewModel(){
-    var performersResponse by mutableStateOf<MembersData?>(null)
-    var composersResponse by mutableStateOf<MembersData?>(null)
+    var performers = mutableStateListOf<Member>()
+    var composers = mutableStateListOf<Member>()
+    var favouriteMembers = mutableStateListOf<FavouriteMember>()
+    var memberTracks =  mutableStateListOf<TrackWrapper>()
+    var membersVideos = mutableStateListOf<VideoWrapper>()
+
+    var isComposerLoading = false
+    var isPerformerLoading = false
+    var isFavMembersLoading = false
+    var isMemberTracksLoading = false
+    var isMemberVideosLoading = false
+
+    private var currentComposerOffset = 0
+    private val pageSizeComposers = 20
+
+    private var currentPerformerOffset = 0
+    private val pageSizePerformers = 20
+
+    private var currentFavMembersOffset = 0
+    private val pageSizeFavMembers = 20
+
+    private var currentMemberTracksOffset = 0
+    private val pageSizeMemberTracks = 20
+
+    private var currentMemberVideosOffset = 0
+    private val pageSizeMemberVideos = 20
+
     var membersResponse by mutableStateOf<MemberDetailsData?>(null)
     var favouriteMemberResponse by mutableStateOf<ResponseBody?>(null)
-    var favouriteMembersResponse by mutableStateOf<FavoriteMembersData?>(null)
-    var memberTracksResponse by mutableStateOf<MemberTracksData?>(null)
-    var membersVideoResponse by mutableStateOf<MemberVideosData?>(null)
     var errorMessage : String by mutableStateOf("")
 
-    fun getPerformersList(limit : Int, offset : Int, ordering : String, q : String ) {
+    fun getPerformersList(image_only : Int, ordering : String, q : String, index : Int ) {
+
+        if (isPerformerLoading) return
+        isPerformerLoading = true
+
         viewModelScope.launch {
-            ApiConstants.retrofit.getPerformers(limit, offset, ordering, q, "Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<MembersResponse>{
-                override fun onResponse(call: Call<MembersResponse>, response: Response<MembersResponse>) =
-                    if(!response.isSuccessful){
+            ApiConstants.retrofit.getPerformers(image_only, pageSizePerformers, currentPerformerOffset, ordering, q, "Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<MembersResponse>{
+                override fun onResponse(call: Call<MembersResponse>, response: Response<MembersResponse>) {
+                    isPerformerLoading = false
+                    if (!response.isSuccessful) {
                         errorMessage = response.message()
                     } else {
-                        performersResponse = response.body()?.data
+                        val newPerformers = response.body()?.data?.results ?: emptyList()
+                        if (index == 1){
+                            performers.addAll(newPerformers)
+                            currentPerformerOffset += newPerformers.size
+                        } else {
+                            currentPerformerOffset = 0
+                            performers.clear()
+                            performers.addAll(newPerformers)
+                        }
                     }
+                }
 
                 override fun onFailure(call: Call<MembersResponse>, response: Throwable) {
+                    isPerformerLoading = false
                     errorMessage = response.toString()
                 }
 
@@ -53,17 +91,32 @@ class MembersViewModel : ViewModel(){
     }
 
 
-    fun getComposerList(limit : Int, offset : Int, ordering : String, q : String) {
+    fun getComposerList(image_only : Int, ordering : String, q : String, index : Int) {
+
+        if (isComposerLoading) return
+        isComposerLoading = true
+
         viewModelScope.launch {
-            ApiConstants.retrofit.getComposers(limit, offset, ordering, q, "Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<MembersResponse>{
-                override fun onResponse(call: Call<MembersResponse>, response: Response<MembersResponse>) =
-                    if(!response.isSuccessful){
+            ApiConstants.retrofit.getComposers(image_only, pageSizeComposers, currentComposerOffset, ordering, q, "Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<MembersResponse>{
+                override fun onResponse(call: Call<MembersResponse>, response: Response<MembersResponse>) {
+                    isComposerLoading = false
+                    if (!response.isSuccessful) {
                         errorMessage = response.message()
                     } else {
-                        composersResponse = response.body()?.data
+                        val newComposers = response.body()?.data?.results ?: emptyList()
+                        if (index == 1){
+                            composers.addAll(newComposers)
+                            currentComposerOffset += newComposers.size
+                        } else {
+                            composers.clear()
+                            currentComposerOffset = 0
+                            composers.addAll(newComposers)
+                        }
                     }
+                }
 
                 override fun onFailure(call: Call<MembersResponse>, response: Throwable) {
+                    isComposerLoading = false
                     errorMessage = response.toString()
                 }
 
@@ -108,24 +161,32 @@ class MembersViewModel : ViewModel(){
         }
     }
 
-    fun getFavoriteMembers(limit : Int, offset : Int, ordering : String ) {
+    fun getFavoriteMembers( ordering : String ) {
+        if (isFavMembersLoading) return
+        isFavMembersLoading = true
+
         viewModelScope.launch {
-            ApiConstants.retrofit.getFavoriteMembers("Token ${TokenManager.getToken()}",limit, offset, ordering).enqueue(
+            ApiConstants.retrofit.getFavoriteMembers("Token ${TokenManager.getToken()}", pageSizeFavMembers, currentFavMembersOffset, ordering).enqueue(
                 object : retrofit2.Callback<FavouriteMembersResponse> {
                     override fun onResponse(
                         call: Call<FavouriteMembersResponse>,
                         response: Response<FavouriteMembersResponse>,
-                    ) =
+                    ) {
+                        isFavMembersLoading = false
                         if (!response.isSuccessful) {
                             errorMessage = response.message()
                         } else {
-                            favouriteMembersResponse = response.body()?.data
+                            val newMembers = response.body()?.data?.results ?: emptyList()
+                            favouriteMembers.addAll(newMembers)
+                            currentFavMembersOffset += newMembers.size
                         }
+                    }
 
                     override fun onFailure(
                         call: Call<FavouriteMembersResponse>,
                         response: Throwable,
                     ) {
+                        isFavMembersLoading = false
                         errorMessage = response.toString()
                     }
 
@@ -136,16 +197,25 @@ class MembersViewModel : ViewModel(){
 
 
     fun getMemberTracks(id : Int ) {
+
+        if(isMemberTracksLoading) return
+        isMemberTracksLoading = true
+
         viewModelScope.launch {
-            ApiConstants.retrofit.getMemberTracks(id, "Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<MemberTracksResponse>{
-                override fun onResponse(call: Call<MemberTracksResponse>, response: Response<MemberTracksResponse>) =
-                    if(!response.isSuccessful){
+            ApiConstants.retrofit.getMemberTracks(id, pageSizeMemberTracks, currentMemberTracksOffset,"Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<MemberTracksResponse>{
+                override fun onResponse(call: Call<MemberTracksResponse>, response: Response<MemberTracksResponse>) {
+                    if (!response.isSuccessful) {
+                        isMemberTracksLoading = false
                         errorMessage = response.message()
                     } else {
-                        memberTracksResponse = response.body()?.data
+                        val newTracks = response.body()?.data?.results ?: emptyList()
+                        memberTracks.addAll(newTracks)
+                        currentMemberTracksOffset += newTracks.size
                     }
+                }
 
                 override fun onFailure(call: Call<MemberTracksResponse>, response: Throwable) {
+                    isMemberTracksLoading = false
                     errorMessage = response.toString()
                 }
 
@@ -155,16 +225,25 @@ class MembersViewModel : ViewModel(){
 
 
     fun getMemberVideos(id : Int ) {
+
+        if ( isMemberVideosLoading ) return
+        isMemberTracksLoading = true
+
         viewModelScope.launch {
-            ApiConstants.retrofit.getMemberVideos(id, "Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<MemberVideosReponse>{
-                override fun onResponse(call: Call<MemberVideosReponse>, response: Response<MemberVideosReponse>) =
-                    if(!response.isSuccessful){
+            ApiConstants.retrofit.getMemberVideos(id, pageSizeMemberVideos, currentMemberVideosOffset, "Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<MemberVideosReponse>{
+                override fun onResponse(call: Call<MemberVideosReponse>, response: Response<MemberVideosReponse>) {
+                    isMemberTracksLoading = false
+                    if (!response.isSuccessful) {
                         errorMessage = response.message()
                     } else {
-                        membersVideoResponse = response.body()?.data
+                        val newVideos = response.body()?.data?.results ?: emptyList()
+                        membersVideos.addAll(newVideos)
+                        currentMemberVideosOffset += newVideos.size
                     }
+                }
 
                 override fun onFailure(call: Call<MemberVideosReponse>, response: Throwable) {
+                    isMemberTracksLoading = false
                     errorMessage = response.toString()
                 }
 

@@ -1,21 +1,21 @@
 package com.memoittech.cuviewtv.screens.appScreens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,9 +24,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
@@ -38,6 +38,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.components.PlayerComponent
+import com.memoittech.cuviewtv.components.Separator
 import com.memoittech.cuviewtv.components.VideoTrackItem
 import com.memoittech.cuviewtv.components.formatSecondsToTime
 import com.memoittech.cuviewtv.ui.theme.DarkBg2
@@ -56,7 +57,9 @@ fun PlayerScreen(
     val trackViewModel : TracksViewModel = viewModel()
 
     val videoDetails = videoViewModel.videodetailResponse
-    val videoTracks = videoViewModel.videoTracksResponse
+    val videoTracks = videoViewModel.videoTracks
+
+    val listState = rememberLazyListState()
 
     var selectedTrack by remember { mutableStateOf(0) }
 
@@ -64,18 +67,39 @@ fun PlayerScreen(
 
     LaunchedEffect(key1 = id) {
         videoViewModel.getVideoDetails(id)
-        videoViewModel.getVideoTracks(id)
+        videoViewModel.getVideoTracks(id, )
     }
 
-    fun onFavouriteClick(){
-        videoViewModel.addFavoriteVideo(id, false)
+    var video by remember { mutableStateOf(videoDetails) }
+
+    LaunchedEffect(videoDetails) {
+        video = videoDetails
+    }
+
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.firstVisibleItemIndex }
+            .collect { index ->
+                if (index >= videoViewModel.videoTracks.size - 10 && !videoViewModel.isVideoTracksLoading) {
+                    videoViewModel.getVideoTracks(id)
+                }
+            }
+    }
+
+
+    fun onFavouriteClick() {
+        if (video?.is_favorite == true) {
+            videoViewModel.addFavoriteVideo(id, true)
+        } else {
+            videoViewModel.addFavoriteVideo(id, false)
+        }
+        video = video?.copy(is_favorite = !video?.is_favorite!!)
     }
 
     Surface(
         modifier = Modifier.fillMaxSize()
             .background(DarkBg2)
     ){
-        videoDetails?.let {
+        video?.let {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -104,7 +128,11 @@ fun PlayerScreen(
                         ){
                             Image(
                                 modifier = Modifier.clickable { onFavouriteClick() },
-                                painter = painterResource(R.drawable.favoritewhite),
+                                painter = painterResource(
+                                    if(!video!!.is_favorite)
+                                    R.drawable.favoritewhite
+                                    else R.drawable.favoritewhitefill
+                                ),
                                 contentDescription = "add favorite"
                             )
                             Image(
@@ -118,7 +146,7 @@ fun PlayerScreen(
                         }
                     }
 
-                    PlayerComponent(videoDetails.youtube_id, 0f){ player ->
+                    PlayerComponent(video!!.youtube_id, 0f){ player ->
                         youTubePlayerInstance.value = player
                     }
 
@@ -130,7 +158,7 @@ fun PlayerScreen(
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = videoDetails.title,
+                            text = video!!.title,
                             modifier = Modifier.fillMaxWidth(),
                             fontSize = 16.sp,
                             color = Color.White,
@@ -140,7 +168,7 @@ fun PlayerScreen(
                         )
 
                         Text(
-                            text = videoDetails.title,
+                            text = video!!.title,
                             modifier = Modifier.fillMaxWidth(),
                             fontSize = 15.sp,
                             color = Color.White,
@@ -151,7 +179,7 @@ fun PlayerScreen(
                         )
 
                         Text(
-                            text = videoTracks?.results?.size.toString() + ". " + videoDetails?.let {
+                            text = videoTracks?.size.toString() + ". " + videoDetails?.let {
                                 formatSecondsToTime(
                                     it.duration)
                             },
@@ -164,27 +192,16 @@ fun PlayerScreen(
                         )
                     }
 
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(8.dp)
-                            .padding(bottom = 10.dp)
-                            .background(
-                                brush = Brush.verticalGradient(
-                                    colors = listOf(
-                                        Color(0x8054609C), // 50% opacity
-                                        Color(0x0054609C)
-                                    )
-                                )
-                            )
-                    )
+                    Separator()
 
-                    LazyColumn(modifier = Modifier
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier
                         .padding(20.dp, 0.dp)
                         .background(Color.Transparent)) {
                         item {
                             Text(
-                                text = videoDetails.description,
+                                text = video!!.description,
                                 modifier = Modifier.fillMaxWidth(),
                                 fontSize = 13.sp,
                                 color = GrayBlueLight,
@@ -192,8 +209,8 @@ fun PlayerScreen(
                                 fontWeight = FontWeight.W400
                             )
                         }
-                        videoTracks?.let {
-                            items(items = it.results){ it->
+                        videoTracks.let {
+                            items(items = it){ it->
                                 VideoTrackItem(
                                     track = it,
                                     {
@@ -206,7 +223,11 @@ fun PlayerScreen(
                                         )
                                     },
                                     {
-                                        trackViewModel.addFavoriteTrack(it.track.id, false)
+                                        if (it.track.is_favorite) {
+                                            trackViewModel.addFavoriteTrack(it.track.id, true)
+                                        } else {
+                                            trackViewModel.addFavoriteTrack(it.track.id, false)
+                                        }
                                     }
                                 )
                             }

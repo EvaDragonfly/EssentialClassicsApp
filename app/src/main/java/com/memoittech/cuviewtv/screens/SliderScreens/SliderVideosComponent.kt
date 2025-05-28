@@ -33,10 +33,10 @@ fun SliderVideosComponent(navController: NavController) {
     val viewModels : VideosViewModel = viewModel()
 
     LaunchedEffect(Unit) {
-        viewModels.getVideosList(10, 0, "created_at", "")
+        viewModels.getVideosList( "created_at", "", 1)
     }
 
-    val videos = viewModels.videosResponse
+    val videos = viewModels.videos
 
     Column (modifier = Modifier.fillMaxWidth()){
         Row(modifier = Modifier
@@ -75,7 +75,7 @@ fun SliderVideosComponent(navController: NavController) {
                 modifier = Modifier.padding(0.dp, 15.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ){
-                items(items = it.results){item ->
+                items(items = it){item ->
                     VideoOvalItem(item, {
                         navController.navigate("player/${item.id}")
                     })

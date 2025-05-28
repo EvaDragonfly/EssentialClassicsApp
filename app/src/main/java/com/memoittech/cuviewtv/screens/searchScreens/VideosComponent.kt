@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,30 +31,43 @@ fun VideosComponent(navController: NavController , q : String){
 
     val videosViewModel : VideosViewModel = viewModel()
 
-    var limit by remember { mutableStateOf(0) }
-    var offset by remember { mutableStateOf(0) }
-    var ordering by remember { mutableStateOf("position") }
+//
+    var ordering by remember { mutableStateOf("created_at") }
 
-    videosViewModel.getVideosList(limit, offset, ordering, q)
+    val listState = rememberLazyListState()
+
+    videosViewModel.getVideosList( ordering, q, 1)
 
     LaunchedEffect(q) {
         snapshotFlow{ q }
             .debounce(2000) // Wait for 2 seconds of inactivity
             .collect { value ->
                 if (value.length >= 3) {
-                    videosViewModel.getVideosList(limit, offset, ordering, q)
+                    videosViewModel.getVideosList(ordering, q, 0)
+                }
+            }
+        listState.scrollToItem(0)
+    }
+
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.firstVisibleItemIndex }
+            .collect { index ->
+                if (index >= videosViewModel.videos.size/2 - 10  && !videosViewModel.isLoading) {
+                    videosViewModel.getVideosList(ordering, q, 1)
                 }
             }
     }
 
 
-    videosViewModel.videosResponse?.let {
+    videosViewModel.videos?.let {
         LazyColumn (
+            state = listState,
             modifier = Modifier
             .background(DarkBg2)
             .padding(0.dp, 10.dp),
-            verticalArrangement = Arrangement.Center){
-            items(items = it.results.chunked(2)) { rowItem ->
+            verticalArrangement = Arrangement.Center
+        ){
+            items(items = it.chunked(2)) { rowItem ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()

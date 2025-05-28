@@ -3,6 +3,7 @@ package com.memoittech.cuviewtv.screens.searchScreens
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -21,11 +22,13 @@ fun TracksComponent(navController: NavController , q : String){
 
     val tracksViewModel : TracksViewModel = viewModel()
 
-    var limit by remember { mutableStateOf(0) }
-    var offset by remember { mutableStateOf(0) }
-    var ordering by remember { mutableStateOf("position") }
+//    var limit by remember { mutableStateOf(20) }
+//    var offset by remember { mutableStateOf(0) }
+    var ordering by remember { mutableStateOf("created_at") }
 
-    tracksViewModel.getTracksList(limit, offset, ordering, q)
+    val listState = rememberLazyListState()
+
+//    tracksViewModel.getTracksList( ordering, q, 1)
 
     fun onTrackClick(id: Int){
         navController.navigate("track_details/${id}")
@@ -36,15 +39,28 @@ fun TracksComponent(navController: NavController , q : String){
             .debounce(2000) // Wait for 2 seconds of inactivity
             .collect { value ->
                 if (value.length >= 3) {
-                    tracksViewModel.getTracksList(limit, offset, ordering, q)
+                    tracksViewModel.getTracksList( ordering, q, 0)
+                }
+            }
+        listState.scrollToItem(0)
+    }
+
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.firstVisibleItemIndex }
+            .collect { index ->
+                if (index >= tracksViewModel.tracks.size - 10 && !tracksViewModel.isLoading) {
+                    tracksViewModel.getTracksList( ordering, q, 1)
                 }
             }
     }
 
+
     Column() {
-        tracksViewModel.tracksResponse?.let {
-            LazyColumn (){
-                items(items = it.results){item ->
+        tracksViewModel.tracks?.let {
+            LazyColumn (
+                state = listState
+            ){
+                items(items = it){item ->
                     VerticalTrackItem(
                         item,
                         0,
@@ -53,9 +69,6 @@ fun TracksComponent(navController: NavController , q : String){
                             navController.navigate(
                                 "track_details/${item.id}"
                             )
-                        },
-                        {
-                            tracksViewModel.addFavoriteTrack(item.id, false)
                         }
                     )
                 }

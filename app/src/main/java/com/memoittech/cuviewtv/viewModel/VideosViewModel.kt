@@ -1,17 +1,22 @@
 package com.memoittech.cuviewtv.viewModel
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.memoittech.cuviewtv.ApiConstants
 import com.memoittech.cuviewtv.TokenManager
+import com.memoittech.cuviewtv.model.FavoriteVideo
 import com.memoittech.cuviewtv.model.FavoriteVideosData
 import com.memoittech.cuviewtv.model.FavoriteVideosResponse
+import com.memoittech.cuviewtv.model.Track
+import com.memoittech.cuviewtv.model.Video
 import com.memoittech.cuviewtv.model.VideoDetailsData
 import com.memoittech.cuviewtv.model.VideoDetailsResponse
 import com.memoittech.cuviewtv.model.VideoResponse
+import com.memoittech.cuviewtv.model.VideoTrack
 import com.memoittech.cuviewtv.model.VideoTrackData
 import com.memoittech.cuviewtv.model.VideoTracksResponse
 import com.memoittech.cuviewtv.model.VideosData
@@ -21,25 +26,53 @@ import retrofit2.Call
 import retrofit2.Response
 
 class VideosViewModel : ViewModel(){
-    var videosResponse by mutableStateOf<VideosData?>(null)
+    var videos = mutableStateListOf<Video>()
+    var favouriteVideos = mutableStateListOf<FavoriteVideo>()
+    var videoTracks = mutableStateListOf<VideoTrack>()
+
+    var isLoading = false
+    private var currentOffsetVideos = 0
+    private val pageSizeVideos = 30
+
+    var isFavoriteVideosLoading = false
+    private var currentOffsetFavVideos = 0
+    private val pageSizeFavVideos = 30
+
+    var isVideoTracksLoading = false
+    private var currentOffsetVideoTracks = 0
+    private val pageSizeVideoTracks = 20
+
     var sliderVideosResponse by mutableStateOf<VideosData?>(null)
     var videodetailResponse by mutableStateOf<VideoDetailsData?>(null)
     var favouriteVideoResponse by mutableStateOf<ResponseBody?>(null)
-    var favouriteVideosResponse by mutableStateOf<FavoriteVideosData?>(null)
-    var videoTracksResponse by mutableStateOf<VideoTrackData?>(null)
     var errorMessage : String by mutableStateOf("")
 
-    fun getVideosList(limit : Int, offset : Int, ordering : String, q : String ) {
+    fun getVideosList( ordering : String, q : String, index : Int  ) {
+
+        if (isLoading) return
+        isLoading = true
+
         viewModelScope.launch {
-            ApiConstants.retrofit.getVideos(limit, offset, ordering, q, "Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<VideoResponse>{
-                override fun onResponse(call: Call<VideoResponse>, response: Response<VideoResponse>) =
-                    if(!response.isSuccessful){
+            ApiConstants.retrofit.getVideos(pageSizeVideos, currentOffsetVideos, ordering, q, "Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<VideoResponse>{
+                override fun onResponse(call: Call<VideoResponse>, response: Response<VideoResponse>) {
+                    isLoading = false
+                    if (!response.isSuccessful) {
                         errorMessage = response.message()
                     } else {
-                        videosResponse = response.body()?.data
+                        val newVideos = response.body()?.data?.results ?: emptyList()
+                        if (index == 1){
+                            videos.addAll(newVideos)
+                            currentOffsetVideos += newVideos.size
+                        } else {
+                            videos.clear()
+                            currentOffsetVideos = 0
+                            videos.addAll(newVideos)
+                        }
                     }
+                }
 
                 override fun onFailure(call: Call<VideoResponse>, response: Throwable) {
+                    isLoading = false
                     errorMessage = response.toString()
                 }
 
@@ -105,17 +138,26 @@ class VideosViewModel : ViewModel(){
     }
 
 
-    fun getFavoriteVideos(limit : Int, offset : Int, ordering : String) {
+    fun getFavoriteVideos( ordering : String) {
+
+        if (isFavoriteVideosLoading) return
+        isFavoriteVideosLoading = true
+
         viewModelScope.launch {
-            ApiConstants.retrofit.getFavoriteVideos("Token ${TokenManager.getToken()}", limit, offset, ordering).enqueue(object : retrofit2.Callback<FavoriteVideosResponse>{
-                override fun onResponse(call: Call<FavoriteVideosResponse>, response: Response<FavoriteVideosResponse>) =
-                    if(!response.isSuccessful){
+            ApiConstants.retrofit.getFavoriteVideos("Token ${TokenManager.getToken()}", pageSizeFavVideos, currentOffsetFavVideos, ordering).enqueue(object : retrofit2.Callback<FavoriteVideosResponse>{
+                override fun onResponse(call: Call<FavoriteVideosResponse>, response: Response<FavoriteVideosResponse>) {
+                    isFavoriteVideosLoading = false
+                    if (!response.isSuccessful) {
                         errorMessage = response.message()
                     } else {
-                        favouriteVideosResponse  = response.body()?.data
+                        val newVideos = response.body()?.data?.results ?: emptyList()
+                        favouriteVideos.addAll(newVideos)
+                        currentOffsetFavVideos += newVideos.size
                     }
+                }
 
                 override fun onFailure(call: Call<FavoriteVideosResponse>, response: Throwable) {
+                    isFavoriteVideosLoading = false
                     errorMessage = response.toString()
                 }
 
@@ -125,16 +167,24 @@ class VideosViewModel : ViewModel(){
     
     
     fun getVideoTracks(id : Int){
+        if (isVideoTracksLoading) return
+        isVideoTracksLoading = true
+
         viewModelScope.launch {
-            ApiConstants.retrofit.getVideoTracks(id,"Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<VideoTracksResponse>{
-                override fun onResponse(call: Call<VideoTracksResponse>, response: Response<VideoTracksResponse>) =
-                    if(!response.isSuccessful){
+            ApiConstants.retrofit.getVideoTracks(id, pageSizeVideoTracks, currentOffsetVideoTracks,"Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<VideoTracksResponse>{
+                override fun onResponse(call: Call<VideoTracksResponse>, response: Response<VideoTracksResponse>) {
+                    isVideoTracksLoading = false
+                    if (!response.isSuccessful) {
                         errorMessage = response.message()
                     } else {
-                        videoTracksResponse  = response.body()?.data
+                        val newTracks = response.body()?.data?.results ?: emptyList()
+                        videoTracks.addAll(newTracks)
+                        currentOffsetVideoTracks += newTracks.size
                     }
+                }
 
                 override fun onFailure(call: Call<VideoTracksResponse>, response: Throwable) {
+                    isVideoTracksLoading = false
                     errorMessage = response.toString()
                 }
 

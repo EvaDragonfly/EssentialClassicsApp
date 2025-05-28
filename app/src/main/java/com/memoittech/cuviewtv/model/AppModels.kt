@@ -90,9 +90,11 @@ data class Video(
     val description: String,
     val duration: Long,
     val created_at: String,
-    val position: Long,
+    val position: Int,
     val views: Long,
-    val likes: Long
+    val likes: Long,
+    val is_favorite: Boolean,
+    val has_thumbnail: Boolean
 )
 
 data class VideosData(
@@ -146,7 +148,7 @@ data class FavoriteVideosResponse(
 data class MemberDetailsData(
     val id: Int,
     val title: String,
-    val biography_text : String,
+    val biography_text : String?,
     val is_favorite : Boolean
 ){}
 
@@ -192,6 +194,8 @@ data class VideoDetailsData(
     val title: String,
     val description: String,
     val duration: Int,
+    val is_favorite: Boolean,
+    val has_thumbnail: Boolean
 ){}
 
 data class VideoDetailsResponse(
@@ -241,7 +245,7 @@ data class TrackVideosResponse(
 
 data class MoodTrack(
     val track : Track,
-    val video_id : String,
+    val video : Video,
     val position: Int,
     val starts_at: Int,
     val ends_at: Int
@@ -250,4 +254,16 @@ data class MoodTrack(
 data class MoodTracksResponse(
     val code: Int,
     val data : List<MoodTrack>
+){}
+
+data class FavoriteCountData(
+    val tracks : Int,
+    val videos : Int,
+    val albums : Int,
+    val members : Int,
+){}
+
+data class FavoritesCountResponse(
+    val code : Int,
+    val data : FavoriteCountData
 ){}

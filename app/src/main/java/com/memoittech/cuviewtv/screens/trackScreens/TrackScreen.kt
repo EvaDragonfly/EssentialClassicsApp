@@ -26,6 +26,10 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -65,10 +69,21 @@ fun TrackScreen(id : Int, navController: NavController){
 
     val trackDetails = tracksViewModel.trackdetailResponse
 
-    val trackVideos = tracksViewModel.trackVideosResponse?.results
+    val trackVideos = tracksViewModel.trackVideos
+
+    var track by remember { mutableStateOf(trackDetails) }
+
+    LaunchedEffect(trackDetails) {
+        track = trackDetails
+    }
 
     fun onFavoriteClick(id : Int){
-        tracksViewModel.addFavoriteTrack(id, false)
+        if(track?.is_favorite == true){
+            tracksViewModel.addFavoriteTrack(id, true)
+        } else {
+            tracksViewModel.addFavoriteTrack(id, false)
+        }
+        track = track?.copy(is_favorite = !track?.is_favorite!!)
     }
 
     Column(
@@ -76,7 +91,7 @@ fun TrackScreen(id : Int, navController: NavController){
             .fillMaxSize()
             .background(DarkBg2)
     ) {
-        trackDetails?.let{
+        track?.let{
             Column (
                 modifier = Modifier
                     .fillMaxWidth()
@@ -101,9 +116,13 @@ fun TrackScreen(id : Int, navController: NavController){
                     ){
                         Image(
                             modifier = Modifier.clickable {
-                                onFavoriteClick(trackDetails.id)
+                                onFavoriteClick(track!!.id)
                             },
-                            painter = painterResource(R.drawable.favoritewhite),
+                            painter = painterResource(
+                                if(!track!!.is_favorite)
+                                    R.drawable.favoritewhite
+                                else R.drawable.favoritewhitefill
+                            ),
                             contentDescription = "add favorite"
                         )
                         Image(
@@ -128,7 +147,7 @@ fun TrackScreen(id : Int, navController: NavController){
                     )
                     Column(modifier = Modifier.padding(15.dp, 0.dp)) {
                         Text(
-                            text = trackDetails.title,
+                            text = track!!.title,
                             color = Color.White,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.W700
@@ -143,7 +162,7 @@ fun TrackScreen(id : Int, navController: NavController){
                             )
 
                             Text(
-                                text = formatSecondsToTime(trackDetails.duration),
+                                text = formatSecondsToTime(track!!.duration),
                                 color = Color.White,
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.W500
@@ -183,7 +202,7 @@ fun TrackScreen(id : Int, navController: NavController){
                             fontWeight = FontWeight.W500
                         )
                         Text(
-                            text = trackDetails.composers
+                            text = track!!.composers
                                 .map { it.member_title}
                                 .joinToString(","),
                             color = Color.White,
@@ -214,7 +233,7 @@ fun TrackScreen(id : Int, navController: NavController){
                             )
                             Text(
                                 modifier = Modifier.padding(start = 10.dp),
-                                text = trackDetails.performers
+                                text = track!!.performers
                                     .map { it.member_title}
                                     .joinToString(","),
                                 color = Color.White,
@@ -241,7 +260,7 @@ fun TrackScreen(id : Int, navController: NavController){
                         )
                     }
 
-                    trackVideos?.let {
+                    trackVideos.let {
                         if(trackVideos.size == 1){
                             item {
                                 Column(
@@ -262,7 +281,7 @@ fun TrackScreen(id : Int, navController: NavController){
                                                 .fillMaxSize()
                                                 .clip(RoundedCornerShape(6.dp)),
                                             model = ImageRequest.Builder(LocalContext.current)
-                                                .data("https://img.youtube.com/vi/${trackVideos.get(0).video.id}/maxresdefault.jpg")
+                                                .data("https://img.youtube.com/vi/${trackVideos[0]?.video?.id}/maxresdefault.jpg")
                                                 .crossfade(true)
                                                 .build(),
                                             placeholder = painterResource(id= R.drawable.some_image),
@@ -275,35 +294,39 @@ fun TrackScreen(id : Int, navController: NavController){
                                             contentDescription = "Play",
                                             modifier = Modifier.padding(15.dp)
                                                 .clickable {
-                                                    navController.navigate("player/${trackVideos.get(0).video.id}")
+                                                    navController.navigate("player/${trackVideos[0]?.video?.id}")
                                                 }
                                         )
                                     }
-                                    Text(
-                                        text = trackVideos.get(0).video.title,
-                                        color = Color.White,
-                                        fontSize = 16.sp,
-                                        maxLines = 1,
-                                        textAlign = TextAlign.Center,
-                                        fontWeight = FontWeight.W600,
-                                        modifier = Modifier
-                                            .align(alignment = Alignment.CenterHorizontally)
-                                            .width(360.dp)
-                                            .padding(5.dp, 3.dp),
-                                    )
-                                    Text(
-                                        text = trackVideos.get(0).video.description,
-                                        color = Color.White,
-                                        fontSize = 15.sp,
-                                        maxLines = 1,
-                                        fontWeight = FontWeight.W400,
-                                        fontStyle = FontStyle.Italic,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier
-                                            .align(alignment = Alignment.CenterHorizontally)
-                                            .width(360.dp)
-                                            .padding(5.dp, 0.dp, 5.dp, 0.dp)
-                                    )
+                                    trackVideos[0]?.video?.title?.let { it1 ->
+                                        Text(
+                                            text = it1,
+                                            color = Color.White,
+                                            fontSize = 16.sp,
+                                            maxLines = 1,
+                                            textAlign = TextAlign.Center,
+                                            fontWeight = FontWeight.W600,
+                                            modifier = Modifier
+                                                .align(alignment = Alignment.CenterHorizontally)
+                                                .width(360.dp)
+                                                .padding(5.dp, 3.dp),
+                                        )
+                                    }
+                                    trackVideos[0]?.video?.let { it1 ->
+                                        Text(
+                                            text = it1.description,
+                                            color = Color.White,
+                                            fontSize = 15.sp,
+                                            maxLines = 1,
+                                            fontWeight = FontWeight.W400,
+                                            fontStyle = FontStyle.Italic,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier
+                                                .align(alignment = Alignment.CenterHorizontally)
+                                                .width(360.dp)
+                                                .padding(5.dp, 0.dp, 5.dp, 0.dp)
+                                        )
+                                    }
                                 }
                             }
                         } else {
@@ -315,9 +338,11 @@ fun TrackScreen(id : Int, navController: NavController){
                                 )
                                 {
                                     for (it in rowItem) {
-                                        VideoOvalItem(video = it.video, {
-                                            navController.navigate("player/${it.video.id}")
-                                        })
+                                        it?.let { it1 ->
+                                            VideoOvalItem(video = it1.video, {
+                                                navController.navigate("player/${it.video.id}")
+                                            })
+                                        }
                                     }
                                     if (rowItem.size < 2) {
                                         Spacer(modifier = Modifier.weight(1f)) // Fill empty space if only 1 item in the last row

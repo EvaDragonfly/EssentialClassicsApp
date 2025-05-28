@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -27,17 +29,28 @@ fun MemberVideosComponent(navController: NavController, id: Int){
         viewModel.getMemberVideos(id)
     }
 
-    val memberVideos = viewModel.membersVideoResponse
+    val listState = rememberLazyListState()
 
+    val memberVideos = viewModel.membersVideos
+
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.firstVisibleItemIndex }
+            .collect { index ->
+                if (index >= viewModel.membersVideos.size/2 - 10  && !viewModel.isMemberVideosLoading) {
+                    viewModel.getMemberVideos(id)
+                }
+            }
+    }
 
     LazyColumn(
+        state = listState,
         modifier = Modifier
             .background(DarkBg2)
             .padding(0.dp, 10.dp),
         verticalArrangement = Arrangement.Center
     ) {
-        memberVideos?.let {
-            items(items = it.results.chunked(2)){ rowItem ->
+        memberVideos.let {
+            items(items = it.chunked(2)){ rowItem ->
                 Row(modifier = Modifier
                     .fillMaxWidth()
                     .padding(10.dp, 5.dp),

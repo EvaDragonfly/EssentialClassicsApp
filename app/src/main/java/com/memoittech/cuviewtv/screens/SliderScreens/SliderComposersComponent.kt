@@ -32,10 +32,10 @@ fun SliderComposersComponent(navController: NavController){
     val viewModels : MembersViewModel = viewModel()
 
     LaunchedEffect(Unit) {
-        viewModels.getComposerList(10, 0, "position", "")
+        viewModels.getComposerList(1,"position", "", 1)
     }
 
-    val composers = viewModels.composersResponse
+    val composers = viewModels.composers
 
     Column (modifier = Modifier.fillMaxWidth()){
         Row(modifier = Modifier
@@ -52,7 +52,7 @@ fun SliderComposersComponent(navController: NavController){
             )
             Row(
                 modifier = Modifier
-                    .clickable { navController.navigate("search/${0}") },
+                    .clickable { navController.navigate("search/${1}") },
                 verticalAlignment = Alignment.CenterVertically
             ){
                 Text(
@@ -74,7 +74,7 @@ fun SliderComposersComponent(navController: NavController){
                 modifier = Modifier.padding(0.dp, 15.dp),
 //                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ){
-                items(items = it.results){item ->
+                items(items = it){item ->
                     MemberVerticalItem(item, {
                         navController.navigate("member_details/${item.id}")
                     })

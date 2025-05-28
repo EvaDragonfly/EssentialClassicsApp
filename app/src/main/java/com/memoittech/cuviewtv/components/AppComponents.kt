@@ -18,15 +18,23 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.DropdownMenu
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -38,6 +46,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.memoittech.cuviewtv.R
@@ -49,8 +58,11 @@ import com.memoittech.cuviewtv.model.VideoTrack
 import com.memoittech.cuviewtv.ui.theme.DarkBg2
 import com.memoittech.cuviewtv.ui.theme.GrayBlue
 import com.memoittech.cuviewtv.ui.theme.GrayBlueLight
+import com.memoittech.cuviewtv.ui.theme.PlaceHolderColor
 import com.memoittech.cuviewtv.ui.theme.Violet
 import com.memoittech.cuviewtv.ui.theme.Yellow
+import com.memoittech.cuviewtv.ui.theme.bgColor
+import com.memoittech.cuviewtv.viewModel.TracksViewModel
 
 
 @Composable
@@ -236,10 +248,24 @@ fun MemberVerticalItem(member : Member, onClick : () -> Unit){
 
 
 @Composable
-fun VerticalTrackItem(track : Track, active_track_id : Int, onClick : () -> Unit, onMove : () -> Unit, onFavoriteClick : () -> Unit){
+fun VerticalTrackItem(track : Track, active_track_id : Int, onClick : () -> Unit, onMove : () -> Unit){
+
     var expanded = remember { mutableStateOf(false) }
 
     val backgroundColor = if (track.id == active_track_id) Violet else DarkBg2
+
+    val tracksViewModel : TracksViewModel = viewModel()
+
+    var trackItem by remember { mutableStateOf(track) }
+
+    fun onFavoriteClick(item : Track){
+        if(trackItem.is_favorite){
+            tracksViewModel.addFavoriteTrack(item.id, false)
+        } else {
+            tracksViewModel.addFavoriteTrack(item.id, false)
+        }
+        trackItem = trackItem.copy(is_favorite = !trackItem.is_favorite)
+    }
 
     Box (modifier = Modifier
         .fillMaxWidth()
@@ -264,7 +290,7 @@ fun VerticalTrackItem(track : Track, active_track_id : Int, onClick : () -> Unit
 
             ) {
                 Text(
-                    text = track.composers
+                    text = trackItem.composers
                         .map { it.member_title}
                         .joinToString(","),
                     fontSize = 13.sp,
@@ -274,7 +300,7 @@ fun VerticalTrackItem(track : Track, active_track_id : Int, onClick : () -> Unit
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
-                    text = track.title,
+                    text = trackItem.title,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.W400,
                     color = Color.White,
@@ -282,7 +308,7 @@ fun VerticalTrackItem(track : Track, active_track_id : Int, onClick : () -> Unit
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
-                    text = track.performers
+                    text = trackItem.performers
                         .map { it.member_title}
                         .joinToString(","),
                     fontSize = 13.sp,
@@ -328,12 +354,12 @@ fun VerticalTrackItem(track : Track, active_track_id : Int, onClick : () -> Unit
                             Text(
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.Center,
-                                text = "Add to favorites",
+                                text = if (trackItem.is_favorite) "Delete from favorites" else "Add to favorites",
                                 color = DarkBg2
                             )
                         },
                         onClick = {
-                            onFavoriteClick()
+                            onFavoriteClick(trackItem)
                             expanded.value=false
                         }
                     )
@@ -451,7 +477,7 @@ fun VideoTrackItem(track : VideoTrack, onClick : () -> Unit, onMove : () -> Unit
                             Text(
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.Center,
-                                text = "Add to favorites",
+                                text = if (track.track.is_favorite) "Delete from favorites" else "Add to favorites",
                                 color = DarkBg2
                             )
                         },
@@ -470,82 +496,133 @@ fun VideoTrackItem(track : VideoTrack, onClick : () -> Unit, onMove : () -> Unit
 
 
 @Composable
-fun HorizontalTrackItem(track : Track, onClick : () -> Unit){
-
-
-    Surface() {
-        Column(
-            modifier = Modifier.padding(5.dp)
-                .clickable { onClick() }
-        ) {
-            Image(
-                painter = painterResource(id=R.drawable.some_image),
-                contentDescription = "Image",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.width(90.dp)
-                    .height(70.dp)
+fun Separator(){
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(8.dp)
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0x8054609C), // 50% opacity
+                        Color(0x0054609C)
+                    )
+                )
             )
-            Text(
-                modifier = Modifier.width(90.dp),
-                text = track.title,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Normal  ,
-                color = Color.Cyan,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Text(
-                modifier = Modifier.width(90.dp),
-                text = (track.performers + track.composers)
-                    .map { it.member_title}
-                    .joinToString(","),
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Light,
-                color = Color.Green,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
-    }
+    )
 }
 
 
 @Composable
-fun HorizontalVideoItem(video : Video, onClick: () -> Unit){
-    Surface() {
-        Column(
-            modifier = Modifier.padding(5.dp)
-                .clickable { onClick() }
-        ) {
-            AsyncImage(
-                modifier = Modifier
-                    .width(90.dp)
-                    .height(90.dp),
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data("https://img.cugate.com/?o=CUTV_VIDEO&i=${video.id}&s=300")
-                    .crossfade(true)
-                    .build(),
-                placeholder = painterResource(id=R.drawable.some_image),
-                error = painterResource(id=R.drawable.some_image),
-                contentDescription = "Video thumbnail",
-                contentScale = ContentScale.Crop
+fun FavoritesItem(icon : Int, name : String, number : Int, onClick: () -> Unit){
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(DarkBg2)
+            .clickable { onClick() }
+            .drawBehind {
+                val strokeWidth = 1.dp.toPx()
+                val y = size.height - strokeWidth / 2
+                drawLine(
+                    color = Violet,
+                    start = Offset(0f, y),
+                    end = Offset(size.width, y),
+                    strokeWidth = strokeWidth
+                )
+            }
+
+    ){
+        Row( modifier = Modifier.fillMaxWidth()
+            .padding(20.dp, 15.dp)){
+            Image(
+                painter = painterResource(icon),
+                contentDescription = "icon"
             )
             Text(
-                modifier = Modifier.width(90.dp),
-                text = video.title,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Normal,
-                color = Color.Cyan,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
+                text = name,
+                color = Color.White,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.W500,
+                modifier = Modifier.padding(start = 20.dp).weight(1f)
             )
-
+            Text(
+                text = number.toString(),
+                color = Color.White,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.W500,
+                modifier = Modifier.padding(start = 20.dp)
+            )
         }
+    }
+
+}
+
+@Composable
+fun SearchComponent(text:String, onTextChange: (String)->Unit,){
+    Box(
+        modifier = Modifier
+            .fillMaxWidth(),
+        contentAlignment = Alignment.BottomEnd
+    ) {
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(30.dp)
+                .padding(10.dp, 9.dp)
+                .background(Violet, RoundedCornerShape(6.dp))
+        )
+
+
+        TextField(
+            value = text,
+            onValueChange = onTextChange,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp)
+                .height(46.dp)
+                .align(Alignment.Center)
+                .clip(RoundedCornerShape(6.dp))
+                .background(Color(0xFF2C3C5C)),
+            placeholder = {
+                Text(
+                    text = "Search...",
+                    color = PlaceHolderColor
+                )
+            },
+            singleLine = true,
+            colors = TextFieldDefaults.textFieldColors(
+//                        backgroundColor = Violet,
+                textColor = GrayBlue,
+            ),
+            leadingIcon = {
+                Image(
+                    painter = painterResource(R.drawable.whitesearch),
+                    contentDescription = "Search Icon",
+                    modifier = Modifier.padding(0.dp).size(20.dp)
+                )
+            },
+            trailingIcon = {
+                if (text.isNotEmpty()) {
+                    IconButton(onClick = { onTextChange("") }) {
+                        Image(
+                            painter = painterResource(R.drawable.crossicon),
+                            contentDescription = "Cancel"
+                        )
+                    }
+                }
+            }
+        )
+
     }
 }
 
 
-
+//@Preview
+//@Composable
+//fun favoritesPrev(){
+//    FavoritesItem(R.drawable.artistsiconwhite, "Artists", 100, {})
+//}
 
 //@Preview
 //@Composable
@@ -568,11 +645,11 @@ fun HorizontalVideoItem(video : Video, onClick: () -> Unit){
 //}
 
 
-@Preview
-@Composable
-fun memberPreview(){
-    VerticalTrackItem(Track(3, "johan sd sebastian bach", "fgjf", listOf(Member_Wrapper(3, "dcfcn"), Member_Wrapper(5,"dcfcn jhbuhdsc cdsc sxcsdc dscsdcvsvd sdcsdcsdcv sdvcsdvcsdv dvsdvsd")), listOf(Member_Wrapper(6,"dcfcn dfhsbudcys dchasudca dcahcb dhab ahdba"), Member_Wrapper(7, "dcfcn")), 6, true), 3, {}, {}, {})
-}
+//@Preview
+//@Composable
+//fun memberPreview(){
+//    VerticalTrackItem(Track(3, "johan sd sebastian bach", "fgjf", listOf(Member_Wrapper(3, "dcfcn"), Member_Wrapper(5,"dcfcn jhbuhdsc cdsc sxcsdc dscsdcvsvd sdcsdcsdcv sdvcsdvcsdv dvsdvsd")), listOf(Member_Wrapper(6,"dcfcn dfhsbudcys dchasudca dcahcb dhab ahdba"), Member_Wrapper(7, "dcfcn")), 6, true), 3, {}, {}, {})
+//}
 
 //
 //@Preview

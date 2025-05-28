@@ -17,13 +17,16 @@ import com.memoittech.cuviewtv.screens.authScreens.LoginScreen
 import com.memoittech.cuviewtv.screens.authScreens.PasswordResetScreen
 import com.memoittech.cuviewtv.screens.authScreens.SignUpScreen
 import com.memoittech.cuviewtv.screens.authScreens.TermsAndConditionsScreen
-import com.memoittech.cuviewtv.screens.appScreens.FavouritesScreen
 import com.memoittech.cuviewtv.screens.appScreens.MainScreen
 import com.memoittech.cuviewtv.screens.MoodScreens.MoodsScreen
 import com.memoittech.cuviewtv.screens.appScreens.PlayerScreen
 import com.memoittech.cuviewtv.screens.searchScreens.SearchScreen
 import com.memoittech.cuviewtv.screens.appScreens.SplashScreen
 import com.memoittech.cuviewtv.screens.detailScreens.MemberDetailsScreen
+import com.memoittech.cuviewtv.screens.favoritesScreens.FavoriteArtistsScreen
+import com.memoittech.cuviewtv.screens.favoritesScreens.FavoriteTracksScreen
+import com.memoittech.cuviewtv.screens.favoritesScreens.FavoriteVideosScreen
+import com.memoittech.cuviewtv.screens.favoritesScreens.FavoritesScreen
 import com.memoittech.cuviewtv.screens.trackScreens.TrackScreen
 
 
@@ -45,7 +48,7 @@ fun MyNavigations(){
         }
 
         composable( route = "favourites"){
-            FavouritesScreen(navController)
+            FavoritesScreen(navController)
         }
 
         composable(route = "moods"){
@@ -104,6 +107,18 @@ fun MyNavigations(){
         ) { backStackEntry ->
             val id = backStackEntry.arguments?.getInt("id")
             id?.let { TrackScreen(id = it, navController) }
+        }
+
+        composable( route = "favorite_members" ){
+            FavoriteArtistsScreen(navController)
+        }
+
+        composable( route = "favorite_videos" ){
+            FavoriteVideosScreen(navController)
+        }
+
+        composable( route = "favorite_tracks" ){
+            FavoriteTracksScreen(navController)
         }
 
         composable( route = "sign_up" ){

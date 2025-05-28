@@ -13,41 +13,34 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.memoittech.cuviewtv.R
+import com.memoittech.cuviewtv.components.SearchComponent
+import com.memoittech.cuviewtv.components.Separator
 import com.memoittech.cuviewtv.ui.theme.DarkBg2
-import com.memoittech.cuviewtv.ui.theme.GrayBlue
-import com.memoittech.cuviewtv.ui.theme.PlaceHolderColor
 import com.memoittech.cuviewtv.ui.theme.Rose
 import com.memoittech.cuviewtv.ui.theme.Violet
 
@@ -58,6 +51,9 @@ fun SearchScreen(navController: NavController, index : Int){
 
     var text by remember { mutableStateOf("") }
 
+    val backStackEntry = navController.currentBackStackEntry
+    val savedIndex = backStackEntry?.savedStateHandle?.get<Int>("search_index")
+
     var searchItems = remember {
         mutableStateListOf(
             Pair(0,"Performers"),
@@ -67,7 +63,11 @@ fun SearchScreen(navController: NavController, index : Int){
         )
     }
 
-    var currentComponent by remember { mutableStateOf(0) }
+    var currentComponent by rememberSaveable {
+        mutableStateOf(savedIndex ?: index)
+    }
+
+//    var currentComponent by remember { mutableStateOf(index) }
     var selectedOption by remember { mutableStateOf(searchItems [index]) }
 
 
@@ -115,7 +115,9 @@ fun SearchScreen(navController: NavController, index : Int){
                                     .background(color = if (it == selectedOption) Rose else Violet)
                                     .clickable {
                                         selectedOption = it;
-                                        currentComponent = it.first },
+                                        currentComponent = it.first
+                                        navController.previousBackStackEntry?.savedStateHandle?.set("index", it.first)
+                                               },
                                 contentAlignment = Alignment.Center
                             ){
                                 Text(
@@ -134,77 +136,12 @@ fun SearchScreen(navController: NavController, index : Int){
                 }
             }
 
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.BottomEnd
-            ) {
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(30.dp)
-                        .padding(10.dp, 9.dp)
-                        .background(Violet, RoundedCornerShape(6.dp))
-                )
-
-
-                TextField(
-                    value = text,
-                    onValueChange = { text = it },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp)
-                        .height(46.dp)
-                        .align(Alignment.Center)
-                        .clip(RoundedCornerShape(6.dp))
-                        .background(Color(0xFF2C3C5C)),
-                    placeholder = {
-                        Text(
-                            text = "Search...",
-                            color = PlaceHolderColor
-                        )
-                    },
-                    singleLine = true,
-                    colors = TextFieldDefaults.textFieldColors(
-//                        backgroundColor = Violet,
-                        textColor = GrayBlue,
-                    ),
-                    leadingIcon = {
-                        Image(
-                            painter = painterResource(R.drawable.whitesearch),
-                            contentDescription = "Search Icon",
-                            modifier = Modifier.padding(0.dp).size(20.dp)
-                        )
-                    },
-                    trailingIcon = {
-                        if (text.isNotEmpty()) {
-                            IconButton(onClick = { text = "" }) {
-                                Image(
-                                    painter = painterResource(R.drawable.crossicon),
-                                    contentDescription = "Cancel"
-                                )
-                            }
-                        }
-                    }
-                )
-
-            }
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(8.dp)
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(
-                                Color(0x8054609C), // 50% opacity
-                                Color(0x0054609C)
-                            )
-                        )
-                    )
+            SearchComponent(
+                text,
+                onTextChange = { text = it },
             )
+
+            Separator()
 
 
             when(currentComponent){

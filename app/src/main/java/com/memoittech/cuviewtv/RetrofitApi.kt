@@ -2,6 +2,7 @@ package com.memoittech.cuviewtv
 
 import com.memoittech.cuviewtv.model.FavoriteTracksResponse
 import com.memoittech.cuviewtv.model.FavoriteVideosResponse
+import com.memoittech.cuviewtv.model.FavoritesCountResponse
 import com.memoittech.cuviewtv.model.FavouriteMembersResponse
 import com.memoittech.cuviewtv.model.MemberDetailsResponse
 import com.memoittech.cuviewtv.model.MemberTracksResponse
@@ -56,13 +57,10 @@ interface RetrofitApi {
         @Header("Authorization") token : String
     ) : Call<ResponseBody>
 
-    @GET("/api/v1/ec_playlists/mainpage_playlists/")
-    fun getMainPagePlaylists(
-        @Header("Authorization") token : String
-    ) : Call<ResponseBody>
 
     @GET("/api/v1/ec_playlists/performers/")
     fun getPerformers(
+        @Query("image_only") image_only: Int,
         @Query("limit") limit: Int,
         @Query("offset") offset: Int,
         @Query("ordering") ordering : String,
@@ -72,6 +70,7 @@ interface RetrofitApi {
 
     @GET("/api/v1/ec_playlists/composers/")
     fun getComposers(
+        @Query("image_only") image_only: Int,
         @Query("limit") limit: Int,
         @Query("offset") offset: Int,
         @Query("ordering") ordering : String,
@@ -106,12 +105,16 @@ interface RetrofitApi {
     @GET("/api/v1/ec_playlists/members/{id}/tracks/")
     fun getMemberTracks(
         @Path("id") id: Int,
+        @Query("limit") limit: Int,
+        @Query("offset") offset: Int,
         @Header("Authorization") token : String
     ) : Call<MemberTracksResponse>
 
     @GET("/api/v1/ec_playlists/members/{id}/videos/")
     fun getMemberVideos(
         @Path("id") id: Int,
+        @Query("limit") limit: Int,
+        @Query("offset") offset: Int,
         @Header("Authorization") token : String
     ) : Call<MemberVideosReponse>
 
@@ -124,6 +127,8 @@ interface RetrofitApi {
     @GET("/api/v1/ec_playlists/tracks/{id}/videos/")
     fun getTrackVideos(
         @Path("id") id: Int,
+        @Query("limit") limit: Int,
+        @Query("offset") offset: Int,
         @Header("Authorization") token : String
     ) : Call<TrackVideosResponse>
 
@@ -136,6 +141,8 @@ interface RetrofitApi {
     @GET("/api/v1/ec_playlists/videos/{id}/tracks/")
     fun getVideoTracks(
         @Path("id") id: Int,
+        @Query("limit") limit: Int,
+        @Query("offset") offset: Int,
         @Header("Authorization") token : String
     ) : Call<VideoTracksResponse>
 
@@ -193,5 +200,11 @@ interface RetrofitApi {
         @Header("Authorization") token : String,
         @Path("moodId") moodId : Int
     ) : Call<MoodTracksResponse>
+
+    @GET("/api/v1/ec_playlists/favorites_count/")
+    fun getFavoriteCount(
+        @Header("Authorization") token : String
+    ) : Call<FavoritesCountResponse>
 }
+
 

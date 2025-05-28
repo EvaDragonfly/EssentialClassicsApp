@@ -12,8 +12,8 @@ import androidx.navigation.compose.composable
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.screens.SliderScreens.OpenScreen
-import com.memoittech.cuviewtv.screens.appScreens.FavouritesScreen
 import com.memoittech.cuviewtv.screens.MoodScreens.MoodsScreen
+import com.memoittech.cuviewtv.screens.favoritesScreens.FavoritesScreen
 import com.memoittech.cuviewtv.screens.searchScreens.SearchScreen
 
 
@@ -35,7 +35,7 @@ fun BottomNavGraph(bottomNavController: NavHostController, rootNavController : N
                 SearchScreen(rootNavController, 0)
             }
             composable(route = BottomBarScreen.Favorite.route){
-                FavouritesScreen(rootNavController)
+                FavoritesScreen(rootNavController)
             }
     }
 }
@@ -43,26 +43,31 @@ fun BottomNavGraph(bottomNavController: NavHostController, rootNavController : N
 sealed class BottomBarScreen(
     val route: String,
     val title: String,
-    val icon: Int
+    val icon: Int,
+    val iconActive : Int
 ) {
     object Slider : BottomBarScreen(
         route = "slider",
-        title = "slider",
-        icon = R.drawable.main
+        title = "Main",
+        icon = R.drawable.main,
+        iconActive = R.drawable.mainactive
     )
     object Moods : BottomBarScreen(
         route = "moods",
-        title = "moods",
-        icon = R.drawable.moods
+        title = "Moods",
+        icon = R.drawable.moods,
+        iconActive = R.drawable.moodsactive
     )
     object Search : BottomBarScreen(
         route = "search",
-        title = "search",
-        icon = R.drawable.search
+        title = "Search",
+        icon = R.drawable.search,
+        iconActive = R.drawable.searchactive
     )
     object Favorite : BottomBarScreen(
         route = "favorites",
-        title = "favorites",
-        icon = R.drawable.collection
+        title = "Favorites",
+        icon = R.drawable.collection,
+        iconActive = R.drawable.collectionactive
     )
 }

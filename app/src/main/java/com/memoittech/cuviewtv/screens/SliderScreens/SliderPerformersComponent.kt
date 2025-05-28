@@ -33,10 +33,10 @@ fun SliderPerformersComponent (navController: NavController){
     val viewModel : MembersViewModel = viewModel()
 
     LaunchedEffect(Unit) {
-        viewModel.getPerformersList(10, 0, "position", "")
+        viewModel.getPerformersList( 1,"position", "", 1)
     }
 
-    val performers = viewModel.performersResponse
+    val performers = viewModel.performers
 
     Column (modifier = Modifier.fillMaxWidth()){
         Row(modifier = Modifier
@@ -53,7 +53,7 @@ fun SliderPerformersComponent (navController: NavController){
             )
             Row(
                 modifier = Modifier
-                .clickable { navController.navigate("search/${1}") },
+                .clickable { navController.navigate("search/${0}") },
                 verticalAlignment = Alignment.CenterVertically
             ){
                 Text(
@@ -75,7 +75,7 @@ fun SliderPerformersComponent (navController: NavController){
                 modifier = Modifier.padding(0.dp, 15.dp),
                 horizontalArrangement = Arrangement.spacedBy(15.dp)
             ){
-                items(items = performers.results){item ->
+                items(items = performers){item ->
                     MemberOvalItem(item, {
                         navController.navigate("member_details/${item.id}")
                     })
