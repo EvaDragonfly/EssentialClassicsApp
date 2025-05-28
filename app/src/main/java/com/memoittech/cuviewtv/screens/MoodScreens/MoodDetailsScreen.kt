@@ -118,13 +118,6 @@ fun MoodDetailsScreen(id : Int, navController: NavController){
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-//                            Image(
-//                                modifier = Modifier.clickable {
-////                                     onFavouriteClick()
-//                                                              },
-//                                painter = painterResource(R.drawable.favoritewhite),
-//                                contentDescription = "add favorite"
-//                            )
                             Image(
                                 painter = painterResource(R.drawable.shareicon),
                                 contentDescription = "share"

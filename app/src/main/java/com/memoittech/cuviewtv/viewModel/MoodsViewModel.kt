@@ -28,13 +28,17 @@ class MoodsViewModel : ViewModel() {
                 ) {
                     if(!response.isSuccessful){
                         errorMessage = response.message()
+                        Log.d("MY_TAG", errorMessage)
                     } else {
                         moodTracksResponse = response.body()
+                        Log.d("MY_TAG", moodTracksResponse?.data.toString())
+                        Log.d("MY_TAG", moodTracksResponse?.data?.size.toString())
                     }
                 }
 
                 override fun onFailure(call: Call<MoodTracksResponse>, response: Throwable) {
                     errorMessage = response.toString()
+                    Log.d("MY_TAG", errorMessage)
                 }
 
             })

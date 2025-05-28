@@ -1,4 +1,5 @@
 package com.memoittech.cuviewtv.screens.MoodScreens
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
@@ -32,22 +33,22 @@ fun SmoothColorWheel(
     // Define base colors for the wheel (will create a gradient between them)
     val baseColors = listOf(
         Color.Red,
-        Color(0xFFFF4500), // Orange-Red
-        Color(0xFFFF8C00), // Dark Orange
-        Color.Yellow,
-        Color(0xFF9ACD32), // Yellow-Green
-        Color.Green,
-        Color(0xFF008B8B), // Teal
-        Color.Cyan,
-        Color.Blue,
-        Color(0xFF4B0082), // Indigo
-        Color(0xFF800080), // Purple
         Color(0xFFFF00FF), // Magenta
+        Color(0xFF800080), // Purple
+        Color(0xFF4B0082), // Indigo
+        Color.Blue,
+        Color.Cyan,
+        Color(0xFF008B8B), // Teal
+        Color.Green,
+        Color(0xFF9ACD32), // Yellow-Green
+        Color.Yellow,
+        Color(0xFFFF8C00), // Dark Orange
+        Color(0xFFFF4500), // Orange-Red
         Color.Red  // Repeat first color to close the loop
     )
 
     var selectedZone by remember { mutableStateOf(-1) }
-    var currentColor by remember { mutableStateOf(Color.Red) }
+    var currentColor by remember { mutableStateOf(Color.Yellow) }
     var selectedAngle by remember { mutableStateOf(0f) }
 
     Box(modifier = modifier) {
@@ -182,7 +183,7 @@ fun ColorWheelExample(navController: NavController) {
 
     val moods  = moodList
 
-    var selectedMood by remember { mutableStateOf(moods.get(0)) }
+    var selectedMood by remember { mutableStateOf(moods[9]) }
 
     Surface(
         modifier = Modifier
@@ -205,7 +206,7 @@ fun ColorWheelExample(navController: NavController) {
             ) {
 
                 Text(
-                    text = "${selectedMood.title}",
+                    text = selectedMood.title,
                     color = Color.White,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
@@ -218,12 +219,13 @@ fun ColorWheelExample(navController: NavController) {
                     .size(300.dp)
                     .padding(16.dp),
                 onSelect = {
-                    navController.navigate("mood_details/${moods.get(it).id}")
+                    navController.navigate("mood_details/${moods[it].id}")
                 },
                 onColorSelected = { selectedColor = it },
                 onZoneSelected = {
                     selectedZone = it + 1
-                    selectedMood = moods.get(it) },
+                    selectedMood = moods[it]
+                                 },
             )
 
             Box(
@@ -235,7 +237,7 @@ fun ColorWheelExample(navController: NavController) {
             ) {
 
                 Text(
-                    text = "${selectedMood.title}",
+                    text = selectedMood.title,
                     color = Color.White,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
