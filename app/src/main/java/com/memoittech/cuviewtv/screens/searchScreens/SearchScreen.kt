@@ -92,7 +92,7 @@ fun SearchScreen(navController: NavController, appViewModel: AppViewModels){
                     painter = painterResource(R.drawable.backarrow),
                     contentDescription = "go back"
                 )
-                Image(painter = painterResource(R.drawable.shareicon), contentDescription = "share")
+//                Image(painter = painterResource(R.drawable.shareicon), contentDescription = "share")
             }
 
             LazyColumn(

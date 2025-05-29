@@ -1,5 +1,6 @@
 package com.memoittech.cuviewtv.viewModel
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -16,8 +17,8 @@ import com.memoittech.cuviewtv.model.MemberDetailsResponse
 import com.memoittech.cuviewtv.model.MemberTracksResponse
 import com.memoittech.cuviewtv.model.MemberVideosReponse
 import com.memoittech.cuviewtv.model.MembersResponse
-import com.memoittech.cuviewtv.model.TrackWrapper
-import com.memoittech.cuviewtv.model.VideoWrapper
+import com.memoittech.cuviewtv.model.Track
+import com.memoittech.cuviewtv.model.TrackVideo
 import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -29,8 +30,8 @@ class MembersViewModel : ViewModel(){
     var performers = mutableStateListOf<Member>()
     var composers = mutableStateListOf<Member>()
     var favouriteMembers = mutableStateListOf<FavouriteMember>()
-    var memberTracks =  mutableStateListOf<TrackWrapper>()
-    var membersVideos = mutableStateListOf<VideoWrapper>()
+    var memberTracks =  mutableStateListOf<Track>()
+    var membersVideos = mutableStateListOf<TrackVideo>()
 
     var isComposerLoading = false
     var isPerformerLoading = false
@@ -227,12 +228,12 @@ class MembersViewModel : ViewModel(){
     fun getMemberVideos(id : Int ) {
 
         if ( isMemberVideosLoading ) return
-        isMemberTracksLoading = true
+        isMemberVideosLoading = true
 
         viewModelScope.launch {
             ApiConstants.retrofit.getMemberVideos(id, pageSizeMemberVideos, currentMemberVideosOffset, "Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<MemberVideosReponse>{
                 override fun onResponse(call: Call<MemberVideosReponse>, response: Response<MemberVideosReponse>) {
-                    isMemberTracksLoading = false
+                    isMemberVideosLoading = false
                     if (!response.isSuccessful) {
                         errorMessage = response.message()
                     } else {
@@ -243,7 +244,7 @@ class MembersViewModel : ViewModel(){
                 }
 
                 override fun onFailure(call: Call<MemberVideosReponse>, response: Throwable) {
-                    isMemberTracksLoading = false
+                    isMemberVideosLoading = false
                     errorMessage = response.toString()
                 }
 

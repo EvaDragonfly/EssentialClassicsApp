@@ -1,4 +1,4 @@
-package com.memoittech.cuviewtv.screens.detailScreens
+package com.memoittech.cuviewtv.screens.memberScreens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,7 +16,6 @@ import androidx.navigation.NavController
 import com.memoittech.cuviewtv.components.VerticalTrackItem
 import com.memoittech.cuviewtv.ui.theme.Violet
 import com.memoittech.cuviewtv.viewModel.MembersViewModel
-import com.memoittech.cuviewtv.viewModel.TracksViewModel
 
 @Composable
 fun MemberTracksComponent( navController: NavController, id: Int){
@@ -46,24 +45,19 @@ fun MemberTracksComponent( navController: NavController, id: Int){
         modifier = Modifier.fillMaxWidth()
             .background(Violet)
     ) {
-        memberTracks?.let {
-            items(items = memberTracks){item ->
-                VerticalTrackItem(
-                    track = item.track,
-                    0,
-                    {
-                        navController.navigate("track_details/${item.track.id}")
-                    },
-                    {
-                        navController.navigate(
-                            "track_details/${item.track.id}"
-                        )
-                    }
-//                    {
-//                        tracksViewModel.addFavoriteTrack(item.track.id, false)
-//                    }
-                )
-            }
+        items(items = memberTracks){item ->
+            VerticalTrackItem(
+                track = item,
+                0,
+                {
+                    navController.navigate("track_details/${item.id}")
+                },
+                {
+                    navController.navigate(
+                        "track_details/${item.id}"
+                    )
+                }
+            )
         }
     }
 

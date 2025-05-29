@@ -2,7 +2,6 @@ package com.memoittech.cuviewtv.screens.searchScreens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -74,11 +73,10 @@ fun VideosComponent(navController: NavController , q : String){
                         .padding(10.dp, 5.dp),
                     horizontalArrangement = Arrangement.SpaceAround
                 )
-                {
-                    for (it in rowItem) {
-                        VideoOvalItem(video = it, {
-                            navController.navigate("player/${it.id}")
-                        })
+                { for (it in rowItem) {
+                        VideoOvalItem(id = it.id, youtube_id = it.youtube_id, title = it.title, has_thumbnail = it.has_thumbnail) {
+                            navController.navigate("player/${it.id}/${0f}")
+                        }
                     }
                     if (rowItem.size < 2) {
                         Spacer(modifier = Modifier.weight(1f)) // Fill empty space if only 1 item in the last row

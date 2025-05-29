@@ -11,21 +11,13 @@ import androidx.lifecycle.viewModelScope
 import com.memoittech.cuviewtv.ApiConstants
 import com.memoittech.cuviewtv.TokenManager
 import com.memoittech.cuviewtv.model.FavoriteTrack
-import com.memoittech.cuviewtv.model.FavoriteTracksData
 import com.memoittech.cuviewtv.model.FavoriteTracksResponse
-import com.memoittech.cuviewtv.model.FavoriteVideosData
-import com.memoittech.cuviewtv.model.FavoriteVideosResponse
 import com.memoittech.cuviewtv.model.Track
 import com.memoittech.cuviewtv.model.TrackDetailsData
 import com.memoittech.cuviewtv.model.TrackDetailsResponse
-import com.memoittech.cuviewtv.model.TrackVideoWrapper
-import com.memoittech.cuviewtv.model.TrackVideosData
+import com.memoittech.cuviewtv.model.TrackVideo
 import com.memoittech.cuviewtv.model.TrackVideosResponse
-import com.memoittech.cuviewtv.model.TracksData
 import com.memoittech.cuviewtv.model.TracksResponse
-import com.memoittech.cuviewtv.model.Video
-import com.memoittech.cuviewtv.model.VideoResponse
-import com.memoittech.cuviewtv.model.VideosData
 import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -35,7 +27,7 @@ class TracksViewModel : ViewModel(){
 
     var tracks = mutableStateListOf<Track>()
     var favouriteTracks = mutableStateListOf<FavoriteTrack>()
-    var trackVideos = mutableStateListOf<TrackVideoWrapper?>()
+    var trackVideos = mutableStateListOf<TrackVideo?>()
 
     var isLoading = false
     private var currentOffsetTracks = 0

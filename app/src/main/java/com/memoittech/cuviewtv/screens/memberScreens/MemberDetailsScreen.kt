@@ -1,6 +1,7 @@
-package com.memoittech.cuviewtv.screens.detailScreens
+package com.memoittech.cuviewtv.screens.memberScreens
 
-import android.util.Log
+import android.graphics.RenderEffect
+import android.graphics.Shader
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyRow
@@ -31,15 +33,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asComposeRenderEffect
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.components.Separator
+import com.memoittech.cuviewtv.components.shareLink
 import com.memoittech.cuviewtv.ui.theme.DarkBg2
 import com.memoittech.cuviewtv.ui.theme.GrayBlueLight
 import com.memoittech.cuviewtv.viewModel.MembersViewModel
@@ -59,6 +67,8 @@ fun MemberDetailsScreen(navController: NavController, id : Int){
     }
 
     var member by remember { mutableStateOf(memberDetails) }
+
+    val context = LocalContext.current
 
     LaunchedEffect(memberDetails) {
         member = memberDetails
@@ -122,7 +132,10 @@ fun MemberDetailsScreen(navController: NavController, id : Int){
                         )
                         Image(
                             painter = painterResource(R.drawable.shareicon),
-                            contentDescription = "share"
+                            contentDescription = "share",
+                            modifier = Modifier.clickable {
+                                shareLink(context, "https://www.cumarket.net/artist/${member!!.id}")
+                            }
                         )
                     }
 
@@ -136,12 +149,18 @@ fun MemberDetailsScreen(navController: NavController, id : Int){
                     fontWeight = FontWeight.W700,
                     maxLines = 1
                 )
-                Image(
-                    painter = painterResource(id = R.drawable.some_image),
-                    contentDescription = "member image",
-                    contentScale = ContentScale.Crop,
+
+                AsyncImage(
                     modifier = Modifier.fillMaxWidth()
-                        .aspectRatio(1.98F, true)
+                        .aspectRatio(1.98F, true),
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data("https://img.cugate.com/?o=member&i=${member!!.id}&s=300")
+                        .crossfade(true)
+                        .build(),
+                    placeholder = painterResource(id= R.drawable.some_image),
+                    error = painterResource(id= R.drawable.some_image),
+                    contentDescription = "Video thumbnail",
+                    contentScale = ContentScale.Crop
                 )
 
 

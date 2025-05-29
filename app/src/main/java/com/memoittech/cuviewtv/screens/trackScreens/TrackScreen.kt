@@ -1,5 +1,6 @@
 package com.memoittech.cuviewtv.screens.trackScreens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -40,9 +41,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -51,6 +50,7 @@ import coil.request.ImageRequest
 import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.components.VideoOvalItem
 import com.memoittech.cuviewtv.components.formatSecondsToTime
+import com.memoittech.cuviewtv.components.shareLink
 import com.memoittech.cuviewtv.ui.theme.DarkBg2
 import com.memoittech.cuviewtv.ui.theme.Violet
 import com.memoittech.cuviewtv.ui.theme.Yellow
@@ -73,10 +73,11 @@ fun TrackScreen(id : Int, navController: NavController){
 
     var track by remember { mutableStateOf(trackDetails) }
 
+    val context = LocalContext.current
+
     LaunchedEffect(trackDetails) {
         track = trackDetails
     }
-
     fun onFavoriteClick(id : Int){
         if(track?.is_favorite == true){
             tracksViewModel.addFavoriteTrack(id, true)
@@ -127,12 +128,15 @@ fun TrackScreen(id : Int, navController: NavController){
                         )
                         Image(
                             painter = painterResource(R.drawable.shareicon),
-                            contentDescription = "share"
+                            contentDescription = "share",
+                            modifier = Modifier.clickable {
+                                shareLink(context, "https://www.cumarket.net/track/${track!!.id}")
+                            }
                         )
-                        Image(
-                            painter = painterResource(R.drawable.dotswhite),
-                            contentDescription = "menu"
-                        )
+//                        Image(
+//                            painter = painterResource(R.drawable.dotswhite),
+//                            contentDescription = "menu"
+//                        )
                     }
                 }
                 Row(
@@ -182,7 +186,7 @@ fun TrackScreen(id : Int, navController: NavController){
                             .clip(CircleShape)
                             .border(1.dp, Yellow, CircleShape),
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data("https://img.cugate.com/?o=member&i=${4754}&s=300")
+                            .data("https://img.cugate.com/?o=member&i=${trackDetails?.composers?.get(0)?.member_id}&s=300")
                             .crossfade(true)
                             .build(),
                         placeholder = painterResource(id=R.drawable.some_image),
@@ -250,7 +254,7 @@ fun TrackScreen(id : Int, navController: NavController){
                                 .height(200.dp)
                                 .fillMaxWidth(),
                             model = ImageRequest.Builder(LocalContext.current)
-                                .data("https://img.cugate.com/?o=member&i=${4754}&s=300")
+                                .data("https://img.cugate.com/?o=member&i=${trackDetails?.performers?.get(0)?.member_id}&s=300")
                                 .crossfade(true)
                                 .build(),
                             placeholder = painterResource(id=R.drawable.some_image),
@@ -281,7 +285,7 @@ fun TrackScreen(id : Int, navController: NavController){
                                                 .fillMaxSize()
                                                 .clip(RoundedCornerShape(6.dp)),
                                             model = ImageRequest.Builder(LocalContext.current)
-                                                .data("https://img.youtube.com/vi/${trackVideos[0]?.video?.id}/maxresdefault.jpg")
+                                                .data(if (trackVideos[0]?.has_thumbnail!!) "https://img.cugate.com/?o=eclass_video&i=${trackVideos[0]!!.id}&s=300" else "https://img.youtube.com/vi/${trackVideos[0]!!.youtube_id}/maxresdefault.jpg")
                                                 .crossfade(true)
                                                 .build(),
                                             placeholder = painterResource(id= R.drawable.some_image),
@@ -294,11 +298,11 @@ fun TrackScreen(id : Int, navController: NavController){
                                             contentDescription = "Play",
                                             modifier = Modifier.padding(15.dp)
                                                 .clickable {
-                                                    navController.navigate("player/${trackVideos[0]?.video?.id}")
+                                                    navController.navigate("player/${trackVideos[0]?.id}/${trackVideos[0]?.starts_at}")
                                                 }
                                         )
                                     }
-                                    trackVideos[0]?.video?.title?.let { it1 ->
+                                    trackVideos[0]?.title?.let { it1 ->
                                         Text(
                                             text = it1,
                                             color = Color.White,
@@ -312,7 +316,7 @@ fun TrackScreen(id : Int, navController: NavController){
                                                 .padding(5.dp, 3.dp),
                                         )
                                     }
-                                    trackVideos[0]?.video?.let { it1 ->
+                                    trackVideos[0]?.let { it1 ->
                                         Text(
                                             text = it1.description,
                                             color = Color.White,
@@ -339,9 +343,8 @@ fun TrackScreen(id : Int, navController: NavController){
                                 {
                                     for (it in rowItem) {
                                         it?.let { it1 ->
-                                            VideoOvalItem(video = it1.video, {
-                                                navController.navigate("player/${it.video.id}")
-                                            })
+                                            VideoOvalItem(id = it1.id, youtube_id = it1.youtube_id, title = it1.title, has_thumbnail = it1.has_thumbnail) {
+                                                navController.navigate("player/${it.id}/${it.starts_at.toFloat()}") }
                                         }
                                     }
                                     if (rowItem.size < 2) {

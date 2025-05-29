@@ -118,9 +118,9 @@ fun FavoriteVideosScreen(navController : NavController) {
                     )
                     {
                         for (it in rowItem) {
-                            VideoOvalItem(video = it.video, {
-                                navController.navigate("player/${it.video.id}")
-                            })
+                            VideoOvalItem(id = it.video.id, youtube_id = it.video.youtube_id, title = it.video.title, has_thumbnail = it.video.has_thumbnail) {
+                                navController.navigate("player/${it.video.id}/${0f}")
+                            }
                         }
                         if (rowItem.size < 2) {
                             Spacer(modifier = Modifier.weight(1f)) // Fill empty space if only 1 item in the last row

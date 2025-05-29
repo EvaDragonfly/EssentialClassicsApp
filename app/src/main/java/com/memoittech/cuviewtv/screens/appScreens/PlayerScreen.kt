@@ -28,6 +28,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -41,6 +42,7 @@ import com.memoittech.cuviewtv.components.PlayerComponent
 import com.memoittech.cuviewtv.components.Separator
 import com.memoittech.cuviewtv.components.VideoTrackItem
 import com.memoittech.cuviewtv.components.formatSecondsToTime
+import com.memoittech.cuviewtv.components.shareLink
 import com.memoittech.cuviewtv.ui.theme.DarkBg2
 import com.memoittech.cuviewtv.ui.theme.GrayBlueLight
 import com.memoittech.cuviewtv.viewModel.TracksViewModel
@@ -50,7 +52,8 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 @Composable
 fun PlayerScreen(
     navController: NavController,
-    id: Int
+    id: Int,
+    starts_at : Float
 ) {
 
     val videoViewModel : VideosViewModel = viewModel()
@@ -60,6 +63,8 @@ fun PlayerScreen(
     val videoTracks = videoViewModel.videoTracks
 
     val listState = rememberLazyListState()
+
+    val context = LocalContext.current
 
     var selectedTrack by remember { mutableStateOf(0) }
 
@@ -137,7 +142,10 @@ fun PlayerScreen(
                             )
                             Image(
                                 painter = painterResource(R.drawable.shareicon),
-                                contentDescription = "share"
+                                contentDescription = "share",
+                                modifier = Modifier.clickable {
+                                    shareLink(context, "https://www.youtube.com/watch?v=${video!!.youtube_id}")
+                                }
                             )
                             Image(
                                 painter = painterResource(R.drawable.dotswhite),
@@ -146,7 +154,7 @@ fun PlayerScreen(
                         }
                     }
 
-                    PlayerComponent(video!!.youtube_id, 0f){ player ->
+                    PlayerComponent(video!!.youtube_id, starts_at){ player ->
                         youTubePlayerInstance.value = player
                     }
 

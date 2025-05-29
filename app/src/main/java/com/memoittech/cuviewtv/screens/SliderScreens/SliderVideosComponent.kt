@@ -80,9 +80,9 @@ fun SliderVideosComponent(navController: NavController, appViewModel: AppViewMod
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ){
                 items(items = it){item ->
-                    VideoOvalItem(item, {
-                        navController.navigate("player/${item.id}")
-                    })
+                    VideoOvalItem(id = item.id, youtube_id = item.youtube_id, title = item.title, has_thumbnail = item.has_thumbnail) {
+                        navController.navigate("player/${item.id}/${0f}")
+                    }
                 }
             }
 

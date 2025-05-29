@@ -115,18 +115,14 @@ fun MoodDetailsScreen(id : Int, navController: NavController){
                             painter = painterResource(R.drawable.backarrow),
                             contentDescription = "back"
                         )
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(16.dp)
-                        ) {
-                            Image(
-                                painter = painterResource(R.drawable.shareicon),
-                                contentDescription = "share"
-                            )
-                            Image(
-                                painter = painterResource(R.drawable.dotswhite),
-                                contentDescription = "menu"
-                            )
-                        }
+//                        Row(
+//                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+//                        ) {
+//                            Image(
+//                                painter = painterResource(R.drawable.dotswhite),
+//                                contentDescription = "menu"
+//                            )
+//                        }
                     }
 
                     track?.video?.youtube_id?.let {

@@ -64,9 +64,9 @@ fun SliderComponent(navController: NavController){
         videoViewModel.getSliderVideosList(5, 0, "position", "")
     }
 
-    val videos = videoViewModel.sliderVideosResponse
+    val videos = videoViewModel.sliderVideosResponse?.results
 
-    val pagerState = videos?.results?.size?.let {
+    val pagerState = videos?.size?.let {
         rememberPagerState(
         pageCount = it,
         initialPage = 2
@@ -131,7 +131,7 @@ fun SliderComponent(navController: NavController){
                                     ).asComposeRenderEffect()
                                 },
                             model = ImageRequest.Builder(LocalContext.current)
-                                .data("https://img.youtube.com/vi/${videos.results?.get(page)}/maxresdefault.jpg")
+                                .data(if (videos[page].has_thumbnail) "https://img.cugate.com/?o=eclass_video&i=${videos[page].id}&s=300" else "https://img.youtube.com/vi/${videos[page].youtube_id}/maxresdefault.jpg")
                                 .crossfade(true)
                                 .build(),
                             placeholder = painterResource(id= R.drawable.some_image),
@@ -157,7 +157,7 @@ fun SliderComponent(navController: NavController){
                                             .fillMaxSize()
                                             .clip(RoundedCornerShape(6.dp)),
                                         model = ImageRequest.Builder(LocalContext.current)
-                                            .data("https://img.youtube.com/vi/${videos.results?.get(page)}/maxresdefault.jpg")
+                                            .data(if (videos[page].has_thumbnail) "https://img.cugate.com/?o=eclass_video&i=${videos[page].id}&s=300" else "https://img.youtube.com/vi/${videos[page].youtube_id}/maxresdefault.jpg")
                                             .crossfade(true)
                                             .build(),
                                         placeholder = painterResource(id= R.drawable.some_image),
@@ -170,13 +170,13 @@ fun SliderComponent(navController: NavController){
                                         contentDescription = "Play",
                                         modifier = Modifier.padding(15.dp)
                                             .clickable {
-                                                navController.navigate("player/${videos.results?.get(page)?.id}")
+                                                navController.navigate("player/${videos[page].id}/${0f}")
                                             }
                                     )
                                 }
 
                                 Text(
-                                    text = videos.results?.get(page)?.title.toString(),
+                                    text = videos[page].title,
                                     color = Color.White,
                                     fontSize = 16.sp,
                                     maxLines = 1,
@@ -188,7 +188,7 @@ fun SliderComponent(navController: NavController){
                                         .padding(5.dp, 3.dp)
                                 )
                                 Text(
-                                    text = videos.results?.get(page)?.description.toString(),
+                                    text = videos[page].description.toString(),
                                     color = Color.White,
                                     fontSize = 15.sp,
                                     maxLines = 1,

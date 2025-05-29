@@ -55,8 +55,6 @@ fun FavoriteTracksScreen(navController : NavController) {
 
     val favoriteTracks = tracksViewModel.favouriteTracks
 
-    Log.d("MY_TAG", favoriteTracks.toString())
-
     fun onTrackClick(id: Int){
         navController.navigate("track_details/${id}")
     }

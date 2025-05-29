@@ -157,15 +157,11 @@ data class MemberDetailsResponse(
     val data : MemberDetailsData
 ){}
 
-data class TrackWrapper(
-    val track : Track
-){}
-
 data class MemberTracksData(
     val count: Int,
     val next: String,
     val previous: String,
-    val results: List<TrackWrapper>
+    val results: List<Track>
 ){}
 
 data class MemberTracksResponse(
@@ -203,15 +199,25 @@ data class VideoDetailsResponse(
     val data : VideoDetailsData
 ){}
 
-data class VideoWrapper(
-    val video: Video
+data class TrackVideo(
+    val id: Int,
+    val youtube_id: String,
+    val title: String,
+    val description: String,
+    val duration: Long,
+    val created_at: String,
+    val position: Int,
+    val views: Long,
+    val likes: Long,
+    val has_thumbnail: Boolean,
+    val starts_at: Int,
 ){}
 
 data class MemberVideosData(
     val count: Int,
     val next: String?,
     val previous: String?,
-    val results: List<VideoWrapper>
+    val results: List<TrackVideo>
 ){}
 
 data class MemberVideosReponse(
@@ -224,18 +230,11 @@ data class Mood(
     val title: String
 ){}
 
-data class TrackVideoWrapper(
-    val video : Video,
-    val position: Int,
-    val starts_at: Int,
-    val ends_at: Int
-){}
-
 data class TrackVideosData(
     val count: Int,
     val next: String?,
     val previous: String?,
-    val results: List<TrackVideoWrapper>
+    val results: List<TrackVideo>
 ){}
 
 data class TrackVideosResponse(

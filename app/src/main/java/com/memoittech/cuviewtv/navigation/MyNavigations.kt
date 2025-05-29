@@ -23,7 +23,7 @@ import com.memoittech.cuviewtv.screens.MoodScreens.MoodsScreen
 import com.memoittech.cuviewtv.screens.appScreens.PlayerScreen
 import com.memoittech.cuviewtv.screens.searchScreens.SearchScreen
 import com.memoittech.cuviewtv.screens.appScreens.SplashScreen
-import com.memoittech.cuviewtv.screens.detailScreens.MemberDetailsScreen
+import com.memoittech.cuviewtv.screens.memberScreens.MemberDetailsScreen
 import com.memoittech.cuviewtv.screens.favoritesScreens.FavoriteArtistsScreen
 import com.memoittech.cuviewtv.screens.favoritesScreens.FavoriteTracksScreen
 import com.memoittech.cuviewtv.screens.favoritesScreens.FavoriteVideosScreen
@@ -70,13 +70,15 @@ fun MyNavigations(){
         }
 
         composable(
-            route = "player/{id}",
+            route = "player/{id}/{starts_at}",
             arguments = listOf(
-                navArgument("id") { type = NavType.IntType }
+                navArgument("id") { type = NavType.IntType },
+                navArgument("starts_at") { type = NavType.FloatType }
             )
         ){ backStackEntry ->
                 val id = backStackEntry.arguments?.getInt("id")
-                id?.let { PlayerScreen(navController, id = it) }
+                val starts_at = backStackEntry.arguments?.getFloat("starts_at")
+                id?.let { starts_at?.let { it1 -> PlayerScreen(navController, id = it, starts_at = it1) } }
         }
 
         composable(route = "search"){backStackEntry ->

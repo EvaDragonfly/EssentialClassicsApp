@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -22,7 +21,6 @@ import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -43,7 +41,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -51,7 +48,6 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.model.Member
-import com.memoittech.cuviewtv.model.Member_Wrapper
 import com.memoittech.cuviewtv.model.Track
 import com.memoittech.cuviewtv.model.Video
 import com.memoittech.cuviewtv.model.VideoTrack
@@ -61,7 +57,6 @@ import com.memoittech.cuviewtv.ui.theme.GrayBlueLight
 import com.memoittech.cuviewtv.ui.theme.PlaceHolderColor
 import com.memoittech.cuviewtv.ui.theme.Violet
 import com.memoittech.cuviewtv.ui.theme.Yellow
-import com.memoittech.cuviewtv.ui.theme.bgColor
 import com.memoittech.cuviewtv.viewModel.TracksViewModel
 
 
@@ -108,7 +103,7 @@ fun MemberOvalItem(member : Member, onClick : () -> Unit){
 
 
 @Composable
-fun VideoOvalItem(video : Video, onClick : () -> Unit){
+fun VideoOvalItem(id : Int, youtube_id:String, title: String, has_thumbnail : Boolean, onClick: () -> Unit){
     Card (modifier = Modifier
         .background(color = Color.Transparent)
         .clickable { onClick() }
@@ -124,7 +119,7 @@ fun VideoOvalItem(video : Video, onClick : () -> Unit){
                     .width(170.dp)
                     .clip(RoundedCornerShape(8.dp)),
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data("https://img.youtube.com/vi/${video.youtube_id}/maxresdefault.jpg")
+                    .data(if (has_thumbnail) "https://img.cugate.com/?o=eclass_video&i=${id}&s=300" else "https://img.youtube.com/vi/${youtube_id}/maxresdefault.jpg")
                     .crossfade(true)
                     .build(),
                 placeholder = painterResource(id=R.drawable.some_image),
@@ -133,7 +128,7 @@ fun VideoOvalItem(video : Video, onClick : () -> Unit){
                 contentScale = ContentScale.Crop
             )
             Text(
-                text = video.title,
+                text = title,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,
@@ -260,7 +255,7 @@ fun VerticalTrackItem(track : Track, active_track_id : Int, onClick : () -> Unit
 
     fun onFavoriteClick(item : Track){
         if(trackItem.is_favorite){
-            tracksViewModel.addFavoriteTrack(item.id, false)
+            tracksViewModel.addFavoriteTrack(item.id, true)
         } else {
             tracksViewModel.addFavoriteTrack(item.id, false)
         }
