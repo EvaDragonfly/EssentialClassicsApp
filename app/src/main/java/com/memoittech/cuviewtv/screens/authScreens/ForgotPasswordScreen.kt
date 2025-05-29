@@ -1,5 +1,6 @@
 package com.memoittech.cuviewtv.screens.authScreens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,13 +20,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.memoittech.cuviewtv.ApiConstants
 import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.components.ButtonComponent
-import com.memoittech.cuviewtv.components.ImageComponent
 import com.memoittech.cuviewtv.components.MyTextFieldComponent
 import com.memoittech.cuviewtv.components.NormalTextComponent
 import com.memoittech.cuviewtv.components.isValidEmail
@@ -80,7 +82,12 @@ fun ForgotPasswordScreen(navController: NavController) {
             modifier = Modifier.fillMaxSize()
                 .background(color = Color.Transparent)
         ){
-            ImageComponent()
+            Image(
+                painter = painterResource(id = R.drawable.background),
+                contentDescription = "backgroundImage",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
             Column(modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center

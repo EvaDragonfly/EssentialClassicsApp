@@ -4,7 +4,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
@@ -15,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -24,7 +27,6 @@ import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.components.ButtonComponent
 import com.memoittech.cuviewtv.components.CheckBoxComponent
 import com.memoittech.cuviewtv.components.HeadingTextComponent
-import com.memoittech.cuviewtv.components.ImageComponent
 import com.memoittech.cuviewtv.components.MyTextFieldComponent
 import com.memoittech.cuviewtv.components.PasswordTextFieldComponent
 import com.memoittech.cuviewtv.components.ValidationMessage
@@ -95,7 +97,12 @@ fun SignUpScreen (navController: NavController) {
     ) {
         Box(modifier = Modifier.fillMaxSize()
             .background(color = DarkBg2)){
-            ImageComponent()
+            Image(
+                painter = painterResource(id = R.drawable.background),
+                contentDescription = "backgroundImage",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
             Column(
                 modifier = Modifier.fillMaxSize()
                     .align(Alignment.Center)
@@ -112,6 +119,8 @@ fun SignUpScreen (navController: NavController) {
                 )
 
                 HeadingTextComponent(value = stringResource(id = R.string.login_text))
+
+                Spacer(modifier = Modifier.height(70.dp))
 
                 ButtonComponent(
                     value = stringResource(R.string.login),

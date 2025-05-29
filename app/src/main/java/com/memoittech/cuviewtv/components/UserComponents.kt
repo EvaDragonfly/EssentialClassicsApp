@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
@@ -296,36 +298,6 @@ fun ButtonComponent(value: String, onClick : ()-> Unit, color : Color){
 }
 
 
-@Composable
-fun ClickableLoginTextComponent(tryingToLogin : Boolean = true, onTextSelected : (String)->Unit){
-    val initialText = if(tryingToLogin) "Already have an account?  " else "Don't have an account yet? "
-    val loginText = if(tryingToLogin) "Login" else "Register"
-
-    val annotatedString = buildAnnotatedString {
-        append(initialText)
-        withStyle(style = SpanStyle(color = Purple80)){
-            pushStringAnnotation(tag = loginText , annotation = loginText)
-            append(loginText)
-        }
-    }
-
-    ClickableText(
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(24.dp),
-        style = TextStyle(
-            textAlign = TextAlign.Center
-        ),
-        text = annotatedString,
-        onClick = { offset ->
-        annotatedString.getStringAnnotations(offset, offset)
-            .firstOrNull()?.also {span ->
-                if (span.item == loginText){
-                    onTextSelected(span.item)
-                }
-            }
-    })
-}
 
 @Composable
 fun UnderLinedTextComponent(value:String, onClick : () -> Unit){
@@ -350,62 +322,12 @@ fun UnderLinedTextComponent(value:String, onClick : () -> Unit){
     )
 }
 
-@Composable
-fun ImageComponent(){
 
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
-    val topPadding = screenHeight * 35f
-
-    Box(
-        modifier = Modifier.fillMaxSize()
-            .background(color = DarkBg2)
-    ) {
-        // Background image with gradient blend
-
-
-        Image(
-            painter = painterResource(id = R.drawable.violin),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(2f / 3f) // Image takes top 2/3
-        )
-
-
-        // Gradient overlay to blend into solid color
-        Column(
-            modifier = Modifier
-                .background(color = Color.Transparent)
-                .padding(top = topPadding)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(1f / 2f) // Same height as image
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Transparent, // Top of gradient = clear
-                                DarkBg2       // Bottom = target color
-                            ),
-                            startY = 300f,
-                            endY = Float.POSITIVE_INFINITY
-                        )
-                    )
-            )
-        }
-        // Solid color at the bottom 1/3
-    }
-}
-
-
-@Preview
-@Composable
-fun prevBack(){
-    ImageComponent()
-}
+//@Preview
+//@Composable
+//fun prevBack(){
+//    ImageComponent()
+//}
 
 
 
