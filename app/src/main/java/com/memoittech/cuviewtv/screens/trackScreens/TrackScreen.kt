@@ -133,10 +133,6 @@ fun TrackScreen(id : Int, navController: NavController){
                                 shareLink(context, "https://www.cumarket.net/track/${track!!.id}")
                             }
                         )
-//                        Image(
-//                            painter = painterResource(R.drawable.dotswhite),
-//                            contentDescription = "menu"
-//                        )
                     }
                 }
                 Row(

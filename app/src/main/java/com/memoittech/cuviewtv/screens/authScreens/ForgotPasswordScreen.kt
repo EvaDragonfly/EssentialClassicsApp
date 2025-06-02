@@ -59,7 +59,7 @@ fun ForgotPasswordScreen(navController: NavController) {
                         alertText.value = "Something went wrong, Please try again"
                         dialogStatus.value = true
                     } else {
-                        navController.navigate("password_reset/${email}")
+                        navController.navigate("auth/password_reset/${email}")
                     }
 
                 }

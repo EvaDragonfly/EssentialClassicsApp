@@ -31,7 +31,7 @@ fun VideosComponent(navController: NavController , q : String){
     val videosViewModel : VideosViewModel = viewModel()
 
 //
-    var ordering by remember { mutableStateOf("created_at") }
+    var ordering by remember { mutableStateOf("-created_at") }
 
     val listState = rememberLazyListState()
 
@@ -42,7 +42,7 @@ fun VideosComponent(navController: NavController , q : String){
             .debounce(2000) // Wait for 2 seconds of inactivity
             .collect { value ->
                 if (value.length >= 3) {
-                    videosViewModel.getVideosList(ordering, q, 0)
+                    videosViewModel.getVideosList("-created_at", q, 0)
                 }
             }
         listState.scrollToItem(0)

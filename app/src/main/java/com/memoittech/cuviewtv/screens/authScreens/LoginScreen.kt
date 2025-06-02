@@ -143,7 +143,7 @@ fun LoginScreen (navController: NavController) {
 
                     value = stringResource(R.string.register),
                     onClick = {
-                        navController.navigate("sign_up")
+                        navController.navigate("auth/sign_up")
                     },
                     Violet
                 )
@@ -174,7 +174,7 @@ fun LoginScreen (navController: NavController) {
                 UnderLinedTextComponent(
                     value = stringResource(id = R.string.forgot_password),
                     onClick = {
-                        navController.navigate("forgot_password")
+                        navController.navigate("auth/forgot_password")
                     }
                 )
 

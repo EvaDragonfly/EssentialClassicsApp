@@ -45,7 +45,7 @@ fun FavoriteTracksScreen(navController : NavController) {
 
     val tracksViewModel : TracksViewModel = viewModel()
 
-    var ordering by remember { mutableStateOf("created_at") }
+    var ordering by remember { mutableStateOf("-created_at") }
 
     val listState = rememberLazyListState()
 

@@ -60,13 +60,19 @@ fun MyNavigations(){
         }
 
         composable(
-            route = "mood_details/{id}",
+            route = "mood_details/{id}/{title}",
             arguments = listOf(
-                navArgument("id") { type = NavType.IntType }
+                navArgument("id") { type = NavType.IntType },
+                navArgument("title") { type = NavType.StringType }
             )
         ){ backStackEntry ->
             val id = backStackEntry.arguments?.getInt("id")
-            id?.let { MoodDetailsScreen( id = it, navController) }
+            val title = backStackEntry.arguments?.getString("title")
+            id?.let { MoodDetailsScreen(
+                id = it,
+                title = title.toString(),
+                navController
+            ) }
         }
 
         composable(
@@ -121,32 +127,34 @@ fun MyNavigations(){
             FavoriteTracksScreen(navController)
         }
 
-        composable( route = "sign_up" ){
+        composable( route = "auth/sign_up" ){
             SignUpScreen(navController)
         }
 
-        composable( route = "login" ){
+        composable( route = "auth/login" ){
             LoginScreen(navController)
         }
 
-        composable( route = "terms_and_conditions" ){
-            TermsAndConditionsScreen(navController)
+        composable( route = "auth/terms_and_conditions" ){
+            TermsAndConditionsScreen(
+                navController
+            )
         }
 
         composable(
-            route = "email_confirmation/{email}" ,
+            route = "auth/email_confirmation/{email}" ,
             arguments = listOf(navArgument("email") { type = NavType.StringType })
         ){ navBackStackEntry ->
             val email = navBackStackEntry.arguments?.getString("email")
             email?.let { EmailConfirmationScreen(navController, it) }
         }
 
-        composable( route = "forgot_password" ){
+        composable( route = "auth/forgot_password" ){
             ForgotPasswordScreen(navController)
         }
 
         composable(
-            route = "password_reset/{email}",
+            route = "auth/password_reset/{email}",
             arguments = listOf(navArgument("email") { type = NavType.StringType })
         ){navBackStackEntry ->
             val email = navBackStackEntry.arguments?.getString("email")

@@ -50,15 +50,17 @@ class AuthViewModel(application : Application) : AndroidViewModel(application) {
                                response: retrofit2.Response<UserResponse>
                            ) {
                                if (!response.isSuccessful) {
-                                   navController.navigate("login")
+                                   navController.navigate("auth/login")
                                } else {
                                    user = response.body()?.data
-                                   navController.navigate("main")
+                                   navController.navigate("main"){
+                                       popUpTo("auth") { inclusive = true }
+                                   }
                                }
                            }
 
                            override fun onFailure(call: Call<UserResponse>, response: Throwable) {
-                               navController.navigate("login")
+                               navController.navigate("auth/login")
                            }
 
                        })
@@ -83,12 +85,11 @@ class AuthViewModel(application : Application) : AndroidViewModel(application) {
                     } else {
                         TokenManager.clearToken()
                         prefs.edit().remove("email").apply()
-                        navController.navigate("login")
+                        navController.navigate("auth/login")
                     }
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, response: Throwable) {
-                    navController.navigate("main")
                     navController.navigate("main")
                 }
 

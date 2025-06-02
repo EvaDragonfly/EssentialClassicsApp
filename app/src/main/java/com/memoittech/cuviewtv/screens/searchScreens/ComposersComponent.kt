@@ -22,7 +22,7 @@ fun ComposersComponent(navController: NavController, q : String){
 
     val composersViewModel : MembersViewModel = viewModel()
 
-    var ordering by remember { mutableStateOf("created_at") }
+    var ordering by remember { mutableStateOf("-created_at") }
 
     val listState = rememberLazyListState()
 

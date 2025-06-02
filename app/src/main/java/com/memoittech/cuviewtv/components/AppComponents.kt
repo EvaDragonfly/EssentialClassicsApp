@@ -367,9 +367,22 @@ fun VerticalTrackItem(track : Track, active_track_id : Int, onClick : () -> Unit
 
 
 @Composable
-fun VideoTrackItem(track : VideoTrack, onClick : () -> Unit, onMove : () -> Unit, onFavoriteClick : () -> Unit){
+fun VideoTrackItem(track : VideoTrack, onClick : () -> Unit, onMove : () -> Unit){
 
     var expanded = remember { mutableStateOf(false) }
+
+    var trackItem by remember { mutableStateOf(track.track) }
+
+    val tracksViewModel : TracksViewModel = viewModel()
+
+    fun onFavoriteClick(item : Track){
+        if(trackItem.is_favorite){
+            tracksViewModel.addFavoriteTrack(item.id, true)
+        } else {
+            tracksViewModel.addFavoriteTrack(item.id, false)
+        }
+        trackItem = trackItem.copy(is_favorite = !trackItem.is_favorite)
+    }
 
     Box (modifier = Modifier
         .fillMaxWidth()
@@ -406,7 +419,7 @@ fun VideoTrackItem(track : VideoTrack, onClick : () -> Unit, onMove : () -> Unit
                     )
 
                     Text(
-                        text = track.track.composers
+                        text = trackItem.composers
                             .map { it.member_title}
                             .joinToString(","),
                         fontSize = 13.sp,
@@ -418,7 +431,7 @@ fun VideoTrackItem(track : VideoTrack, onClick : () -> Unit, onMove : () -> Unit
                 }
 
                 Text(
-                    text = track.track.title,
+                    text = trackItem.title,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.W400,
                     color = Color.White,
@@ -426,7 +439,7 @@ fun VideoTrackItem(track : VideoTrack, onClick : () -> Unit, onMove : () -> Unit
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
-                    text = track.track.performers
+                    text = trackItem.performers
                         .map { it.member_title}
                         .joinToString(","),
                     fontSize = 13.sp,
@@ -472,13 +485,13 @@ fun VideoTrackItem(track : VideoTrack, onClick : () -> Unit, onMove : () -> Unit
                             Text(
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.Center,
-                                text = if (track.track.is_favorite) "Delete from favorites" else "Add to favorites",
+                                text = if (trackItem.is_favorite) "Delete from favorites" else "Add to favorites",
                                 color = DarkBg2
                             )
                         },
                         onClick = {
                             expanded.value = false
-                            onFavoriteClick()
+                            onFavoriteClick(trackItem)
                         }
                     )
                 }

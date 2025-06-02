@@ -83,7 +83,7 @@ fun PasswordResetScreen(navController: NavController, email : String){
                 ButtonComponent(
                     value = "Sign In",
                     onClick = {
-                        navController.navigate("login")
+                        navController.navigate("auth/login")
                     },
                     Violet
                 )

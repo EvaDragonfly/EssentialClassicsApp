@@ -56,7 +56,9 @@ import kotlin.math.absoluteValue
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @ExperimentalPagerApi
 @Composable
-fun SliderComponent(navController: NavController){
+fun SliderComponent(
+    navController: NavController
+){
 
     val videoViewModel : VideosViewModel = viewModel()
 
@@ -118,6 +120,7 @@ fun SliderComponent(navController: NavController){
                     Box(modifier = Modifier.fillMaxSize()
                         .background(Color.LightGray)
                         .align(Alignment.Center)
+                        .padding(top = 20.dp)
                     ){
                         AsyncImage(
                             modifier = Modifier
@@ -149,7 +152,10 @@ fun SliderComponent(navController: NavController){
                                 Box(
                                     modifier = Modifier
                                         .width(360.dp)
-                                        .height(205.dp),
+                                        .height(205.dp)
+                                        .clickable {
+                                            navController.navigate("player/${videos[page].id}/${0f}")
+                                        },
                                     contentAlignment = Alignment.BottomEnd
                                 ){
                                     AsyncImage(
@@ -169,9 +175,6 @@ fun SliderComponent(navController: NavController){
                                         painter = painterResource(R.drawable.playericon),
                                         contentDescription = "Play",
                                         modifier = Modifier.padding(15.dp)
-                                            .clickable {
-                                                navController.navigate("player/${videos[page].id}/${0f}")
-                                            }
                                     )
                                 }
 

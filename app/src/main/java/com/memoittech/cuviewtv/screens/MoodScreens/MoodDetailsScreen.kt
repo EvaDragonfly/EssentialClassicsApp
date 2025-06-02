@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Surface
@@ -28,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -37,23 +39,27 @@ import com.memoittech.cuviewtv.components.PlayerComponent
 import com.memoittech.cuviewtv.components.Separator
 import com.memoittech.cuviewtv.components.VerticalTrackItem
 import com.memoittech.cuviewtv.model.MoodTrack
+import com.memoittech.cuviewtv.ui.theme.DarkBg1
 import com.memoittech.cuviewtv.ui.theme.DarkBg2
+import com.memoittech.cuviewtv.ui.theme.GrayBlue
+import com.memoittech.cuviewtv.ui.theme.Violet
 
 import com.memoittech.cuviewtv.viewModel.MoodsViewModel
-import com.memoittech.cuviewtv.viewModel.TracksViewModel
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 
 
 @Composable
-fun MoodDetailsScreen(id : Int, navController: NavController){
+fun MoodDetailsScreen(
+    id : Int,
+    title : String,
+    navController: NavController
+){
 
     val youTubePlayerInstance = remember { mutableStateOf<YouTubePlayer?>(null) }
 
     var track by remember { mutableStateOf<MoodTrack?>(null) }
 
     val viewModel : MoodsViewModel = viewModel()
-
-    val trackViewModel : TracksViewModel = viewModel()
 
     LaunchedEffect(id) {
         viewModel.getMoodTracks(id)
@@ -79,14 +85,6 @@ fun MoodDetailsScreen(id : Int, navController: NavController){
         track = item
     }
 
-    fun onFavoriteClick(item: MoodTrack){
-        if(item.track.is_favorite){
-            trackViewModel.addFavoriteTrack(item.track.id, true)
-        } else {
-            trackViewModel.addFavoriteTrack(item.track.id, false)
-        }
-    }
-
     Surface(
         modifier = Modifier.fillMaxSize()
             .background(DarkBg2)
@@ -100,6 +98,7 @@ fun MoodDetailsScreen(id : Int, navController: NavController){
                 Column (
                     modifier = Modifier
                         .fillMaxSize()
+                        .padding(top = 20.dp)
                         .background(Color.Transparent)
                 ) {
                     Row(
@@ -111,18 +110,21 @@ fun MoodDetailsScreen(id : Int, navController: NavController){
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Image(
-                            modifier = Modifier.clickable { navController.popBackStack() },
+                            modifier = Modifier.clickable {
+                                navController.popBackStack()
+                                                          },
                             painter = painterResource(R.drawable.backarrow),
                             contentDescription = "back"
                         )
-//                        Row(
-//                            horizontalArrangement = Arrangement.spacedBy(16.dp)
-//                        ) {
-//                            Image(
-//                                painter = painterResource(R.drawable.dotswhite),
-//                                contentDescription = "menu"
-//                            )
-//                        }
+
+                        Text(
+                            text = title,
+                            color = GrayBlue,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.W500,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.weight(1f)
+                        )
                     }
 
                     track?.video?.youtube_id?.let {
@@ -152,18 +154,6 @@ fun MoodDetailsScreen(id : Int, navController: NavController){
                             )
                         }
                     }
-
-//
-//                        Text(
-//                            text = videoDetails.title,
-//                            modifier = Modifier.fillMaxWidth(),
-//                            fontSize = 15.sp,
-//                            color = Color.White,
-//                            textAlign = TextAlign.Center,
-//                            fontWeight = FontWeight.W400,
-//                            maxLines = 2,
-//                            fontStyle = FontStyle.Italic
-//                        )
 
                     Separator()
 

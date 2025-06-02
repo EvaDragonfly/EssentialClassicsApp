@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -41,17 +42,15 @@ import com.memoittech.cuviewtv.viewModel.MembersViewModel
 
 
 @Composable
-fun FavoriteArtistsScreen(navController : NavController) {
+fun FavoriteArtistsScreen(
+    navController : NavController
+) {
 
     val membersViewModel : MembersViewModel = viewModel()
 
-    var ordering by remember { mutableStateOf("created_at") }
+    var ordering by remember { mutableStateOf("-created_at") }
 
     val listState = rememberLazyListState()
-
-//    LaunchedEffect(Unit) {
-//        membersViewModel.getFavoriteMembers( ordering)
-//    }
 
     val favoritemembers = membersViewModel.favouriteMembers
 
@@ -79,7 +78,7 @@ fun FavoriteArtistsScreen(navController : NavController) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp),
+                .padding(20.dp, 20.dp, 10.dp, 0.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ){
@@ -122,3 +121,8 @@ fun FavoriteArtistsScreen(navController : NavController) {
     }
 }
 
+//@Preview
+//@Composable
+//fun prevFav(){
+//    FavoriteArtistsScreen()
+//}

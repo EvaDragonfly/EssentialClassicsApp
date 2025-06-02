@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.debounce
 @Composable
 fun PerformersComponent( navController: NavController, q : String){
 
-    var ordering by remember { mutableStateOf("created_at") }
+    var ordering by remember { mutableStateOf("-created_at") }
 
     val performersViewModel : MembersViewModel = viewModel()
 

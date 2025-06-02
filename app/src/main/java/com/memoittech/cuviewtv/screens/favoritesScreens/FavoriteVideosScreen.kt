@@ -46,7 +46,7 @@ fun FavoriteVideosScreen(navController : NavController) {
 
     val videosViewModel : VideosViewModel = viewModel()
 
-    var ordering by remember { mutableStateOf("created_at") }
+    var ordering by remember { mutableStateOf("-created_at") }
 
     val listState = rememberLazyListState()
 

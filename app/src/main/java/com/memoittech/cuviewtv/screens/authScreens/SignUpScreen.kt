@@ -49,6 +49,8 @@ fun SignUpScreen (navController: NavController) {
 
     var rePassword by remember { mutableStateOf("") }
 
+    var checked by remember { mutableStateOf(false) }
+
     val user = User(email = email, password = password)
 
     val dialogStatus = remember {
@@ -71,6 +73,9 @@ fun SignUpScreen (navController: NavController) {
         } else if (!isValidPassword(password)){
             alertText.value ="Password Should contain letters, numbers and special characters"
             dialogStatus.value = true
+        } else if (!checked){
+            alertText.value ="Please, agree the privacy policy"
+            dialogStatus.value = true
         } else {
             ApiConstants.retrofit.createUser(user).enqueue(object : retrofit2.Callback<ResponseBody>{
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -78,7 +83,7 @@ fun SignUpScreen (navController: NavController) {
                         alertText.value = "Something went wrong, Please try again"
                         dialogStatus.value = true
                     } else {
-                        navController.navigate("email_confirmation/${email}")
+                        navController.navigate("auth/email_confirmation/${email}")
                     }
 
                 }
@@ -125,7 +130,7 @@ fun SignUpScreen (navController: NavController) {
                 ButtonComponent(
                     value = stringResource(R.string.login),
                     onClick = {
-                        navController.navigate("login")
+                        navController.navigate("auth/login")
                     }, Violet
                 )
 
@@ -149,8 +154,12 @@ fun SignUpScreen (navController: NavController) {
                 )
                 CheckBoxComponent(
                     value = stringResource(R.string.terms_and_conditions),
+                    checked = checked,
+                    onCheck = {
+                        checked = !checked
+                    },
                     onTextSelected = {
-                        navController.navigate("terms_and_conditions")
+                        navController.navigate("auth/terms_and_conditions")
                     }
                 )
 //                Spacer(modifier = Modifier.height(80.dp))
@@ -160,13 +169,6 @@ fun SignUpScreen (navController: NavController) {
                         signUpClickHandler()
                     }, Rose
                 )
-//                Spacer(modifier = Modifier.height(40.dp))
-//                ClickableLoginTextComponent(
-//                    tryingToLogin = true,
-//                    onTextSelected = {
-//                        navController.navigate("login")
-//                    }
-//                )
                 if(dialogStatus.value){
                     ValidationMessage(
                         alertText.value,

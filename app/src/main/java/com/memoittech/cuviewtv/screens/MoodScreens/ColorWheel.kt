@@ -1,6 +1,7 @@
 package com.memoittech.cuviewtv.screens.MoodScreens
 import android.util.Log
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Surface
@@ -21,13 +22,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.memoittech.cuviewtv.model.moodList
+import com.memoittech.cuviewtv.ui.theme.DarkBg1
+import com.memoittech.cuviewtv.ui.theme.DarkBg2
+import com.memoittech.cuviewtv.ui.theme.Violet
 import kotlin.math.*
 
 @Composable
 fun SmoothColorWheel(
     modifier: Modifier = Modifier,
     onSelect : (Int) -> Unit,
-    onColorSelected: (Color) -> Unit = {},
     onZoneSelected: (Int) -> Unit = {}
 ) {
     // Define base colors for the wheel (will create a gradient between them)
@@ -62,7 +65,6 @@ fun SmoothColorWheel(
                                 selectedZone = zone
                                 selectedAngle = angle
                                 currentColor = color
-                                onColorSelected(color)
                                 onZoneSelected(zone)
                             }
                         },
@@ -71,7 +73,6 @@ fun SmoothColorWheel(
                                 selectedZone = zone
                                 selectedAngle = angle
                                 currentColor = color
-                                onColorSelected(color)
                                 onZoneSelected(zone)
                             }
                         },
@@ -178,73 +179,94 @@ private fun lerp(start: Float, end: Float, fraction: Float): Float {
 @Composable
 fun ColorWheelExample(navController: NavController) {
 
-    var selectedColor by remember { mutableStateOf(Color.Red) }
+    val colors = listOf(
+        Color.Red,
+        Color(0xFFFF00FF), // Magenta
+        Color(0xFF800080), // Purple
+        Color(0xFF4B0082), // Indigo
+        Color.Blue,
+        Color.Cyan,
+        Color(0xFF008B8B), // Teal
+        Color.Green,
+        Color(0xFF9ACD32), // Yellow-Green
+        Color.Yellow,
+        Color(0xFFFF8C00), // Dark Orange
+        Color(0xFFFF4500), // Orange-Red
+    )
+
+
     var selectedZone by remember { mutableStateOf(1) }
+
+    var selectedMoodIndex by remember { mutableStateOf(9) }
 
     val moods  = moodList
 
-    var selectedMood by remember { mutableStateOf(moods[9]) }
-
     Surface(
-        modifier = Modifier
-            .fillMaxSize(),
-        color = Color(0xFF880E4F) // Dark magenta background like in your image
     ) {
-        Column(
+        Box(
             modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement =  Arrangement.SpaceBetween
-        ) {
-
-            Box(
+                .fillMaxSize()
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(colors[(selectedMoodIndex+11)%12], colors[selectedMoodIndex], colors[(selectedMoodIndex+1)%12])
+                    )
+                )
+        ){
+            Column(
                 modifier = Modifier
-                    .size(200.dp)
-                    .fillMaxWidth()
-                    .align(Alignment.CenterHorizontally),
-                contentAlignment = Alignment.Center
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement =  Arrangement.SpaceBetween
             ) {
 
-                Text(
-                    text = selectedMood.title,
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.align(Alignment.BottomCenter)
+                Box(
+                    modifier = Modifier
+                        .size(200.dp)
+                        .fillMaxWidth()
+                        .align(Alignment.CenterHorizontally),
+                    contentAlignment = Alignment.Center
+                ) {
+
+                    Text(
+                        text = moods[selectedMoodIndex].title,
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.align(Alignment.BottomCenter)
+                    )
+                }
+
+                SmoothColorWheel(
+                    modifier = Modifier
+                        .size(300.dp)
+                        .padding(16.dp),
+                    onSelect = {
+                        navController.navigate("mood_details/${moods[it].id}/${moods[it].title}")
+                    },
+                    onZoneSelected = {
+                        selectedZone = it + 1
+                        selectedMoodIndex = it
+                    },
                 )
+
+                Box(
+                    modifier = Modifier
+                        .size(200.dp)
+                        .fillMaxWidth()
+                        .align(Alignment.CenterHorizontally),
+                    contentAlignment = Alignment.Center
+                ) {
+
+                    Text(
+                        text = moods[selectedMoodIndex].title,
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.align(Alignment.TopCenter)
+                    )
+                }
+
             }
-
-            SmoothColorWheel(
-                modifier = Modifier
-                    .size(300.dp)
-                    .padding(16.dp),
-                onSelect = {
-                    navController.navigate("mood_details/${moods[it].id}")
-                },
-                onColorSelected = { selectedColor = it },
-                onZoneSelected = {
-                    selectedZone = it + 1
-                    selectedMood = moods[it]
-                                 },
-            )
-
-            Box(
-                modifier = Modifier
-                    .size(200.dp)
-                    .fillMaxWidth()
-                    .align(Alignment.CenterHorizontally),
-                contentAlignment = Alignment.Center
-            ) {
-
-                Text(
-                    text = selectedMood.title,
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.align(Alignment.TopCenter)
-                )
-            }
-
         }
     }
 }

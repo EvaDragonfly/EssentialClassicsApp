@@ -118,7 +118,7 @@ fun PlayerScreen(
                 ){
                     Row( modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp, 15.dp)
+                        .padding(20.dp)
                         .align(Alignment.CenterHorizontally)
                         .background(DarkBg2),
                         horizontalArrangement = Arrangement.SpaceBetween
@@ -146,10 +146,6 @@ fun PlayerScreen(
                                 modifier = Modifier.clickable {
                                     shareLink(context, "https://www.youtube.com/watch?v=${video!!.youtube_id}")
                                 }
-                            )
-                            Image(
-                                painter = painterResource(R.drawable.dotswhite),
-                                contentDescription = "menu"
                             )
                         }
                     }
@@ -230,13 +226,6 @@ fun PlayerScreen(
                                             "track_details/${it.track.id}"
                                         )
                                     },
-                                    {
-                                        if (it.track.is_favorite) {
-                                            trackViewModel.addFavoriteTrack(it.track.id, true)
-                                        } else {
-                                            trackViewModel.addFavoriteTrack(it.track.id, false)
-                                        }
-                                    }
                                 )
                             }
                         }

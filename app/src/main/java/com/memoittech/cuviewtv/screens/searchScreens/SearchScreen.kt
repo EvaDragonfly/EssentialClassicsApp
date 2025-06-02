@@ -64,8 +64,6 @@ fun SearchScreen(navController: NavController, appViewModel: AppViewModels){
 
     val index = appViewModel.index
 
-    println(index)
-
     var currentComponent = index
     var selectedOption = searchItems.getOrNull(index) ?: 0
 
@@ -81,20 +79,6 @@ fun SearchScreen(navController: NavController, appViewModel: AppViewModels){
                 .background(color = DarkBg2)
                 .padding(10.dp)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(0.dp, 10.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ){
-                Image(
-                    modifier = Modifier.clickable { navController.popBackStack() },
-                    painter = painterResource(R.drawable.backarrow),
-                    contentDescription = "go back"
-                )
-//                Image(painter = painterResource(R.drawable.shareicon), contentDescription = "share")
-            }
-
             LazyColumn(
                 modifier = Modifier.padding(0.dp, 10.dp)
             ) {

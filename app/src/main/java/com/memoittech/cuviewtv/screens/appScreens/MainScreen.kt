@@ -70,7 +70,7 @@ fun BottomBar(navController: NavHostController){
     BottomNavigation(
         modifier = Modifier
             .fillMaxWidth()
-            .height(70.dp) // Set your desired height
+//            .height(70.dp) // Set your desired height
             .background(Color.White),
         backgroundColor = Color.White, // Optional, to be explicit
         elevation = 8.dp
@@ -99,7 +99,7 @@ fun RowScope.AddItem(
                 text = screen.title,
                 color = if (selected) DarkBg2 else GrayBlue,
                 fontWeight = FontWeight.W500,
-                fontSize = 16.sp
+                fontSize = 13.sp
             )
         },
         icon = {

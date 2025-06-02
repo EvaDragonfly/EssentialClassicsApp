@@ -22,13 +22,9 @@ fun TracksComponent(navController: NavController , q : String){
 
     val tracksViewModel : TracksViewModel = viewModel()
 
-//    var limit by remember { mutableStateOf(20) }
-//    var offset by remember { mutableStateOf(0) }
-    var ordering by remember { mutableStateOf("created_at") }
+    var ordering by remember { mutableStateOf("-created_at") }
 
     val listState = rememberLazyListState()
-
-//    tracksViewModel.getTracksList( ordering, q, 1)
 
     fun onTrackClick(id: Int){
         navController.navigate("track_details/${id}")

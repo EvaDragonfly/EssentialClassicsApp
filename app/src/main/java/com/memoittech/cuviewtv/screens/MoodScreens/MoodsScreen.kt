@@ -10,7 +10,8 @@ import androidx.navigation.NavController
 fun MoodsScreen(navController: NavController){
 
 
-    Surface(modifier = Modifier.fillMaxSize()
+    Surface(
+        modifier = Modifier.fillMaxSize()
     ) {
         ColorWheelExample(navController)
     }
