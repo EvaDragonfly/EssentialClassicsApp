@@ -51,7 +51,7 @@ import com.memoittech.cuviewtv.viewModel.AppViewModels
 @Composable
 fun SearchScreen(navController: NavController, appViewModel: AppViewModels){
 
-    var text by remember { mutableStateOf("") }
+//    val text = rememberSaveable { mutableStateOf("") }
 
     var searchItems = remember {
         mutableStateListOf(
@@ -119,19 +119,18 @@ fun SearchScreen(navController: NavController, appViewModel: AppViewModels){
             }
 
             SearchComponent(
-                text,
-                onTextChange = { text = it },
+                appViewModel.query,
+                onTextChange = { appViewModel.onQueryChanged(it) },
             )
 
             Separator()
 
 
             when(currentComponent){
-            0 -> PerformersComponent(navController, text )
-            1 -> ComposersComponent(navController, text)
-            2 -> TracksComponent(navController, text)
-            3 -> VideosComponent(navController, text)
-
+            0 -> PerformersComponent(navController, appViewModel )
+            1 -> ComposersComponent(navController, appViewModel )
+            2 -> TracksComponent(navController, appViewModel)
+            3 -> VideosComponent(navController, appViewModel)
             }
         }
 

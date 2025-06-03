@@ -34,7 +34,7 @@ fun SliderVideosComponent(navController: NavController, appViewModel: AppViewMod
     val viewModels : VideosViewModel = viewModel()
 
     LaunchedEffect(Unit) {
-        viewModels.getVideosList( "-created_at", "", 1)
+        viewModels.getVideosList( "-created_at", "", 0)
     }
 
     val videos = viewModels.videos

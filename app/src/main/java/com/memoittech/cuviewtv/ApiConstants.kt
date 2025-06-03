@@ -12,7 +12,6 @@ object ApiConstants {
         .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .build().create(RetrofitApi ::class.java)
-
 }
 
 object TokenManager {

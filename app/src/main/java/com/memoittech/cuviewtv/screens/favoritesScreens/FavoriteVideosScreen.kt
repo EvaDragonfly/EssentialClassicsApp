@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Text
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -38,6 +39,8 @@ import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.components.Separator
 import com.memoittech.cuviewtv.components.VideoOvalItem
 import com.memoittech.cuviewtv.ui.theme.DarkBg2
+import com.memoittech.cuviewtv.ui.theme.GrayBlue
+import com.memoittech.cuviewtv.ui.theme.Violet
 import com.memoittech.cuviewtv.viewModel.VideosViewModel
 
 
@@ -127,8 +130,17 @@ fun FavoriteVideosScreen(navController : NavController) {
                         }
                     }
                 }
+                item {
+                    if (videosViewModel.isFavoriteVideosLoading){
+                        androidx.compose.material3.Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = "Loading...",
+                            textAlign = TextAlign.Center,
+                            color = GrayBlue
+                        )
+                    }
+                }
             }
         }
-
     }
 }

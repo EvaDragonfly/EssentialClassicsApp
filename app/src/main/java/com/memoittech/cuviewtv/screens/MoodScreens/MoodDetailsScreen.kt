@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -177,7 +178,18 @@ fun MoodDetailsScreen(
                                     )
                                 }
                             }
-                        }
+                            item {
+                                if (viewModel.isLoading){
+                                    Text(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        text = "Loading...",
+                                        textAlign = TextAlign.Center,
+                                        color = GrayBlue
+                                    )
+                                }
+                            }
+
+                    }
                     }
                 }
             }

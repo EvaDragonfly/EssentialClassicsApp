@@ -9,8 +9,15 @@ class AppViewModels : ViewModel() {
     var index by mutableStateOf(0)
         private set
 
+    var query by mutableStateOf("")
+        private set
+
     fun onIndexChanged(newIndex: Int) {
         index = newIndex
+    }
+
+    fun onQueryChanged(newQuery: String) {
+        query = newQuery
     }
 
 }

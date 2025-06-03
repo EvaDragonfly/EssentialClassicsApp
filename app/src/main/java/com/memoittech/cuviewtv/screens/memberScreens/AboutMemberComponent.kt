@@ -16,8 +16,6 @@ import com.memoittech.cuviewtv.ui.theme.GrayBlueLight
 @Composable
 fun AboutMemberComponent( text : String) {
 
-    Log.d("MY_TAG", text)
-
     LazyColumn {
         item {
             Text(

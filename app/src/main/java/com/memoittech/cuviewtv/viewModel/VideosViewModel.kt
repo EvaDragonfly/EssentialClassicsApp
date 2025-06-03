@@ -1,5 +1,6 @@
 package com.memoittech.cuviewtv.viewModel
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -30,15 +31,18 @@ class VideosViewModel : ViewModel(){
     var favouriteVideos = mutableStateListOf<FavoriteVideo>()
     var videoTracks = mutableStateListOf<VideoTrack>()
 
-    var isLoading = false
+    var isLoading by mutableStateOf(false)
+        private set
     private var currentOffsetVideos = 0
     private val pageSizeVideos = 30
 
-    var isFavoriteVideosLoading = false
+    var isFavoriteVideosLoading by mutableStateOf(false)
+        private set
     private var currentOffsetFavVideos = 0
     private val pageSizeFavVideos = 30
 
-    var isVideoTracksLoading = false
+    var isVideoTracksLoading by mutableStateOf(false)
+        private set
     private var currentOffsetVideoTracks = 0
     private val pageSizeVideoTracks = 20
 
@@ -52,23 +56,22 @@ class VideosViewModel : ViewModel(){
         if (isLoading) return
         isLoading = true
 
+        if(index == 0){
+            currentOffsetVideos = 0
+            videos.clear()
+        }
+
         viewModelScope.launch {
             ApiConstants.retrofit.getVideos(pageSizeVideos, currentOffsetVideos, ordering, q, "Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<VideoResponse>{
                 override fun onResponse(call: Call<VideoResponse>, response: Response<VideoResponse>) {
-                    isLoading = false
                     if (!response.isSuccessful) {
                         errorMessage = response.message()
                     } else {
                         val newVideos = response.body()?.data?.results ?: emptyList()
-                        if (index == 1){
-                            videos.addAll(newVideos)
-                            currentOffsetVideos += newVideos.size
-                        } else {
-                            videos.clear()
-                            currentOffsetVideos = 0
-                            videos.addAll(newVideos)
-                        }
+                        videos.addAll(newVideos)
+                        currentOffsetVideos += newVideos.size
                     }
+                    isLoading = false
                 }
 
                 override fun onFailure(call: Call<VideoResponse>, response: Throwable) {

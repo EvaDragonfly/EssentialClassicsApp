@@ -15,11 +15,18 @@ import retrofit2.Response
 
 class MoodsViewModel : ViewModel() {
 
+    var isLoading by mutableStateOf(false)
+        private set
+
     var errorMessage : String by mutableStateOf("")
 
     var moodTracksResponse by mutableStateOf<MoodTracksResponse?>(null)
 
     fun getMoodTracks(moodId : Int){
+
+        if (isLoading) return
+        isLoading = true
+
         viewModelScope.launch {
             ApiConstants.retrofit.getMoodTracks("Token ${TokenManager.getToken()}", moodId).enqueue(object : retrofit2.Callback<MoodTracksResponse>{
                 override fun onResponse(
@@ -31,10 +38,12 @@ class MoodsViewModel : ViewModel() {
                     } else {
                         moodTracksResponse = response.body()
                     }
+                    isLoading = false
                 }
 
                 override fun onFailure(call: Call<MoodTracksResponse>, response: Throwable) {
                     errorMessage = response.toString()
+                    isLoading = false
                 }
 
             })

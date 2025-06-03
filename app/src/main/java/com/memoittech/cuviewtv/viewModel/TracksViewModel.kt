@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -29,15 +28,18 @@ class TracksViewModel : ViewModel(){
     var favouriteTracks = mutableStateListOf<FavoriteTrack>()
     var trackVideos = mutableStateListOf<TrackVideo?>()
 
-    var isLoading = false
+    var isLoading by mutableStateOf(false)
+        private set
     private var currentOffsetTracks = 0
     private val pageSizeTracks = 20
 
-    var isFavTracksLoading = false
+    var isFavTracksLoading by mutableStateOf(false)
+        private set
     private var currentOffsetFavTracks = 0
     private val pageSizeFavTracks = 20
 
-    var isTrackVideosLoading = false
+    var isTrackVideosLoading by mutableStateOf(false)
+        private set
     private var currentOffsetTrackVideos = 0
     private val pageSizeTrackVideos = 20
 
@@ -52,24 +54,23 @@ class TracksViewModel : ViewModel(){
         if (isLoading) return
         isLoading = true
 
+        if(index == 0){
+            currentOffsetTracks = 0
+            tracks.clear()
+        }
+
         viewModelScope.launch {
+            Log.d("MY_TAG", "isloading ap ${isLoading}")
             ApiConstants.retrofit.getTracks(pageSizeTracks, currentOffsetTracks, ordering, q, "Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<TracksResponse>{
                 override fun onResponse(call: Call<TracksResponse>, response: Response<TracksResponse>) {
-                    isLoading = false
                     if (!response.isSuccessful) {
                         errorMessage = response.message()
                     } else {
                         val newTracks = response.body()?.data?.results ?: emptyList()
-                        if (index == 1){
-                            tracks.addAll(newTracks)
-                            currentOffsetTracks += tracks.size
-                        } else {
-                            tracks.clear()
-                            currentOffsetTracks = 0
-                            tracks.addAll(newTracks)
-                        }
+                        tracks.addAll(newTracks)
+                        currentOffsetTracks += newTracks.size
                     }
-
+                    isLoading = false
                 }
                 override fun onFailure(call: Call<TracksResponse>, response: Throwable) {
                     isLoading = false
