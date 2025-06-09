@@ -19,13 +19,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.memoittech.cuviewtv.components.VerticalTrackItem
 import com.memoittech.cuviewtv.ui.theme.GrayBlue
 import com.memoittech.cuviewtv.ui.theme.Violet
 import com.memoittech.cuviewtv.viewModel.MembersViewModel
 
 @Composable
-fun MemberTracksComponent( navController: NavController, id: Int){
+fun MemberTracksComponent( navController: NavHostController, id: Int){
 
     val viewModel : MembersViewModel = viewModel()
 

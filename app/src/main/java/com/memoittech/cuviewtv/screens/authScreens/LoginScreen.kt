@@ -27,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.memoittech.cuviewtv.ApiConstants
 import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.TokenManager
@@ -49,7 +50,7 @@ import retrofit2.Response
 
 
 @Composable
-fun LoginScreen (navController: NavController) {
+fun LoginScreen (navController: NavHostController) {
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }

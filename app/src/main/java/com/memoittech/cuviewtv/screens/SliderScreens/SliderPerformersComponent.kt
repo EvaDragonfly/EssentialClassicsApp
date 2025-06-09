@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.components.MemberOvalItem
 import com.memoittech.cuviewtv.ui.theme.GrayBlue
@@ -29,7 +30,7 @@ import com.memoittech.cuviewtv.viewModel.MembersViewModel
 
 
 @Composable
-fun SliderPerformersComponent (navController: NavController, appViewModel: AppViewModels){
+fun SliderPerformersComponent (navController: NavHostController, appViewModel: AppViewModels){
 
     val viewModel : MembersViewModel = viewModel()
 
@@ -56,7 +57,7 @@ fun SliderPerformersComponent (navController: NavController, appViewModel: AppVi
                 modifier = Modifier
                 .clickable {
                     appViewModel.onIndexChanged(0)
-                    navController.navigate("search")
+                    navController.navigate("main/search")
                            },
                 verticalAlignment = Alignment.CenterVertically
             ){
@@ -74,15 +75,15 @@ fun SliderPerformersComponent (navController: NavController, appViewModel: AppVi
                 )
             }
         }
-        performers?.let {
+        performers.let {
             LazyRow (
                 modifier = Modifier.padding(0.dp, 15.dp),
                 horizontalArrangement = Arrangement.spacedBy(15.dp)
             ){
                 items(items = performers){item ->
-                    MemberOvalItem(item, {
+                    MemberOvalItem(item) {
                         navController.navigate("member_details/${item.id}")
-                    })
+                    }
                 }
             }
 

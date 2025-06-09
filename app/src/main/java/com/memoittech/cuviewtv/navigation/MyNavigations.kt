@@ -11,7 +11,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.memoittech.cuviewtv.screens.MoodScreens.MoodDetailsScreen
-import com.memoittech.cuviewtv.screens.SliderScreens.OpenScreen
 import com.memoittech.cuviewtv.screens.authScreens.EmailConfirmationScreen
 import com.memoittech.cuviewtv.screens.authScreens.ForgotPasswordScreen
 import com.memoittech.cuviewtv.screens.authScreens.LoginScreen
@@ -19,15 +18,12 @@ import com.memoittech.cuviewtv.screens.authScreens.PasswordResetScreen
 import com.memoittech.cuviewtv.screens.authScreens.SignUpScreen
 import com.memoittech.cuviewtv.screens.authScreens.TermsAndConditionsScreen
 import com.memoittech.cuviewtv.screens.appScreens.MainScreen
-import com.memoittech.cuviewtv.screens.MoodScreens.MoodsScreen
 import com.memoittech.cuviewtv.screens.appScreens.PlayerScreen
-import com.memoittech.cuviewtv.screens.searchScreens.SearchScreen
 import com.memoittech.cuviewtv.screens.appScreens.SplashScreen
 import com.memoittech.cuviewtv.screens.memberScreens.MemberDetailsScreen
 import com.memoittech.cuviewtv.screens.favoritesScreens.FavoriteArtistsScreen
 import com.memoittech.cuviewtv.screens.favoritesScreens.FavoriteTracksScreen
 import com.memoittech.cuviewtv.screens.favoritesScreens.FavoriteVideosScreen
-import com.memoittech.cuviewtv.screens.favoritesScreens.FavoritesScreen
 import com.memoittech.cuviewtv.screens.trackScreens.TrackScreen
 import com.memoittech.cuviewtv.viewModel.AppViewModels
 
@@ -47,16 +43,16 @@ fun MyNavigations(){
             SplashScreen(navController)
         }
 
-        composable(route = "main"){
-            MainScreen(navController, appViewModel)
-        }
-
-        composable( route = "favourites"){
-            FavoritesScreen(navController)
-        }
-
-        composable(route = "moods"){
-            MoodsScreen(navController)
+        composable(
+            route = "main/{tab}",
+            arguments = listOf(
+                navArgument("tab") {
+                    type = NavType.StringType
+                }
+            )
+        ){backStackEntry ->
+            val tab = backStackEntry.arguments?.getString("tab") ?: "slider"
+            MainScreen(navController, appViewModel, tab)
         }
 
         composable(
@@ -85,14 +81,6 @@ fun MyNavigations(){
                 val id = backStackEntry.arguments?.getInt("id")
                 val starts_at = backStackEntry.arguments?.getFloat("starts_at")
                 id?.let { starts_at?.let { it1 -> PlayerScreen(navController, id = it, starts_at = it1) } }
-        }
-
-        composable(route = "search"){backStackEntry ->
-            SearchScreen(navController, appViewModel)
-        }
-
-        composable( route = "slider" ){
-            OpenScreen(navController, appViewModel)
         }
 
         composable(

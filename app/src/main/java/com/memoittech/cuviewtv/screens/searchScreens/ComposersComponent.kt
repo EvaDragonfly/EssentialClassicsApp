@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.memoittech.cuviewtv.components.MemberHorizontalItem
 import com.memoittech.cuviewtv.ui.theme.GrayBlue
 import com.memoittech.cuviewtv.ui.theme.Violet
@@ -34,7 +35,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class)
 @Composable
-fun ComposersComponent(navController: NavController, appViewModel: AppViewModels){
+fun ComposersComponent(navController: NavHostController, appViewModel: AppViewModels){
 
     val composersViewModel : MembersViewModel = viewModel()
 

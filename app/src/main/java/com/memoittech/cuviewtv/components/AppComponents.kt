@@ -49,7 +49,6 @@ import coil.request.ImageRequest
 import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.model.Member
 import com.memoittech.cuviewtv.model.Track
-import com.memoittech.cuviewtv.model.Video
 import com.memoittech.cuviewtv.model.VideoTrack
 import com.memoittech.cuviewtv.ui.theme.DarkBg2
 import com.memoittech.cuviewtv.ui.theme.GrayBlue
@@ -80,8 +79,8 @@ fun MemberOvalItem(member : Member, onClick : () -> Unit){
                     .data("https://img.cugate.com/?o=member&i=${member.id}&s=300")
                     .crossfade(true)
                     .build(),
-                placeholder = painterResource(id=R.drawable.some_image),
-                error = painterResource(id=R.drawable.some_image),
+                placeholder = painterResource(id=R.drawable.artist),
+                error = painterResource(id=R.drawable.artist),
                 contentDescription = "Video thumbnail",
                 contentScale = ContentScale.Crop
             )
@@ -122,8 +121,8 @@ fun VideoOvalItem(id : Int, youtube_id:String, title: String, has_thumbnail : Bo
                     .data(if (has_thumbnail) "https://img.cugate.com/?o=eclass_video&i=${id}&s=300" else "https://img.youtube.com/vi/${youtube_id}/maxresdefault.jpg")
                     .crossfade(true)
                     .build(),
-                placeholder = painterResource(id=R.drawable.some_image),
-                error = painterResource(id=R.drawable.some_image),
+                placeholder = painterResource(id=R.drawable.video),
+                error = painterResource(id=R.drawable.video),
                 contentDescription = "Video thumbnail",
                 contentScale = ContentScale.Crop
             )
@@ -173,9 +172,9 @@ fun MemberHorizontalItem(member : Member, onClick : () -> Unit){
                         .data("https://img.cugate.com/?o=member&i=${member.id}&s=300")
                         .crossfade(true)
                         .build(),
-                    placeholder = painterResource(id=R.drawable.some_image),
-                    error = painterResource(id=R.drawable.some_image),
-                    contentDescription = "Video thumbnail",
+                    placeholder = painterResource(id=R.drawable.composer),
+                    error = painterResource(id=R.drawable.composer),
+                    contentDescription = "member thumbnail",
                     contentScale = ContentScale.Crop
                 )
                 Text(
@@ -221,9 +220,9 @@ fun MemberVerticalItem(member : Member, onClick : () -> Unit){
                     .data("https://img.cugate.com/?o=member&i=${member.id}&s=300")
                     .crossfade(true)
                     .build(),
-                placeholder = painterResource(id=R.drawable.some_image),
-                error = painterResource(id=R.drawable.some_image),
-                contentDescription = "Video thumbnail",
+                placeholder = painterResource(id=R.drawable.composer),
+                error = painterResource(id=R.drawable.composer),
+                contentDescription = "member thumbnail",
                 contentScale = ContentScale.Crop
             )
             Text(
@@ -587,14 +586,14 @@ fun SearchComponent(text:String, onTextChange: (String)->Unit,){
             onValueChange = onTextChange,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp)
-                .height(46.dp)
+                .padding(5.dp)
+                .height(56.dp)
                 .align(Alignment.Center)
                 .clip(RoundedCornerShape(6.dp))
                 .background(Color(0xFF2C3C5C)),
             placeholder = {
                 Text(
-                    text = "Search...",
+                    text = "Type min 3 characters to search...",
                     color = PlaceHolderColor
                 )
             },

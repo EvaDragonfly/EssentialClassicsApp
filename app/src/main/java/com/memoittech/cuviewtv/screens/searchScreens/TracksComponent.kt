@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.memoittech.cuviewtv.components.VerticalTrackItem
 import com.memoittech.cuviewtv.ui.theme.GrayBlue
 import com.memoittech.cuviewtv.ui.theme.Violet
@@ -39,7 +40,7 @@ import kotlinx.coroutines.launch
 @SuppressLint("FlowOperatorInvokedInComposition")
 @OptIn(FlowPreview::class)
 @Composable
-fun TracksComponent(navController: NavController , appViewModel: AppViewModels){
+fun TracksComponent(navController: NavHostController , appViewModel: AppViewModels){
 
     val tracksViewModel : TracksViewModel = viewModel()
 

@@ -1,7 +1,6 @@
 package com.memoittech.cuviewtv.screens.memberScreens
 
-import android.graphics.RenderEffect
-import android.graphics.Shader
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,14 +8,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Surface
@@ -33,8 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asComposeRenderEffect
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -43,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.memoittech.cuviewtv.R
@@ -54,7 +48,7 @@ import com.memoittech.cuviewtv.viewModel.MembersViewModel
 
 
 @Composable
-fun MemberDetailsScreen(navController: NavController, id : Int){
+fun MemberDetailsScreen(navController: NavHostController, id : Int){
 
     val memberViewModel : MembersViewModel = viewModel()
 
@@ -101,7 +95,7 @@ fun MemberDetailsScreen(navController: NavController, id : Int){
             Column(
                 modifier = Modifier
                     .background(DarkBg2)
-                    .padding(WindowInsets.systemBars.asPaddingValues())
+                    .padding(top = 40.dp)
                     .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -157,8 +151,8 @@ fun MemberDetailsScreen(navController: NavController, id : Int){
                         .data("https://img.cugate.com/?o=member&i=${member!!.id}&s=300")
                         .crossfade(true)
                         .build(),
-                    placeholder = painterResource(id= R.drawable.some_image),
-                    error = painterResource(id= R.drawable.some_image),
+                    placeholder = painterResource(id= R.drawable.artist),
+                    error = painterResource(id= R.drawable.artist),
                     contentDescription = "Video thumbnail",
                     contentScale = ContentScale.Crop
                 )

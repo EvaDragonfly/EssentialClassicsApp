@@ -7,12 +7,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -37,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.components.PlayerComponent
 import com.memoittech.cuviewtv.components.Separator
@@ -51,7 +49,7 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 
 @Composable
 fun PlayerScreen(
-    navController: NavController,
+    navController: NavHostController,
     id: Int,
     starts_at : Float
 ) {
@@ -109,7 +107,7 @@ fun PlayerScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(DarkBg2)
-                    .padding(WindowInsets.systemBars.asPaddingValues()),
+                    .padding(top=20.dp),
             ) {
                 Column (
                     modifier = Modifier

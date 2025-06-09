@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.memoittech.cuviewtv.components.VideoOvalItem
 import com.memoittech.cuviewtv.ui.theme.DarkBg2
 import com.memoittech.cuviewtv.ui.theme.GrayBlue
@@ -28,7 +29,7 @@ import com.memoittech.cuviewtv.ui.theme.Violet
 import com.memoittech.cuviewtv.viewModel.MembersViewModel
 
 @Composable
-fun MemberVideosComponent(navController: NavController, id: Int){
+fun MemberVideosComponent(navController: NavHostController, id: Int){
 
     val viewModel : MembersViewModel = viewModel()
 

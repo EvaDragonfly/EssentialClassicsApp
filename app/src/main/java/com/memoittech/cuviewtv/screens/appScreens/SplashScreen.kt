@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.memoittech.cuviewtv.viewModel.AppViewModels
 import com.memoittech.cuviewtv.viewModel.AuthViewModel
 
 @Composable
@@ -31,7 +32,7 @@ fun SplashScreen(navController: NavHostController) {
                 CircularProgressIndicator()
             }
         }
-        isAuthenticated -> navController.navigate("main") {
+        isAuthenticated -> navController.navigate("main/slider") {
             popUpTo("splash") { inclusive = true }
         }
         else -> navController.navigate("auth/login") {

@@ -7,14 +7,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -33,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.components.FavoritesItem
 import com.memoittech.cuviewtv.components.Separator
@@ -43,7 +41,7 @@ import com.memoittech.cuviewtv.viewModel.AuthViewModel
 import com.memoittech.cuviewtv.viewModel.FavoriteCountViewModel
 
 @Composable
-fun FavoritesScreen(navController: NavController) {
+fun FavoritesScreen(navController: NavHostController, modifier: Modifier) {
 
     val authViewModel : AuthViewModel = viewModel()
 
@@ -61,23 +59,20 @@ fun FavoritesScreen(navController: NavController) {
 
     val favoriteCounts = favoriteViewModel.favoriteCountResponse?.data
 
-    val user = authViewModel.user
-
     fun logoutHandler(){
         authViewModel.logout(navController)
     }
 
     Column (
-        modifier = Modifier
+        modifier = modifier
             .background(DarkBg2)
-            .padding(WindowInsets.systemBars.asPaddingValues())
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp),
+                .padding(10.dp, 50.dp, 10.dp, 0.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ){

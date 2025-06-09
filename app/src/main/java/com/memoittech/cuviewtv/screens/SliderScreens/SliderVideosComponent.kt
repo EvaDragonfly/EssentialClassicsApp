@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.components.VideoOvalItem
 import com.memoittech.cuviewtv.ui.theme.GrayBlue
@@ -29,7 +30,7 @@ import com.memoittech.cuviewtv.viewModel.VideosViewModel
 
 
 @Composable
-fun SliderVideosComponent(navController: NavController, appViewModel: AppViewModels) {
+fun SliderVideosComponent(navController: NavHostController, appViewModel: AppViewModels) {
 
     val viewModels : VideosViewModel = viewModel()
 
@@ -56,7 +57,7 @@ fun SliderVideosComponent(navController: NavController, appViewModel: AppViewMod
                 modifier = Modifier
                     .clickable {
                         appViewModel.onIndexChanged(3)
-                        navController.navigate("search")
+                        navController.navigate("main/search")
                                },
                 verticalAlignment = Alignment.CenterVertically
             ){

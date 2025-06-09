@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.memoittech.cuviewtv.ApiConstants
 import com.memoittech.cuviewtv.TokenManager
 import com.memoittech.cuviewtv.model.UserData
@@ -34,7 +35,7 @@ class AuthViewModel(application : Application) : AndroidViewModel(application) {
 
     var user by mutableStateOf<UserData?>(null)
 
-    fun checkAuth(navController: NavController) {
+    fun checkAuth(navController: NavHostController) {
         viewModelScope.launch {
             val token = TokenManager.getToken()
             if (token.isNullOrEmpty()) {
@@ -53,7 +54,7 @@ class AuthViewModel(application : Application) : AndroidViewModel(application) {
                                    navController.navigate("auth/login")
                                } else {
                                    user = response.body()?.data
-                                   navController.navigate("main"){
+                                   navController.navigate("main/slider"){
                                        popUpTo("auth") { inclusive = true }
                                    }
                                }
@@ -76,7 +77,7 @@ class AuthViewModel(application : Application) : AndroidViewModel(application) {
 
 
 
-    fun logout(navController: NavController){
+    fun logout(navController: NavHostController){
         viewModelScope.launch {
             ApiConstants.retrofit.logout("Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<ResponseBody>{
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {

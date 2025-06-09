@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.memoittech.cuviewtv.components.MemberHorizontalItem
 import com.memoittech.cuviewtv.ui.theme.GrayBlue
 import com.memoittech.cuviewtv.viewModel.AppViewModels
@@ -29,7 +30,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class)
 @Composable
-fun PerformersComponent( navController: NavController, appViewModel: AppViewModels){
+fun PerformersComponent( navController: NavHostController, appViewModel: AppViewModels){
 
     var ordering by remember { mutableStateOf("-created_at") }
 

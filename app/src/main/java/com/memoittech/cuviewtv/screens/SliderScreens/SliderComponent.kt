@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -57,7 +58,7 @@ import kotlin.math.absoluteValue
 @ExperimentalPagerApi
 @Composable
 fun SliderComponent(
-    navController: NavController
+    navController: NavHostController
 ){
 
     val videoViewModel : VideosViewModel = viewModel()
@@ -137,8 +138,8 @@ fun SliderComponent(
                                 .data(if (videos[page].has_thumbnail) "https://img.cugate.com/?o=eclass_video&i=${videos[page].id}&s=300" else "https://img.youtube.com/vi/${videos[page].youtube_id}/maxresdefault.jpg")
                                 .crossfade(true)
                                 .build(),
-                            placeholder = painterResource(id= R.drawable.some_image),
-                            error = painterResource(id= R.drawable.some_image),
+                            placeholder = painterResource(id= R.drawable.video),
+                            error = painterResource(id= R.drawable.video),
                             contentDescription = "Video thumbnail",
                             contentScale = ContentScale.Crop
                         )
@@ -166,8 +167,8 @@ fun SliderComponent(
                                             .data(if (videos[page].has_thumbnail) "https://img.cugate.com/?o=eclass_video&i=${videos[page].id}&s=300" else "https://img.youtube.com/vi/${videos[page].youtube_id}/maxresdefault.jpg")
                                             .crossfade(true)
                                             .build(),
-                                        placeholder = painterResource(id= R.drawable.some_image),
-                                        error = painterResource(id= R.drawable.some_image),
+                                        placeholder = painterResource(id= R.drawable.video),
+                                        error = painterResource(id= R.drawable.video),
                                         contentDescription = "Video thumbnail",
                                         contentScale = ContentScale.Crop
                                     )

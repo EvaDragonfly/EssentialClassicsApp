@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.memoittech.cuviewtv.model.moodList
 import com.memoittech.cuviewtv.ui.theme.DarkBg1
 import com.memoittech.cuviewtv.ui.theme.DarkBg2
@@ -177,7 +178,7 @@ private fun lerp(start: Float, end: Float, fraction: Float): Float {
 }
 
 @Composable
-fun ColorWheelExample(navController: NavController) {
+fun ColorWheelExample(navController: NavHostController) {
 
     val colors = listOf(
         Color.Red,

@@ -12,6 +12,7 @@ class AppViewModels : ViewModel() {
     var query by mutableStateOf("")
         private set
 
+
     fun onIndexChanged(newIndex: Int) {
         index = newIndex
     }

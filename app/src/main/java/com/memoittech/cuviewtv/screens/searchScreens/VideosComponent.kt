@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.memoittech.cuviewtv.components.VideoOvalItem
 import com.memoittech.cuviewtv.ui.theme.DarkBg2
 import com.memoittech.cuviewtv.ui.theme.GrayBlue
@@ -38,7 +39,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class)
 @Composable
-fun VideosComponent(navController: NavController , appViewModel: AppViewModels){
+fun VideosComponent(navController: NavHostController , appViewModel: AppViewModels){
 
     val videosViewModel : VideosViewModel = viewModel()
 

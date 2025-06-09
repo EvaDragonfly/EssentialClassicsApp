@@ -19,13 +19,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.ui.theme.DarkBg2
 import com.memoittech.cuviewtv.ui.theme.Violet
 
 @Composable
 fun TermsAndConditionsScreen(
-    navController: NavController
+    navController: NavHostController
 ){
 
     val context = LocalContext.current

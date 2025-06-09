@@ -19,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.memoittech.cuviewtv.ApiConstants
 import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.components.ButtonComponent
@@ -32,7 +33,7 @@ import retrofit2.Call
 import retrofit2.Response
 
 @Composable
-fun EmailConfirmationScreen(navController: NavController, email : String) {
+fun EmailConfirmationScreen(navController: NavHostController, email : String) {
 
     val dialogStatus = remember {
         mutableStateOf(false)

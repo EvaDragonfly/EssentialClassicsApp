@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.memoittech.cuviewtv.ui.theme.DarkBg2
 import com.memoittech.cuviewtv.viewModel.AppViewModels
@@ -22,33 +23,28 @@ import com.memoittech.cuviewtv.viewModel.AppViewModels
 @OptIn(ExperimentalPagerApi::class)
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
-fun OpenScreen (navController : NavController, appViewModel: AppViewModels) {
+fun OpenScreen (navController : NavHostController, appViewModel: AppViewModels, modifier : Modifier) {
 
-    Scaffold(
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(DarkBg2)
+    ) {
+        SliderComponent(navController)
+        LazyColumn(
+            modifier = Modifier.padding(5.dp)
+        ) {
+            item {
+                SliderComposersComponent(navController, appViewModel)
+            }
 
-        content = {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(DarkBg2)
-            ) {
-                SliderComponent(navController)
-                LazyColumn(
-                    modifier = Modifier.padding(5.dp)
-                ) {
-                    item {
-                        SliderComposersComponent(navController, appViewModel)
-                    }
+            item {
+                SliderPerformersComponent(navController, appViewModel)
+            }
 
-                    item {
-                        SliderPerformersComponent(navController, appViewModel)
-                    }
-
-                    item {
-                        SliderVideosComponent(navController, appViewModel)
-                    }
-                }
+            item {
+                SliderVideosComponent(navController, appViewModel)
             }
         }
-    )
+    }
 }
