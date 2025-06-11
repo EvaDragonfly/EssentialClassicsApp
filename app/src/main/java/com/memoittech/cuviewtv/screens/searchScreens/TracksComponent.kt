@@ -60,10 +60,10 @@ fun TracksComponent(navController: NavHostController , appViewModel: AppViewMode
             snapshotFlow { listState.firstVisibleItemIndex }
                 .distinctUntilChanged()
                 .collect { index ->
-                    if (isFirstLaunch) {
-                        isFirstLaunch = false
-                        return@collect
-                    }
+//                    if (isFirstLaunch) {
+//                        isFirstLaunch = false
+//                        return@collect
+//                    }
 
                     if (
                         index >= tracksViewModel.tracks.size - 10 &&
@@ -80,12 +80,16 @@ fun TracksComponent(navController: NavHostController , appViewModel: AppViewMode
                 .debounce(500)
                 .distinctUntilChanged()
                 .collect { value ->
+                    if (isFirstLaunch) {
+                        isFirstLaunch = false
+                        return@collect
+                    }
+
                     if (value.length >= 3) {
                         tracksViewModel.getTracksList(ordering, value, 0)
                     } else if (value.isEmpty()) {
                         tracksViewModel.getTracksList(ordering, "", 0)
                     }
-
                     listState.scrollToItem(0)
                 }
         }

@@ -7,7 +7,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.memoittech.cuviewtv.ApiConstants
 import com.memoittech.cuviewtv.TokenManager
@@ -55,7 +54,9 @@ class AuthViewModel(application : Application) : AndroidViewModel(application) {
                                } else {
                                    user = response.body()?.data
                                    navController.navigate("main/slider"){
-                                       popUpTo("auth") { inclusive = true }
+                                       popUpTo(0) {
+                                           inclusive = true
+                                       }
                                    }
                                }
                            }
@@ -82,16 +83,20 @@ class AuthViewModel(application : Application) : AndroidViewModel(application) {
             ApiConstants.retrofit.logout("Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<ResponseBody>{
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                     if(!response.isSuccessful){
-                        navController.navigate("main")
+                        navController.navigate("main/slider")
                     } else {
                         TokenManager.clearToken()
                         prefs.edit().remove("email").apply()
-                        navController.navigate("auth/login")
+                        navController.navigate("auth/login"){
+                            popUpTo(0){
+                                inclusive = true
+                            }
+                        }
                     }
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, response: Throwable) {
-                    navController.navigate("main")
+                    navController.navigate("main/slider")
                 }
 
             })

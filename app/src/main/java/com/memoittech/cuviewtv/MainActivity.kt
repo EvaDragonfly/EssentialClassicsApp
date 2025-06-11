@@ -26,12 +26,6 @@ class MainActivity : ComponentActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, true)
 
-        // Hide system bars
-//        WindowInsetsControllerCompat(window, window.decorView).let { controller ->
-//            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-//            controller.hide(WindowInsetsCompat.Type.systemBars())
-//        }
-
         TokenManager.init(applicationContext)
         enableEdgeToEdge()
         setContent {

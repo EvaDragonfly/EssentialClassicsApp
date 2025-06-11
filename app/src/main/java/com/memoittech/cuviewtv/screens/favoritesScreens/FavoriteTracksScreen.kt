@@ -7,9 +7,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -71,9 +74,7 @@ fun FavoriteTracksScreen(navController : NavHostController) {
         modifier = Modifier
             .fillMaxSize()
             .background(DarkBg2)
-            .padding(
-                top = 30.dp
-            )
+            .padding(WindowInsets.systemBars.asPaddingValues())
     ){
         Row(
             modifier = Modifier

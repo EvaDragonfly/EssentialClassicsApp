@@ -33,10 +33,10 @@ fun SplashScreen(navController: NavHostController) {
             }
         }
         isAuthenticated -> navController.navigate("main/slider") {
-            popUpTo("splash") { inclusive = true }
+            popUpTo(0) { inclusive = true }
         }
         else -> navController.navigate("auth/login") {
-            popUpTo("splash") { inclusive = true }
+            popUpTo(0) { inclusive = true }
         }
     }
 }

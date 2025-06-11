@@ -7,9 +7,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -18,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -55,7 +59,6 @@ fun PlayerScreen(
 ) {
 
     val videoViewModel : VideosViewModel = viewModel()
-    val trackViewModel : TracksViewModel = viewModel()
 
     val videoDetails = videoViewModel.videodetailResponse
     val videoTracks = videoViewModel.videoTracks
@@ -64,7 +67,7 @@ fun PlayerScreen(
 
     val context = LocalContext.current
 
-    var selectedTrack by remember { mutableStateOf(0) }
+    var selectedTrack by remember { mutableIntStateOf(0) }
 
     val youTubePlayerInstance = remember { mutableStateOf<YouTubePlayer?>(null) }
 
@@ -77,6 +80,12 @@ fun PlayerScreen(
 
     LaunchedEffect(videoDetails) {
         video = videoDetails
+    }
+
+    LaunchedEffect(videoTracks.size) {
+        if(videoTracks.size > 0){
+            selectedTrack = videoTracks[0].position
+        }
     }
 
     LaunchedEffect(listState) {
@@ -101,13 +110,13 @@ fun PlayerScreen(
     Surface(
         modifier = Modifier.fillMaxSize()
             .background(DarkBg2)
+            .padding(WindowInsets.systemBars.asPaddingValues())
     ){
         video?.let {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(DarkBg2)
-                    .padding(top=20.dp),
             ) {
                 Column (
                     modifier = Modifier
@@ -199,7 +208,6 @@ fun PlayerScreen(
                     LazyColumn(
                         state = listState,
                         modifier = Modifier
-                        .padding(20.dp, 0.dp)
                         .background(Color.Transparent)) {
                         item {
                             Text(
@@ -211,21 +219,20 @@ fun PlayerScreen(
                                 fontWeight = FontWeight.W400
                             )
                         }
-                        videoTracks.let {
-                            items(items = it){ it->
-                                VideoTrackItem(
-                                    track = it,
-                                    {
-                                        youTubePlayerInstance.value?.seekTo(it.starts_at.toFloat())
-                                        selectedTrack = it.position
-                                    },
-                                    {
-                                        navController.navigate(
-                                            "track_details/${it.track.id}"
-                                        )
-                                    },
-                                )
-                            }
+                        items(items = videoTracks){
+                            VideoTrackItem(
+                                track = it,
+                                selectedTrack = selectedTrack,
+                                {
+                                    youTubePlayerInstance.value?.seekTo(it.starts_at.toFloat())
+                                    selectedTrack = it.position
+                                },
+                                {
+                                    navController.navigate(
+                                        "track_details/${it.track.id}"
+                                    )
+                                },
+                            )
                         }
                     }
                 }

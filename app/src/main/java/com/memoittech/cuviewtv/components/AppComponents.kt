@@ -49,6 +49,7 @@ import coil.request.ImageRequest
 import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.model.Member
 import com.memoittech.cuviewtv.model.Track
+import com.memoittech.cuviewtv.model.Video
 import com.memoittech.cuviewtv.model.VideoTrack
 import com.memoittech.cuviewtv.ui.theme.DarkBg2
 import com.memoittech.cuviewtv.ui.theme.GrayBlue
@@ -366,13 +367,15 @@ fun VerticalTrackItem(track : Track, active_track_id : Int, onClick : () -> Unit
 
 
 @Composable
-fun VideoTrackItem(track : VideoTrack, onClick : () -> Unit, onMove : () -> Unit){
+fun VideoTrackItem(track : VideoTrack, selectedTrack : Int, onClick : () -> Unit, onMove : () -> Unit){
 
     var expanded = remember { mutableStateOf(false) }
 
     var trackItem by remember { mutableStateOf(track.track) }
 
     val tracksViewModel : TracksViewModel = viewModel()
+
+    val backgroundColor = if (track.position == selectedTrack) Violet else DarkBg2
 
     fun onFavoriteClick(item : Track){
         if(trackItem.is_favorite){
@@ -385,11 +388,12 @@ fun VideoTrackItem(track : VideoTrack, onClick : () -> Unit, onMove : () -> Unit
 
     Box (modifier = Modifier
         .fillMaxWidth()
-        .background(DarkBg2),
+        .background(backgroundColor),
         contentAlignment = Alignment.CenterEnd
     ){
         Row(modifier = Modifier.fillMaxWidth()
-            .height(62.dp)
+//            .height(62.dp)
+            .padding(20.dp, 5.dp)
             .background(color = Color.Transparent),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -434,7 +438,7 @@ fun VideoTrackItem(track : VideoTrack, onClick : () -> Unit, onMove : () -> Unit
                     fontSize = 15.sp,
                     fontWeight = FontWeight.W400,
                     color = Color.White,
-                    maxLines = 2,
+                    maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
@@ -463,7 +467,6 @@ fun VideoTrackItem(track : VideoTrack, onClick : () -> Unit, onMove : () -> Unit
                     modifier = Modifier.background(GrayBlueLight),
                     expanded = expanded.value,
                     onDismissRequest = { expanded.value = false },
-//                    offset = DpOffset(x = (-100).dp, y = 0.dp) // optional, tweak if needed
                 ) {
                     DropdownMenuItem(
                         text = {

@@ -211,13 +211,13 @@ class MembersViewModel : ViewModel(){
             ApiConstants.retrofit.getMemberTracks(id, pageSizeMemberTracks, currentMemberTracksOffset,"Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<MemberTracksResponse>{
                 override fun onResponse(call: Call<MemberTracksResponse>, response: Response<MemberTracksResponse>) {
                     if (!response.isSuccessful) {
-                        isMemberTracksLoading = false
                         errorMessage = response.message()
                     } else {
                         val newTracks = response.body()?.data?.results ?: emptyList()
                         memberTracks.addAll(newTracks)
                         currentMemberTracksOffset += newTracks.size
                     }
+                    isMemberTracksLoading = false
                 }
 
                 override fun onFailure(call: Call<MemberTracksResponse>, response: Throwable) {

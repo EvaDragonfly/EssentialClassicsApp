@@ -1,8 +1,11 @@
 package com.memoittech.cuviewtv.screens.appScreens
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -12,15 +15,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Scaffold
+import androidx.compose.material.TextButton
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
@@ -45,6 +52,34 @@ fun MainScreen(
 ){
 
     var currentTab by rememberSaveable { mutableStateOf(startTab) }
+    val context = LocalContext.current
+    var showExitDialog by remember { mutableStateOf(false) }
+
+
+    BackHandler {
+        showExitDialog = true
+    }
+
+    if (showExitDialog) {
+        AlertDialog(
+            onDismissRequest = { showExitDialog = false },
+            title = { Text("Exit App") },
+            text = { Text("Do you want to leave the app?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    showExitDialog = false
+                    (context as? Activity)?.finish()
+                }) {
+                    Text("Yes")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showExitDialog = false }) {
+                    Text("No")
+                }
+            }
+        )
+    }
 
     Scaffold(
         bottomBar = {

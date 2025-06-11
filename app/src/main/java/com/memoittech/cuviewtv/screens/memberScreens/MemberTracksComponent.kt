@@ -21,6 +21,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.memoittech.cuviewtv.components.VerticalTrackItem
+import com.memoittech.cuviewtv.ui.theme.DarkBg2
 import com.memoittech.cuviewtv.ui.theme.GrayBlue
 import com.memoittech.cuviewtv.ui.theme.Violet
 import com.memoittech.cuviewtv.viewModel.MembersViewModel
@@ -74,7 +75,9 @@ fun MemberTracksComponent( navController: NavHostController, id: Int){
             item {
                 if (viewModel.isMemberTracksLoading){
                     Text(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(DarkBg2),
                         text = "Loading...",
                         textAlign = TextAlign.Center,
                         color = GrayBlue
