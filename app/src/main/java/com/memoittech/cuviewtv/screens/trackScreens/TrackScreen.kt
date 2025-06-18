@@ -340,12 +340,28 @@ fun TrackScreen(id : Int, navController: NavHostController){
                                 {
                                     for (it in rowItem) {
                                         it?.let { it1 ->
-                                            VideoOvalItem(id = it1.id, youtube_id = it1.youtube_id, title = it1.title, has_thumbnail = it1.has_thumbnail) {
-                                                navController.navigate("player/${it.id}/${it.starts_at}") }
+                                            Box(
+                                                modifier = Modifier
+                                                    .weight(1f)
+                                                    .padding(5.dp)
+                                            ) {
+                                                VideoOvalItem(
+                                                    id = it1.id,
+                                                    youtube_id = it1.youtube_id,
+                                                    title = it1.title,
+                                                    has_thumbnail = it1.has_thumbnail
+                                                ) {
+                                                    navController.navigate("player/${it.id}/${it.starts_at}")
+                                                }
+                                            }
                                         }
                                     }
                                     if (rowItem.size < 2) {
-                                        Spacer(modifier = Modifier.weight(1f)) // Fill empty space if only 1 item in the last row
+                                        Box(
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .padding(10.dp)// Same padding as VideoOvalItem
+                                        )
                                     }
                                 }
                             }

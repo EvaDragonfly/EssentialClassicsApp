@@ -2,11 +2,13 @@ package com.memoittech.cuviewtv.screens.searchScreens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -106,12 +108,27 @@ fun VideosComponent(navController: NavHostController , appViewModel: AppViewMode
                         horizontalArrangement = Arrangement.SpaceAround
                     )
                     { for (it in rowItem) {
-                        VideoOvalItem(id = it.id, youtube_id = it.youtube_id, title = it.title, has_thumbnail = it.has_thumbnail) {
-                            navController.navigate("player/${it.id}/0")
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(5.dp)
+                        ) {
+                            VideoOvalItem(
+                                id = it.id,
+                                youtube_id = it.youtube_id,
+                                title = it.title,
+                                has_thumbnail = it.has_thumbnail
+                            ) {
+                                navController.navigate("player/${it.id}/0")
+                            }
                         }
                     }
                         if (rowItem.size < 2) {
-                            Spacer(modifier = Modifier.weight(1f)) // Fill empty space if only 1 item in the last row
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(10.dp)// Same padding as VideoOvalItem
+                            )
                         }
                     }
                 }

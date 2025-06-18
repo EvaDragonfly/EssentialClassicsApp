@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -101,7 +102,10 @@ fun SearchScreen(navController: NavHostController, appViewModel: AppViewModels, 
                             }
                         }
                         if (rowItem.size < 2) {
-                            Spacer(modifier = Modifier.weight(1f)) // Fill empty space if only 1 item in the last row
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)// Same padding as VideoOvalItem
+                            )
                         }
                     }
                 }

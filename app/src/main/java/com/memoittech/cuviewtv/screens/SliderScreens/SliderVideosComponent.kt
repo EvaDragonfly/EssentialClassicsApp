@@ -3,10 +3,12 @@ package com.memoittech.cuviewtv.screens.SliderScreens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
@@ -81,8 +83,18 @@ fun SliderVideosComponent(navController: NavHostController, appViewModel: AppVie
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ){
                 items(items = it){item ->
-                    VideoOvalItem(id = item.id, youtube_id = item.youtube_id, title = item.title, has_thumbnail = item.has_thumbnail) {
-                        navController.navigate("player/${item.id}/0")
+                    Box(
+                        modifier = Modifier
+                            .width(170.dp)
+                    ) {
+                        VideoOvalItem(
+                            id = item.id,
+                            youtube_id = item.youtube_id,
+                            title = item.title,
+                            has_thumbnail = item.has_thumbnail
+                        ) {
+                            navController.navigate("player/${item.id}/0")
+                        }
                     }
                 }
             }

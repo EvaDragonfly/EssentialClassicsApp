@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -74,8 +75,8 @@ fun MemberOvalItem(member : Member, onClick : () -> Unit){
         {
             AsyncImage(
                 modifier = Modifier
-                    .height(96.dp)
-                    .width(170.dp)
+                    .aspectRatio(1.77f)
+                    .fillMaxWidth()
                     .clip(RoundedCornerShape(8.dp)),
                 model = ImageRequest.Builder(LocalContext.current)
                     .data("https://img.cugate.com/?o=member&i=${member.id}&s=300")
@@ -94,8 +95,7 @@ fun MemberOvalItem(member : Member, onClick : () -> Unit){
                 textAlign = TextAlign.Start,
                 maxLines = 2,
                 modifier = Modifier
-                    .width(170.dp)
-                    .padding(5.dp, 5.dp)
+                    .fillMaxWidth()
             )
         }
 
@@ -105,7 +105,7 @@ fun MemberOvalItem(member : Member, onClick : () -> Unit){
 
 @Composable
 fun VideoOvalItem(id : Int, youtube_id:String, title: String, has_thumbnail : Boolean, onClick: () -> Unit){
-    Card (modifier = Modifier
+    Box (modifier = Modifier
         .background(color = Color.Transparent)
         .clickable { onClick() }
     ){
@@ -116,8 +116,8 @@ fun VideoOvalItem(id : Int, youtube_id:String, title: String, has_thumbnail : Bo
         {
             AsyncImage(
                 modifier = Modifier
-                    .height(96.dp)
-                    .width(170.dp)
+                    .aspectRatio(1.77f)
+                    .fillMaxWidth()
                     .clip(RoundedCornerShape(8.dp)),
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(if (has_thumbnail) "https://img.cugate.com/?o=eclass_video&i=${id}&s=300" else "https://img.youtube.com/vi/${youtube_id}/maxresdefault.jpg")
@@ -136,8 +136,8 @@ fun VideoOvalItem(id : Int, youtube_id:String, title: String, has_thumbnail : Bo
                 textAlign = TextAlign.Start,
                 maxLines = 2,
                 modifier = Modifier
-                    .width(170.dp)
-                    .padding(5.dp)
+                    .fillMaxWidth()
+                    .padding(10.dp, 5.dp)
             )
         }
 
@@ -647,11 +647,11 @@ fun SearchComponent(text:String, onTextChange: (String)->Unit,){
 //}
 
 
-//@Preview
-//@Composable
-//fun memberPreview(){
-//    VideoOvalItem(Video(9, "dadsaaas", "Antonio Vivaldi", "cdscsdcsdcw", 4532, "", 4 ,3 ,2), {})
-//}
+@Preview
+@Composable
+fun memberPreview(){
+    VideoOvalItem(3, "EvIZVBSzfjg", "video with the name I dont know what", true, {})
+}
 
 
 //@Preview

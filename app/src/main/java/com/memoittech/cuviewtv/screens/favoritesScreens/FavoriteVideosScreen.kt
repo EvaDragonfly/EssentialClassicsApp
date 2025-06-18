@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -118,12 +120,27 @@ fun FavoriteVideosScreen(navController : NavHostController) {
                     )
                     {
                         for (it in rowItem) {
-                            VideoOvalItem(id = it.video.id, youtube_id = it.video.youtube_id, title = it.video.title, has_thumbnail = it.video.has_thumbnail) {
-                                navController.navigate("player/${it.video.id}/0")
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(5.dp)
+                            ) {
+                                VideoOvalItem(
+                                    id = it.video.id,
+                                    youtube_id = it.video.youtube_id,
+                                    title = it.video.title,
+                                    has_thumbnail = it.video.has_thumbnail
+                                ) {
+                                    navController.navigate("player/${it.video.id}/0")
+                                }
                             }
                         }
                         if (rowItem.size < 2) {
-                            Spacer(modifier = Modifier.weight(1f)) // Fill empty space if only 1 item in the last row
+                            Box(
+                                modifier = Modifier
+                                    .padding(10.dp)
+                                    .weight(1f) // Same padding as VideoOvalItem
+                            )
                         }
                     }
                 }
