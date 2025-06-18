@@ -16,7 +16,6 @@ import com.memoittech.cuviewtv.model.User
 import com.memoittech.cuviewtv.model.UserResponse
 import com.memoittech.cuviewtv.model.VideoDetailsResponse
 import com.memoittech.cuviewtv.model.VideoResponse
-import com.memoittech.cuviewtv.model.VideoTracksResponse
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -138,13 +137,6 @@ interface RetrofitApi {
         @Header("Authorization") token : String
     ) : Call<VideoDetailsResponse>
 
-    @GET("/api/v1/ec_playlists/videos/{id}/tracks/")
-    fun getVideoTracks(
-        @Path("id") id: Int,
-        @Query("limit") limit: Int,
-        @Query("offset") offset: Int,
-        @Header("Authorization") token : String
-    ) : Call<VideoTracksResponse>
 
     @FormUrlEncoded
     @POST("/api/v1/ec_playlists/favorites/members/")

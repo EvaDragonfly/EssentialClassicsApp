@@ -35,7 +35,7 @@ fun SliderPerformersComponent (navController: NavHostController, appViewModel: A
     val viewModel : MembersViewModel = viewModel()
 
     LaunchedEffect(Unit) {
-        viewModel.getPerformersList( 1,"position", "", 1)
+        viewModel.getPerformersList( 1,"position", "", 0)
     }
 
     val performers = viewModel.performers

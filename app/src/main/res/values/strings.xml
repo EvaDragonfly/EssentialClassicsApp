@@ -6,7 +6,7 @@
     <string name="password">Password </string>
     <string name="hide_password">hide password</string>
     <string name="show_password">Show password</string>
-    <string name="terms_and_conditions">By continuing you accept our Privacy Policy and Term of Use</string>
+    <string name="terms_and_conditions">By continuing you accept our Privacy Policy</string>
     <string name="terms_and_conditions_header">Terms of Use</string>
     <string name="register">Sign Up</string>
     <string name="login">"Sign In"</string>

@@ -267,7 +267,10 @@ fun TrackScreen(id : Int, navController: NavHostController){
                                 Column(
                                     modifier = Modifier
                                         .padding(top = 30.dp)
-                                        .fillMaxWidth(),
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            navController.navigate("player/${trackVideos[0]?.id}/${trackVideos[0]?.starts_at}")
+                                        },
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ){
                                     Box(
@@ -294,9 +297,6 @@ fun TrackScreen(id : Int, navController: NavHostController){
                                             painter = painterResource(R.drawable.playericon),
                                             contentDescription = "Play",
                                             modifier = Modifier.padding(15.dp)
-                                                .clickable {
-                                                    navController.navigate("player/${trackVideos[0]?.id}/${trackVideos[0]?.starts_at}")
-                                                }
                                         )
                                     }
                                     trackVideos[0]?.title?.let { it1 ->
@@ -341,7 +341,7 @@ fun TrackScreen(id : Int, navController: NavHostController){
                                     for (it in rowItem) {
                                         it?.let { it1 ->
                                             VideoOvalItem(id = it1.id, youtube_id = it1.youtube_id, title = it1.title, has_thumbnail = it1.has_thumbnail) {
-                                                navController.navigate("player/${it.id}/${it.starts_at.toFloat()}") }
+                                                navController.navigate("player/${it.id}/${it.starts_at}") }
                                         }
                                     }
                                     if (rowItem.size < 2) {

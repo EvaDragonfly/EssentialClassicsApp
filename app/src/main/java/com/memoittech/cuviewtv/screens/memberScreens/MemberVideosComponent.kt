@@ -69,7 +69,7 @@ fun MemberVideosComponent(navController: NavHostController, id: Int){
                 {
                     for (it in rowItem) {
                         VideoOvalItem(id = it.id, youtube_id = it.youtube_id, title = it.title, has_thumbnail = it.has_thumbnail) {
-                            navController.navigate("player/${it.id}/${it.starts_at.toFloat()}")
+                            navController.navigate("player/${it.id}/${it.starts_at}")
                         }
                     }
                     if (rowItem.size < 2) {

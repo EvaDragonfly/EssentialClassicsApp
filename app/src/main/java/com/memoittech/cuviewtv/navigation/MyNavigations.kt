@@ -75,11 +75,11 @@ fun MyNavigations(){
             route = "player/{id}/{starts_at}",
             arguments = listOf(
                 navArgument("id") { type = NavType.IntType },
-                navArgument("starts_at") { type = NavType.FloatType }
+                navArgument("starts_at") { type = NavType.IntType }
             )
         ){ backStackEntry ->
                 val id = backStackEntry.arguments?.getInt("id")
-                val starts_at = backStackEntry.arguments?.getFloat("starts_at")
+                val starts_at = backStackEntry.arguments?.getInt("starts_at")
                 id?.let { starts_at?.let { it1 -> PlayerScreen(navController, id = it, starts_at = it1) } }
         }
 

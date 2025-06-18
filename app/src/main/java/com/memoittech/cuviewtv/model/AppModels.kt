@@ -116,17 +116,6 @@ data class VideoTrack(
     val ends_at: Int
 ){}
 
-data class VideoTrackData(
-    val count: Int,
-    val next: String,
-    val previous: String,
-    val results : List<VideoTrack>
-){}
-
-data class VideoTracksResponse(
-    val code : Int,
-    val data : VideoTrackData
-){}
 
 data class FavoriteVideo(
     val video : Video,
@@ -191,7 +180,8 @@ data class VideoDetailsData(
     val description: String,
     val duration: Int,
     val is_favorite: Boolean,
-    val has_thumbnail: Boolean
+    val has_thumbnail: Boolean,
+    val tracks : List<VideoTrack>
 ){}
 
 data class VideoDetailsResponse(

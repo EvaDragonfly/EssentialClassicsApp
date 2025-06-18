@@ -90,7 +90,7 @@ fun PerformersComponent( navController: NavHostController, appViewModel: AppView
                 modifier = Modifier.fillMaxWidth()
             ) {
                 items(items = it) { item ->
-                    MemberHorizontalItem(item, { onMemberClick(item.id) })
+                    MemberHorizontalItem(item) { onMemberClick(item.id) }
                 }
                 item {
                     if (performersViewModel.isPerformerLoading){

@@ -80,7 +80,7 @@ fun LoginScreen (navController: NavHostController) {
             alertText.value = "Password should contain 8 symbols"
             dialogStatus.value = true
         } else if (!isValidPassword(password)){
-            alertText.value ="Password Should contain letters, numbers and special characters"
+            alertText.value ="Password Should contain letters and special characters"
             dialogStatus.value = true
         } else {
             ApiConstants.retrofit.signIn(user).enqueue( object : retrofit2.Callback<ResponseBody>{

@@ -45,6 +45,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.memoittech.cuviewtv.R
+import com.memoittech.cuviewtv.ui.theme.DarkBg2
 import com.memoittech.cuviewtv.ui.theme.Gray
 import com.memoittech.cuviewtv.ui.theme.GrayBlue
 import com.memoittech.cuviewtv.ui.theme.GrayBlueLight
@@ -208,7 +209,7 @@ fun CheckBoxComponent(
             colors = CheckboxDefaults.colors(
                 checkedColor = Color.White,
                 uncheckedColor = Color.Gray,
-                checkmarkColor = Color.White
+                checkmarkColor = DarkBg2
             )
         )
 
@@ -230,9 +231,9 @@ fun CheckBoxComponent(
 @Composable
 fun ClickableTextComponent(value: String, onTextSelected : (String)->Unit){
     val initialText = "By continuing you accept our "
-    val privacyPolicyText = "privacy_policy"
-    val andText = " and "
-    val termsAndConditionsText = "Term of Use"
+    val privacyPolicyText = "Privacy Policy"
+//    val andText = " and "
+//    val termsAndConditionsText = "Term of Use"
 
     val annotatedString = buildAnnotatedString {
         append(initialText)
@@ -240,11 +241,11 @@ fun ClickableTextComponent(value: String, onTextSelected : (String)->Unit){
             pushStringAnnotation(tag = privacyPolicyText , annotation = privacyPolicyText)
             append(privacyPolicyText)
         }
-        append(andText)
-        withStyle(style = SpanStyle(color = GrayBlue)){
-            pushStringAnnotation(tag = termsAndConditionsText , annotation = termsAndConditionsText)
-            append(termsAndConditionsText)
-        }
+//        append(andText)
+//        withStyle(style = SpanStyle(color = GrayBlue)){
+//            pushStringAnnotation(tag = termsAndConditionsText , annotation = termsAndConditionsText)
+//            append(termsAndConditionsText)
+//        }
     }
 
     ClickableText(text = annotatedString,
@@ -254,7 +255,7 @@ fun ClickableTextComponent(value: String, onTextSelected : (String)->Unit){
         onClick = { offset ->
         annotatedString.getStringAnnotations(offset, offset)
             .firstOrNull()?.also {span ->
-                if ((span.item == termsAndConditionsText) || (span.item == privacyPolicyText)){
+                if (span.item == privacyPolicyText){
                     onTextSelected(span.item)
                 }
             }

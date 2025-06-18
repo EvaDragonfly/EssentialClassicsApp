@@ -53,7 +53,7 @@ fun TermsAndConditionsScreen(
         Text(
             modifier = Modifier.fillMaxWidth()
                 .padding(bottom = 20.dp),
-            text = "privacy_policy",
+            text = "Privacy Policy",
             fontSize = 20.sp,
             color = Violet,
             fontWeight = FontWeight.W500,

@@ -41,6 +41,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -161,8 +162,10 @@ fun MemberHorizontalItem(member : Member, onClick : () -> Unit){
         )
         {
             Row(
-                modifier = Modifier.height(60.dp),
-                verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier
+                    .height(60.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ){
                 AsyncImage(
                     modifier = Modifier
@@ -183,13 +186,16 @@ fun MemberHorizontalItem(member : Member, onClick : () -> Unit){
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
+                    maxLines = 2,
                     textAlign = TextAlign.Start,
                     modifier = Modifier
                         .padding(20.dp, 0.dp)
+                        .weight(1f)
                 )
+                Image(
+                    painter = painterResource(R.drawable.leftarrow),
+                    contentDescription = "show details")
             }
-
-            Image(painter = painterResource(R.drawable.leftarrow)  , contentDescription = "show details")
         }
 
     }
@@ -375,7 +381,7 @@ fun VideoTrackItem(track : VideoTrack, selectedTrack : Int, onClick : () -> Unit
 
     val tracksViewModel : TracksViewModel = viewModel()
 
-    val backgroundColor = if (track.position == selectedTrack) Violet else DarkBg2
+    val backgroundColor = if (track.starts_at == selectedTrack) Violet else DarkBg2
 
     fun onFavoriteClick(item : Track){
         if(trackItem.is_favorite){
@@ -637,7 +643,7 @@ fun SearchComponent(text:String, onTextChange: (String)->Unit,){
 //@Preview
 //@Composable
 //fun memberPreview(){
-//    MemberHorizontalItem(Member(9, "dadsaaas sdasda xcaccs", 3), {})
+//    MemberHorizontalItem(Member(9, "dadsaaas cs bchusdc dshdbcs dahdsca", 3), {})
 //}
 
 

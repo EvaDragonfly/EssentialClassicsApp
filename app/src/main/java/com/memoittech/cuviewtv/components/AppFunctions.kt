@@ -10,8 +10,8 @@ fun isValidEmail(email: String): Boolean {
 }
 
 fun isValidPassword(password: String): Boolean {
-    val passwordRegex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@\$!%*?&])[A-Za-z\\d@\$!%*?&]{8,}$"
-    return password.matches(passwordRegex.toRegex())
+    val regex = Regex("^(?=.*[A-Za-z])(?=.*[!@#\$%^&*(),.?\":{}|<>']).+$")
+    return password.matches(regex)
 }
 
 fun formatSecondsToTime(seconds: Int): String {

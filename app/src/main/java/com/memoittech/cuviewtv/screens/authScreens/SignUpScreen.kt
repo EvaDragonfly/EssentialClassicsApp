@@ -1,5 +1,7 @@
 package com.memoittech.cuviewtv.screens.authScreens
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -18,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -54,6 +57,8 @@ fun SignUpScreen (navController: NavHostController) {
 
     val user = User(email = email, password = password)
 
+    val context = LocalContext.current
+
     val dialogStatus = remember {
         mutableStateOf(false)
     }
@@ -72,7 +77,7 @@ fun SignUpScreen (navController: NavHostController) {
             alertText.value = "Password should contain 8 symbols"
             dialogStatus.value = true
         } else if (!isValidPassword(password)){
-            alertText.value ="Password Should contain letters, numbers and special characters"
+            alertText.value ="Password Should contain letters and special characters"
             dialogStatus.value = true
         } else if (!checked){
             alertText.value ="Please, agree the privacy policy"
@@ -160,7 +165,9 @@ fun SignUpScreen (navController: NavHostController) {
                         checked = !checked
                     },
                     onTextSelected = {
-                        navController.navigate("auth/terms_and_conditions")
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://memoittech.com/privacy-policy-apps/"))
+                        context.startActivity(intent)
+//                        navController.navigate("auth/terms_and_conditions")
                     }
                 )
 //                Spacer(modifier = Modifier.height(80.dp))

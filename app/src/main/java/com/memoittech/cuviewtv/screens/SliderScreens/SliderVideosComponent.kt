@@ -82,7 +82,7 @@ fun SliderVideosComponent(navController: NavHostController, appViewModel: AppVie
             ){
                 items(items = it){item ->
                     VideoOvalItem(id = item.id, youtube_id = item.youtube_id, title = item.title, has_thumbnail = item.has_thumbnail) {
-                        navController.navigate("player/${item.id}/${0f}")
+                        navController.navigate("player/${item.id}/0")
                     }
                 }
             }

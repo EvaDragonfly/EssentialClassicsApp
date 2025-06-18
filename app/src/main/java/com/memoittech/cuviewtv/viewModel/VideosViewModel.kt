@@ -17,9 +17,6 @@ import com.memoittech.cuviewtv.model.Video
 import com.memoittech.cuviewtv.model.VideoDetailsData
 import com.memoittech.cuviewtv.model.VideoDetailsResponse
 import com.memoittech.cuviewtv.model.VideoResponse
-import com.memoittech.cuviewtv.model.VideoTrack
-import com.memoittech.cuviewtv.model.VideoTrackData
-import com.memoittech.cuviewtv.model.VideoTracksResponse
 import com.memoittech.cuviewtv.model.VideosData
 import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
@@ -29,7 +26,6 @@ import retrofit2.Response
 class VideosViewModel : ViewModel(){
     var videos = mutableStateListOf<Video>()
     var favouriteVideos = mutableStateListOf<FavoriteVideo>()
-    var videoTracks = mutableStateListOf<VideoTrack>()
 
     var isLoading by mutableStateOf(false)
         private set
@@ -40,11 +36,6 @@ class VideosViewModel : ViewModel(){
         private set
     private var currentOffsetFavVideos = 0
     private val pageSizeFavVideos = 30
-
-    var isVideoTracksLoading by mutableStateOf(false)
-        private set
-    private var currentOffsetVideoTracks = 0
-    private val pageSizeVideoTracks = 20
 
     var sliderVideosResponse by mutableStateOf<VideosData?>(null)
     var videodetailResponse by mutableStateOf<VideoDetailsData?>(null)
@@ -168,32 +159,6 @@ class VideosViewModel : ViewModel(){
         }
     }
     
-    
-    fun getVideoTracks(id : Int){
-        if (isVideoTracksLoading) return
-        isVideoTracksLoading = true
 
-        viewModelScope.launch {
-            ApiConstants.retrofit.getVideoTracks(id, pageSizeVideoTracks, currentOffsetVideoTracks,"Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<VideoTracksResponse>{
-                override fun onResponse(call: Call<VideoTracksResponse>, response: Response<VideoTracksResponse>) {
-                    isVideoTracksLoading = false
-                    if (!response.isSuccessful) {
-                        errorMessage = response.message()
-                    } else {
-                        val newTracks = response.body()?.data?.results ?: emptyList()
-                        videoTracks.addAll(newTracks)
-                        currentOffsetVideoTracks += newTracks.size
-                    }
-                }
-
-                override fun onFailure(call: Call<VideoTracksResponse>, response: Throwable) {
-                    isVideoTracksLoading = false
-                    errorMessage = response.toString()
-                }
-
-            })
-        }
-    }
-    
 }
 

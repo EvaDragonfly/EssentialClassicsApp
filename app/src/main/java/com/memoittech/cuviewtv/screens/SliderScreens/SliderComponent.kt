@@ -72,11 +72,11 @@ fun SliderComponent(
     val pagerState = videos?.size?.let {
         rememberPagerState(
         pageCount = it,
-        initialPage = 2
+        initialPage = 0
     )
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(Unit, videos?.size) {
         while (true){
             yield()
             delay(2000)
@@ -155,7 +155,7 @@ fun SliderComponent(
                                         .width(360.dp)
                                         .height(205.dp)
                                         .clickable {
-                                            navController.navigate("player/${videos[page].id}/${0f}")
+                                            navController.navigate("player/${videos[page].id}/0")
                                         },
                                     contentAlignment = Alignment.BottomEnd
                                 ){

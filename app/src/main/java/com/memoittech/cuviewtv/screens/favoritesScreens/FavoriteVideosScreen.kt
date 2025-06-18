@@ -119,7 +119,7 @@ fun FavoriteVideosScreen(navController : NavHostController) {
                     {
                         for (it in rowItem) {
                             VideoOvalItem(id = it.video.id, youtube_id = it.video.youtube_id, title = it.video.title, has_thumbnail = it.video.has_thumbnail) {
-                                navController.navigate("player/${it.video.id}/${0f}")
+                                navController.navigate("player/${it.video.id}/0")
                             }
                         }
                         if (rowItem.size < 2) {

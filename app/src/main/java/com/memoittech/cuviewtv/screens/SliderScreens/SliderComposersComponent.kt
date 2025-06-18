@@ -34,7 +34,7 @@ fun SliderComposersComponent(navController: NavHostController, appViewModel: App
     val viewModels : MembersViewModel = viewModel()
 
     LaunchedEffect(Unit) {
-        viewModels.getComposerList(1,"position", "", 1)
+        viewModels.getComposerList(1,"position", "", 0)
     }
 
     val composers = viewModels.composers

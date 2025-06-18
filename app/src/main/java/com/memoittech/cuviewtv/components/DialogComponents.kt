@@ -107,7 +107,7 @@ fun CustomDialog(
             alertText = "Password should contain 8 symbols"
 //            dialogStatus.value = true
         } else if (!isValidPassword(password)){
-            alertText ="Password Should contain letters, numbers and special characters"
+            alertText ="Password Should contain letters and special characters"
 //            dialogStatus.value = true
         } else {
             authViewModel.changePassword(password, { onConfirm() }, { setAlertText("") })

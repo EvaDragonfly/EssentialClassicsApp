@@ -107,7 +107,7 @@ fun VideosComponent(navController: NavHostController , appViewModel: AppViewMode
                     )
                     { for (it in rowItem) {
                         VideoOvalItem(id = it.id, youtube_id = it.youtube_id, title = it.title, has_thumbnail = it.has_thumbnail) {
-                            navController.navigate("player/${it.id}/${0f}")
+                            navController.navigate("player/${it.id}/0")
                         }
                     }
                         if (rowItem.size < 2) {

@@ -48,7 +48,7 @@ import com.memoittech.cuviewtv.viewModel.AppViewModels
 fun MainScreen(
     navController: NavHostController,
     appViewModel: AppViewModels,
-    startTab: String
+    startTab: String = "main/slider"
 ){
 
     var currentTab by rememberSaveable { mutableStateOf(startTab) }

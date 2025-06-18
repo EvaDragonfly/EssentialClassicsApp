@@ -1,5 +1,7 @@
 package com.memoittech.cuviewtv.screens.MoodScreens
 
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,6 +24,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,8 +46,12 @@ import com.memoittech.cuviewtv.ui.theme.GrayBlue
 
 import com.memoittech.cuviewtv.viewModel.MoodsViewModel
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.YouTubePlayerTracker
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun MoodDetailsScreen(
     id : Int,
@@ -53,9 +61,14 @@ fun MoodDetailsScreen(
 
     val youTubePlayerInstance = remember { mutableStateOf<YouTubePlayer?>(null) }
 
+    val youTubePlayerTracker = remember { YouTubePlayerTracker() }
+
     var track by remember { mutableStateOf<MoodTrack?>(null) }
 
     val viewModel : MoodsViewModel = viewModel()
+
+    val scope = rememberCoroutineScope()
+    val listState = rememberLazyListState()
 
     LaunchedEffect(id) {
         viewModel.getMoodTracks(id)
@@ -67,16 +80,23 @@ fun MoodDetailsScreen(
         if (tracks != null) {
             track = tracks[0]
             track?.starts_at?.toFloat()
-                ?.let { youTubePlayerInstance.value?.loadVideo(track?.video?.youtube_id.toString(), it) }
+                ?.let {
+                    youTubePlayerInstance.value?.loadVideo(
+                        track?.video?.youtube_id.toString(),
+                        it
+                    ) }
         }
     }
+
 
 
     fun onTrackClick(item: MoodTrack){
         if(item.video.youtube_id == track?.video?.youtube_id){
             youTubePlayerInstance.value?.seekTo(item.starts_at.toFloat())
+            youTubePlayerInstance.value?.play()
         } else {
             youTubePlayerInstance.value?.loadVideo(item.video.youtube_id, item.starts_at.toFloat())
+            youTubePlayerInstance.value?.play()
         }
         track = item
     }
@@ -124,7 +144,10 @@ fun MoodDetailsScreen(
 
                     track?.video?.youtube_id?.let {
                         track?.starts_at?.toFloat()?.let { it1 ->
-                            PlayerComponent(it, it1) { player ->
+                            PlayerComponent(it,
+                                it1,
+                                youTubePlayerTracker,
+                            ) { player ->
                                 youTubePlayerInstance.value = player
                             }
                         }
@@ -152,7 +175,9 @@ fun MoodDetailsScreen(
 
                     Separator()
 
-                    LazyColumn(modifier = Modifier
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier
                         .padding(10.dp, 0.dp)
                         .background(Color.Transparent)) {
                         tracks?.let {
