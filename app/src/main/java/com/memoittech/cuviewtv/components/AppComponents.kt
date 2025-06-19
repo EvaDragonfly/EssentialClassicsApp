@@ -32,16 +32,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,6 +54,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.model.Member
+import com.memoittech.cuviewtv.model.Member_Wrapper
 import com.memoittech.cuviewtv.model.Track
 import com.memoittech.cuviewtv.model.Video
 import com.memoittech.cuviewtv.model.VideoTrack
@@ -259,6 +264,10 @@ fun VerticalTrackItem(track : Track, active_track_id : Int, onClick : () -> Unit
 
     var trackItem by remember { mutableStateOf(track) }
 
+    val showFull = remember { mutableStateOf(false) }
+
+    val part = trackItem.part.takeIf { it.isNotEmpty() }?.let { ": $it" } ?: ""
+
     fun onFavoriteClick(item : Track){
         if(trackItem.is_favorite){
             tracksViewModel.addFavoriteTrack(item.id, true)
@@ -275,7 +284,6 @@ fun VerticalTrackItem(track : Track, active_track_id : Int, onClick : () -> Unit
     ){
         Row(modifier = Modifier.fillMaxWidth()
             .padding(10.dp)
-            .height(62.dp)
             .background(color = Color.Transparent),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -297,16 +305,16 @@ fun VerticalTrackItem(track : Track, active_track_id : Int, onClick : () -> Unit
                     fontSize = 13.sp,
                     fontWeight = FontWeight.W600,
                     color = Color.White,
-                    maxLines = 1,
+                    maxLines = if(showFull.value) 5 else 1,
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
-                    text = trackItem.title,
+                    text = "${trackItem.title}${part}",
                     fontSize = 15.sp,
                     fontWeight = FontWeight.W400,
                     color = Color.White,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
+                    maxLines = if(showFull.value) 5 else 1,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Text(
                     text = trackItem.performers
@@ -316,57 +324,75 @@ fun VerticalTrackItem(track : Track, active_track_id : Int, onClick : () -> Unit
                     fontWeight = FontWeight.W400,
                     fontStyle = FontStyle.Italic,
                     color = Color.White,
-                    maxLines = 1,
+                    maxLines = if(showFull.value) 5 else 1,
                     overflow = TextOverflow.Ellipsis,
                 )
             }
-            Box {
+            Row (
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+
                 Image(
+                    painter = painterResource(
+                        if(showFull.value)
+                            R.drawable.uparrow
+                        else R.drawable.downarrow
+                    ),
+                    contentDescription = "",
                     modifier = Modifier
-                        .clickable {
-                            expanded.value = true
-                        },
-                    painter = painterResource(id = R.drawable.dotsblue),
-                    contentDescription = "menu"
+                        .padding(end = 10.dp)
+                        .clickable { showFull.value = !showFull.value }
                 )
 
-                DropdownMenu(
-                    modifier = Modifier.background(GrayBlueLight),
-                    expanded = expanded.value,
-                    onDismissRequest = { expanded.value = false },
-//                    offset = DpOffset(x = (-100).dp, y = 0.dp) // optional, tweak if needed
-                ) {
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                modifier = Modifier.fillMaxWidth(),
-                                textAlign = TextAlign.Center,
-                                text = "Go to Track",
-                                color = DarkBg2
-                            )
-                        },
-                        onClick = {
-                            onMove()
-                            expanded.value=false
-                        }
+                Box {
+                    Image(
+                        modifier = Modifier
+                            .clickable {
+                                expanded.value = true
+                            },
+                        painter = painterResource(id = R.drawable.dotsblue),
+                        contentDescription = "menu"
                     )
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                modifier = Modifier.fillMaxWidth(),
-                                textAlign = TextAlign.Center,
-                                text = if (trackItem.is_favorite) "Delete from favorites" else "Add to favorites",
-                                color = DarkBg2
-                            )
-                        },
-                        onClick = {
-                            onFavoriteClick(trackItem)
-                            expanded.value=false
-                        }
-                    )
-                }
-            }
 
+                    DropdownMenu(
+                        modifier = Modifier.background(GrayBlueLight),
+                        expanded = expanded.value,
+                        onDismissRequest = { expanded.value = false },
+//                    offset = DpOffset(x = (-100).dp, y = 0.dp) // optional, tweak if needed
+                    ) {
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textAlign = TextAlign.Center,
+                                    text = "Go to Track",
+                                    color = DarkBg2
+                                )
+                            },
+                            onClick = {
+                                onMove()
+                                expanded.value=false
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textAlign = TextAlign.Center,
+                                    text = if (trackItem.is_favorite) "Delete from favorites" else "Add to favorites",
+                                    color = DarkBg2
+                                )
+                            },
+                            onClick = {
+                                onFavoriteClick(trackItem)
+                                expanded.value=false
+                            }
+                        )
+                    }
+                }
+
+            }
         }
     }
 }
@@ -380,6 +406,16 @@ fun VideoTrackItem(track : VideoTrack, selectedTrack : Int, onClick : () -> Unit
     var trackItem by remember { mutableStateOf(track.track) }
 
     val tracksViewModel : TracksViewModel = viewModel()
+
+    val showFull = remember { mutableStateOf(false) }
+
+    val part = trackItem.part.takeIf { it.isNotEmpty() }?.let { ": $it" } ?: ""
+
+    val timeText = formatSecondsToTime(track.starts_at)
+
+    val composersText = trackItem.composers
+        .map { it.member_title }
+        .joinToString(",")
 
     val backgroundColor = if (track.starts_at == selectedTrack) Violet else DarkBg2
 
@@ -415,38 +451,32 @@ fun VideoTrackItem(track : VideoTrack, selectedTrack : Int, onClick : () -> Unit
                 .align(Alignment.CenterVertically)
 
             ) {
-                Row(modifier = Modifier) {
-
-                    Text(
-                        modifier = Modifier.padding(end = 8.dp),
-                        text = formatSecondsToTime(track.starts_at),
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.W600,
-                        color = GrayBlue,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-
-                    Text(
-                        text = trackItem.composers
-                            .map { it.member_title}
-                            .joinToString(","),
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.W600,
-                        color = Color.White,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
 
                 Text(
-                    text = trackItem.title,
+                    buildAnnotatedString {
+                        withStyle(style = SpanStyle(color = GrayBlue)) {
+                            append(timeText)
+                        }
+                        append(" ")
+                        withStyle(style = SpanStyle(color = Color.White)) {
+                            append(composersText)
+                        }
+                    },
+                    modifier = Modifier.padding(end = 8.dp),
+                    fontWeight = FontWeight.W600,
+                    maxLines = if(showFull.value) 5 else 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Text(
+                    text = "${trackItem.title}${part}",
                     fontSize = 15.sp,
                     fontWeight = FontWeight.W400,
                     color = Color.White,
-                    maxLines = 1,
+                    maxLines = if(showFull.value) 5 else 1,
                     overflow = TextOverflow.Ellipsis,
                 )
+
                 Text(
                     text = trackItem.performers
                         .map { it.member_title}
@@ -455,57 +485,74 @@ fun VideoTrackItem(track : VideoTrack, selectedTrack : Int, onClick : () -> Unit
                     fontWeight = FontWeight.W400,
                     fontStyle = FontStyle.Italic,
                     color = Color.White,
-                    maxLines = 1,
+                    maxLines = if(showFull.value) 5 else 1,
                     overflow = TextOverflow.Ellipsis,
                 )
             }
-            Box {
+
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Image(
+                    painter = painterResource(
+                        if(showFull.value)
+                            R.drawable.uparrow
+                        else R.drawable.downarrow
+                    ),
+                    contentDescription = "",
                     modifier = Modifier
-                        .clickable {
-                            expanded.value = true
-                        },
-                    painter = painterResource(id = R.drawable.dotsblue),
-                    contentDescription = "menu"
+                        .padding(end = 10.dp)
+                        .clickable { showFull.value = !showFull.value }
                 )
 
-                DropdownMenu(
-                    modifier = Modifier.background(GrayBlueLight),
-                    expanded = expanded.value,
-                    onDismissRequest = { expanded.value = false },
-                ) {
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                modifier = Modifier.fillMaxWidth(),
-                                textAlign = TextAlign.Center,
-                                text = "Go to Track",
-                                color = DarkBg2
-                            )
-                        },
-                        onClick = {
-                            expanded.value = false
-                            onMove()
-                        }
+                Box {
+                    Image(
+                        modifier = Modifier
+                            .clickable {
+                                expanded.value = true
+                            },
+                        painter = painterResource(id = R.drawable.dotsblue),
+                        contentDescription = "menu"
                     )
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                modifier = Modifier.fillMaxWidth(),
-                                textAlign = TextAlign.Center,
-                                text = if (trackItem.is_favorite) "Delete from favorites" else "Add to favorites",
-                                color = DarkBg2
-                            )
-                        },
-                        onClick = {
-                            expanded.value = false
-                            onFavoriteClick(trackItem)
-                        }
-                    )
+
+                    DropdownMenu(
+                        modifier = Modifier.background(GrayBlueLight),
+                        expanded = expanded.value,
+                        onDismissRequest = { expanded.value = false },
+                    ) {
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textAlign = TextAlign.Center,
+                                    text = "Go to Track",
+                                    color = DarkBg2
+                                )
+                            },
+                            onClick = {
+                                expanded.value = false
+                                onMove()
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textAlign = TextAlign.Center,
+                                    text = if (trackItem.is_favorite) "Delete from favorites" else "Add to favorites",
+                                    color = DarkBg2
+                                )
+                            },
+                            onClick = {
+                                expanded.value = false
+                                onFavoriteClick(trackItem)
+                            }
+                        )
+                    }
                 }
+
             }
-
-
         }
     }
 }
@@ -647,25 +694,25 @@ fun SearchComponent(text:String, onTextChange: (String)->Unit,){
 //}
 
 
+//@Preview
+//@Composable
+//fun memberPreview(){
+//    VideoOvalItem(3, "EvIZVBSzfjg", "video with the name I dont know what", true, {})
+//}
+
+
+//@Preview
+//@Composable
+//fun memberPreview(){
+//    VideoTrackItem(VideoTrack(Track(3, "johan sd sebastian bach", "fgjf dasdas fdwadas dasdeasdqa",  listOf(Member_Wrapper(3, "dcfcn"), Member_Wrapper(5,"dcfcn jhbuhdsc cdsc sxcsdc dscsdcvsvd sdcsdcsdcv sdvcsdvcsdv dvsdvsd")), listOf(Member_Wrapper(6,"dcfcn dfhsbudcys dchasudca dcahcb dhab ahdba"), Member_Wrapper(7, "dcfcn")), 6, true), 1, 0, 154 ), 3, {}, {})
+//}
+
+
 @Preview
 @Composable
 fun memberPreview(){
-    VideoOvalItem(3, "EvIZVBSzfjg", "video with the name I dont know what", true, {})
+    VerticalTrackItem(Track(3, "johan sd sebastian bach", "fgjf", listOf(Member_Wrapper(3, "dcfcn"), Member_Wrapper(5,"dcfcn jhbuhdsc cdsc sxcsdc dscsdcvsvd sdcsdcsdcv sdvcsdvcsdv dvsdvsd")), listOf(Member_Wrapper(6,"dcfcn dfhsbudcys dchasudca dcahcb dhab ahdba"), Member_Wrapper(7, "dcfcn")), 6, true), 3, {}, {})
 }
-
-
-//@Preview
-//@Composable
-//fun memberPreview(){
-//    VideoTrackItem(VideoTrack(Track(3, "johan sd sebastian bach", "fgjf",  listOf(Member_Wrapper(3, "dcfcn"), Member_Wrapper(5,"dcfcn jhbuhdsc cdsc sxcsdc dscsdcvsvd sdcsdcsdcv sdvcsdvcsdv dvsdvsd")), listOf(Member_Wrapper(6,"dcfcn dfhsbudcys dchasudca dcahcb dhab ahdba"), Member_Wrapper(7, "dcfcn")), 6), 1, 0, 154 ), {}, {}, {})
-//}
-
-
-//@Preview
-//@Composable
-//fun memberPreview(){
-//    VerticalTrackItem(Track(3, "johan sd sebastian bach", "fgjf", listOf(Member_Wrapper(3, "dcfcn"), Member_Wrapper(5,"dcfcn jhbuhdsc cdsc sxcsdc dscsdcvsvd sdcsdcsdcv sdvcsdvcsdv dvsdvsd")), listOf(Member_Wrapper(6,"dcfcn dfhsbudcys dchasudca dcahcb dhab ahdba"), Member_Wrapper(7, "dcfcn")), 6, true), 3, {}, {}, {})
-//}
 
 //
 //@Preview
