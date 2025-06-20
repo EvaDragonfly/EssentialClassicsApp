@@ -10,8 +10,10 @@ fun isValidEmail(email: String): Boolean {
 }
 
 fun isValidPassword(password: String): Boolean {
-    val regex = Regex("^(?=.*[A-Za-z])(?=.*[!@#\$%^&*(),.?\":{}|<>']).+$")
-    return password.matches(regex)
+    val hasLetter = password.any { it.isLetter() }
+    val specialChars = "!@#$%^&*(),.?\":{}|<>\\'[]-_+=;"
+    val hasSpecialChar = password.any { it in specialChars }
+    return hasLetter && hasSpecialChar
 }
 
 fun formatSecondsToTime(seconds: Int): String {
