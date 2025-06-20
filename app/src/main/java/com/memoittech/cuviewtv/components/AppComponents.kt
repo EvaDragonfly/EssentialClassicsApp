@@ -258,6 +258,12 @@ fun VerticalTrackItem(track : Track, active_track_id : Int, onClick : () -> Unit
 
     var expanded = remember { mutableStateOf(false) }
 
+    var isTextOverflowingPerformers by remember { mutableStateOf(0) }
+
+    var isTextOverflowingTitle by remember { mutableStateOf(0) }
+
+    var isTextOverflowingComposer by remember { mutableStateOf(0) }
+
     val backgroundColor = if (track.id == active_track_id) Violet else DarkBg2
 
     val tracksViewModel : TracksViewModel = viewModel()
@@ -307,6 +313,11 @@ fun VerticalTrackItem(track : Track, active_track_id : Int, onClick : () -> Unit
                     color = Color.White,
                     maxLines = if(showFull.value) 5 else 1,
                     overflow = TextOverflow.Ellipsis,
+                    onTextLayout = { textLayoutResult ->
+                        if ( textLayoutResult.hasVisualOverflow ){
+                            isTextOverflowingComposer = 1
+                        }
+                    }
                 )
                 Text(
                     text = "${trackItem.title}${part}",
@@ -314,7 +325,12 @@ fun VerticalTrackItem(track : Track, active_track_id : Int, onClick : () -> Unit
                     fontWeight = FontWeight.W400,
                     color = Color.White,
                     maxLines = if(showFull.value) 5 else 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    onTextLayout = { textLayoutResult ->
+                        if ( textLayoutResult.hasVisualOverflow ){
+                            isTextOverflowingTitle = 1
+                        }
+                    }
                 )
                 Text(
                     text = trackItem.performers
@@ -326,6 +342,11 @@ fun VerticalTrackItem(track : Track, active_track_id : Int, onClick : () -> Unit
                     color = Color.White,
                     maxLines = if(showFull.value) 5 else 1,
                     overflow = TextOverflow.Ellipsis,
+                    onTextLayout = { textLayoutResult ->
+                        if ( textLayoutResult.hasVisualOverflow ){
+                            isTextOverflowingPerformers = 1
+                        }
+                    }
                 )
             }
             Row (
@@ -333,17 +354,19 @@ fun VerticalTrackItem(track : Track, active_track_id : Int, onClick : () -> Unit
                 verticalAlignment = Alignment.CenterVertically
             ){
 
-                Image(
-                    painter = painterResource(
-                        if(showFull.value)
-                            R.drawable.uparrow
-                        else R.drawable.downarrow
-                    ),
-                    contentDescription = "",
-                    modifier = Modifier
-                        .padding(end = 10.dp)
-                        .clickable { showFull.value = !showFull.value }
-                )
+                if (isTextOverflowingTitle == 1 || isTextOverflowingComposer == 1 || isTextOverflowingPerformers == 1){
+                    Image(
+                        painter = painterResource(
+                            if(showFull.value)
+                                R.drawable.uparrow
+                            else R.drawable.downarrow
+                        ),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .padding(end = 10.dp)
+                            .clickable { showFull.value = !showFull.value }
+                    )
+                }
 
                 Box {
                     Image(
@@ -405,6 +428,12 @@ fun VideoTrackItem(track : VideoTrack, selectedTrack : Int, onClick : () -> Unit
 
     var trackItem by remember { mutableStateOf(track.track) }
 
+    var isTextOverflowingPerformers by remember { mutableStateOf(0) }
+
+    var isTextOverflowingTitle by remember { mutableStateOf(0) }
+
+    var isTextOverflowingComposer by remember { mutableStateOf(0) }
+
     val tracksViewModel : TracksViewModel = viewModel()
 
     val showFull = remember { mutableStateOf(false) }
@@ -465,7 +494,12 @@ fun VideoTrackItem(track : VideoTrack, selectedTrack : Int, onClick : () -> Unit
                     modifier = Modifier.padding(end = 8.dp),
                     fontWeight = FontWeight.W600,
                     maxLines = if(showFull.value) 5 else 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    onTextLayout = { textLayoutResult ->
+                        if ( textLayoutResult.hasVisualOverflow ){
+                            isTextOverflowingComposer = 1
+                        }
+                    }
                 )
 
                 Text(
@@ -475,6 +509,11 @@ fun VideoTrackItem(track : VideoTrack, selectedTrack : Int, onClick : () -> Unit
                     color = Color.White,
                     maxLines = if(showFull.value) 5 else 1,
                     overflow = TextOverflow.Ellipsis,
+                    onTextLayout = { textLayoutResult ->
+                        if ( textLayoutResult.hasVisualOverflow ){
+                            isTextOverflowingTitle = 1
+                        }
+                    }
                 )
 
                 Text(
@@ -487,6 +526,11 @@ fun VideoTrackItem(track : VideoTrack, selectedTrack : Int, onClick : () -> Unit
                     color = Color.White,
                     maxLines = if(showFull.value) 5 else 1,
                     overflow = TextOverflow.Ellipsis,
+                    onTextLayout = { textLayoutResult ->
+                        if ( textLayoutResult.hasVisualOverflow ){
+                            isTextOverflowingPerformers = 1
+                        }
+                    }
                 )
             }
 
@@ -494,17 +538,19 @@ fun VideoTrackItem(track : VideoTrack, selectedTrack : Int, onClick : () -> Unit
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(
-                    painter = painterResource(
-                        if(showFull.value)
-                            R.drawable.uparrow
-                        else R.drawable.downarrow
-                    ),
-                    contentDescription = "",
-                    modifier = Modifier
-                        .padding(end = 10.dp)
-                        .clickable { showFull.value = !showFull.value }
-                )
+                if (isTextOverflowingTitle == 1 || isTextOverflowingComposer == 1 || isTextOverflowingPerformers == 1){
+                    Image(
+                        painter = painterResource(
+                            if(showFull.value)
+                                R.drawable.uparrow
+                            else R.drawable.downarrow
+                        ),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .padding(end = 10.dp)
+                            .clickable { showFull.value = !showFull.value }
+                    )
+                }
 
                 Box {
                     Image(
