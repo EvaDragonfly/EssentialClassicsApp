@@ -26,6 +26,8 @@ import com.memoittech.cuviewtv.model.moodList
 import com.memoittech.cuviewtv.ui.theme.DarkBg1
 import com.memoittech.cuviewtv.ui.theme.DarkBg2
 import com.memoittech.cuviewtv.ui.theme.Violet
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import kotlin.math.*
 
 @Composable
@@ -242,7 +244,8 @@ fun ColorWheelExample(navController: NavHostController) {
                         .size(300.dp)
                         .padding(16.dp),
                     onSelect = {
-                        navController.navigate("mood_details/${moods[it].id}/${moods[it].title}")
+                        val encodedTitle = URLEncoder.encode(moods[it].title, StandardCharsets.UTF_8.toString())
+                        navController.navigate("mood_details/${moods[it].id}/$encodedTitle")
                     },
                     onZoneSelected = {
                         selectedZone = it + 1
