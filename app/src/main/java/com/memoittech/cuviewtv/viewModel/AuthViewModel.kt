@@ -2,6 +2,7 @@ package com.memoittech.cuviewtv.viewModel
 
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -50,6 +51,11 @@ class AuthViewModel(application : Application) : AndroidViewModel(application) {
                                response: retrofit2.Response<UserResponse>
                            ) {
                                if (!response.isSuccessful) {
+                                   Log.d("MY_TAG", "first auth")
+                                   Log.d("MY_TAG", response.message())
+                                   Log.d("MY_TAG", response.errorBody().toString())
+                                   Log.d("MY_TAG", response.body().toString())
+                                   Log.d("MY_TAG", response.body().toString())
                                    navController.navigate("auth/login")
                                } else {
                                    user = response.body()?.data
@@ -62,6 +68,9 @@ class AuthViewModel(application : Application) : AndroidViewModel(application) {
                            }
 
                            override fun onFailure(call: Call<UserResponse>, response: Throwable) {
+                               Log.d("MY_TAG", "second auth")
+                               Log.d("MY_TAG", response.message.toString())
+                               Log.d("MY_TAG", response.toString())
                                navController.navigate("auth/login")
                            }
 

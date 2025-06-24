@@ -167,7 +167,7 @@ fun PasswordTextFieldComponent(text:String, onTextChange: (String)->Unit, labelV
             val iconImage = if(passwordVisible.value) {
                 R.drawable.eye
             } else {
-                R.drawable.eye
+                R.drawable.eye_hide
             }
 
             val descripton = if(passwordVisible.value){

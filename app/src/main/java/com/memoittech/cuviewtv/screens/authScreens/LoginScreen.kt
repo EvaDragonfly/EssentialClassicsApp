@@ -10,7 +10,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -59,6 +62,8 @@ fun LoginScreen (navController: NavHostController) {
 
     val context = LocalContext.current
 
+    val scrollState = rememberScrollState()
+
     val sharedPreferences = remember {
         context.getSharedPreferences("prefs", Context.MODE_PRIVATE)
     }
@@ -86,8 +91,35 @@ fun LoginScreen (navController: NavHostController) {
             ApiConstants.retrofit.signIn(user).enqueue( object : retrofit2.Callback<ResponseBody>{
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                     if(!response.isSuccessful){
-                        alertText.value = "Something went wrong, Please try again"
-                        dialogStatus.value = true
+                        val errorBody = response.errorBody()?.string()
+                        if (!errorBody.isNullOrEmpty()) {
+                            val json = JSONObject(errorBody)
+
+                            if (json.has("error")) {
+                                val errorObj = json.getJSONObject("error")
+
+                                val allErrors = mutableListOf<String>()
+
+                                for (key in errorObj.keys()) {
+                                    val errorArray = errorObj.getJSONArray(key)
+                                    for (i in 0 until errorArray.length()) {
+                                        allErrors.add(errorArray.getString(i))
+                                    }
+                                }
+
+                                // Use first error, or join them all
+                                val firstError = allErrors.firstOrNull()
+//                                val fullMessage = allErrors.joinToString("\n")
+//
+//                                Log.e("API_ERROR", "First: $firstError\nAll: $fullMessage")
+                                alertText.value = firstError.toString()
+                                dialogStatus.value = true
+                            }
+                        }
+                        else {
+                            alertText.value = "Something went wrong, Please try again"
+                            dialogStatus.value = true
+                        }
                     } else {
                         val key = response.body()?.string()
                             ?.let { JSONObject(it).getJSONObject("data").getString("key") }
@@ -128,6 +160,8 @@ fun LoginScreen (navController: NavHostController) {
                     .fillMaxWidth()
                     .align(Alignment.Center)
                     .background(color = Color.Transparent)
+                    .verticalScroll(scrollState) // 👈 enable scrolling
+                    .imePadding()
             ) {
 
                 Image(

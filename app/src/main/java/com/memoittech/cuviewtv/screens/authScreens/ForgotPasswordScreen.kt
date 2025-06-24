@@ -34,6 +34,7 @@ import com.memoittech.cuviewtv.components.NormalTextComponent
 import com.memoittech.cuviewtv.components.isValidEmail
 import com.memoittech.cuviewtv.ui.theme.Violet
 import okhttp3.ResponseBody
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Response
 
@@ -57,8 +58,35 @@ fun ForgotPasswordScreen(navController: NavHostController) {
             ApiConstants.retrofit.resetPassword(email).enqueue(object : retrofit2.Callback<ResponseBody>{
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                     if(!response.isSuccessful){
-                        alertText.value = "Something went wrong, Please try again"
-                        dialogStatus.value = true
+                        val errorBody = response.errorBody()?.string()
+                        if (!errorBody.isNullOrEmpty()) {
+                            val json = JSONObject(errorBody)
+
+                            if (json.has("error")) {
+                                val errorObj = json.getJSONObject("error")
+
+                                val allErrors = mutableListOf<String>()
+
+                                for (key in errorObj.keys()) {
+                                    val errorArray = errorObj.getJSONArray(key)
+                                    for (i in 0 until errorArray.length()) {
+                                        allErrors.add(errorArray.getString(i))
+                                    }
+                                }
+
+                                // Use first error, or join them all
+                                val firstError = allErrors.firstOrNull()
+//                                val fullMessage = allErrors.joinToString("\n")
+//
+//                                Log.e("API_ERROR", "First: $firstError\nAll: $fullMessage")
+                                alertText.value = firstError.toString()
+                                dialogStatus.value = true
+                            }
+                        }
+                        else {
+                            alertText.value = "Something went wrong, Please try again"
+                            dialogStatus.value = true
+                        }
                     } else {
                         navController.navigate("auth/password_reset/${email}")
                     }

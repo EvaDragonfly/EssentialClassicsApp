@@ -16,7 +16,6 @@ import com.memoittech.cuviewtv.screens.authScreens.ForgotPasswordScreen
 import com.memoittech.cuviewtv.screens.authScreens.LoginScreen
 import com.memoittech.cuviewtv.screens.authScreens.PasswordResetScreen
 import com.memoittech.cuviewtv.screens.authScreens.SignUpScreen
-import com.memoittech.cuviewtv.screens.authScreens.TermsAndConditionsScreen
 import com.memoittech.cuviewtv.screens.appScreens.MainScreen
 import com.memoittech.cuviewtv.screens.appScreens.PlayerScreen
 import com.memoittech.cuviewtv.screens.appScreens.SplashScreen
@@ -121,12 +120,6 @@ fun MyNavigations(){
 
         composable( route = "auth/login" ){
             LoginScreen(navController)
-        }
-
-        composable( route = "auth/terms_and_conditions" ){
-            TermsAndConditionsScreen(
-                navController
-            )
         }
 
         composable(
