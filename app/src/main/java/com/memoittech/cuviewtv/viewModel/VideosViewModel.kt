@@ -12,6 +12,7 @@ import com.memoittech.cuviewtv.TokenManager
 import com.memoittech.cuviewtv.model.FavoriteVideo
 import com.memoittech.cuviewtv.model.FavoriteVideosData
 import com.memoittech.cuviewtv.model.FavoriteVideosResponse
+import com.memoittech.cuviewtv.model.MembersData
 import com.memoittech.cuviewtv.model.Track
 import com.memoittech.cuviewtv.model.Video
 import com.memoittech.cuviewtv.model.VideoDetailsData
@@ -24,13 +25,17 @@ import retrofit2.Call
 import retrofit2.Response
 
 class VideosViewModel : ViewModel(){
-    var videos = mutableStateListOf<Video>()
+    var videos by mutableStateOf<VideosData?>(null)
+    var searchVideos = mutableStateListOf<Video>()
     var favouriteVideos = mutableStateListOf<FavoriteVideo>()
 
     var isLoading by mutableStateOf(false)
         private set
     private var currentOffsetVideos = 0
     private val pageSizeVideos = 30
+
+    var isSearchVideosLoading by mutableStateOf(false)
+        private set
 
     var isFavoriteVideosLoading by mutableStateOf(false)
         private set
@@ -47,20 +52,14 @@ class VideosViewModel : ViewModel(){
         if (isLoading) return
         isLoading = true
 
-        if(index == 0){
-            currentOffsetVideos = 0
-            videos.clear()
-        }
 
         viewModelScope.launch {
-            ApiConstants.retrofit.getVideos(pageSizeVideos, currentOffsetVideos, ordering, q, "Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<VideoResponse>{
+            ApiConstants.retrofit.getVideos(10, 0, ordering, q, "Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<VideoResponse>{
                 override fun onResponse(call: Call<VideoResponse>, response: Response<VideoResponse>) {
                     if (!response.isSuccessful) {
                         errorMessage = response.message()
                     } else {
-                        val newVideos = response.body()?.data?.results ?: emptyList()
-                        videos.addAll(newVideos)
-                        currentOffsetVideos += newVideos.size
+                        videos = response.body()?.data
                     }
                     isLoading = false
                 }
@@ -73,6 +72,40 @@ class VideosViewModel : ViewModel(){
             })
         }
     }
+
+
+    fun getSearchVideosList( ordering : String, q : String, index : Int  ) {
+
+        if (isSearchVideosLoading) return
+        isSearchVideosLoading = true
+
+        if(index == 0){
+            currentOffsetVideos = 0
+            searchVideos.clear()
+        }
+
+        viewModelScope.launch {
+            ApiConstants.retrofit.getVideos(pageSizeVideos, currentOffsetVideos, ordering, q, "Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<VideoResponse>{
+                override fun onResponse(call: Call<VideoResponse>, response: Response<VideoResponse>) {
+                    if (!response.isSuccessful) {
+                        errorMessage = response.message()
+                    } else {
+                        val newVideos = response.body()?.data?.results ?: emptyList()
+                        searchVideos.addAll(newVideos)
+                        currentOffsetVideos += newVideos.size
+                    }
+                    isSearchVideosLoading = false
+                }
+
+                override fun onFailure(call: Call<VideoResponse>, response: Throwable) {
+                    isSearchVideosLoading = false
+                    errorMessage = response.toString()
+                }
+
+            })
+        }
+    }
+
 
 
     fun getSliderVideosList(limit : Int, offset : Int, ordering : String, q : String ) {

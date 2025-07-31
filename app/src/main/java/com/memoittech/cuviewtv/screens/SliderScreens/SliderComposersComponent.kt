@@ -24,6 +24,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.components.MemberVerticalItem
+import com.memoittech.cuviewtv.model.Member
 import com.memoittech.cuviewtv.ui.theme.GrayBlue
 import com.memoittech.cuviewtv.viewModel.AppViewModels
 import com.memoittech.cuviewtv.viewModel.MembersViewModel
@@ -37,7 +38,7 @@ fun SliderComposersComponent(navController: NavHostController, appViewModel: App
         viewModels.getComposerList(1,"position", "", 0)
     }
 
-    val composers = viewModels.composers
+    val composers: List<Member> = viewModels.composers?.results ?: emptyList()
 
     Column (modifier = Modifier.fillMaxWidth()){
         Row(modifier = Modifier

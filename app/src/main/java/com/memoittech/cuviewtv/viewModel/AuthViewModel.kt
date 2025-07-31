@@ -68,9 +68,6 @@ class AuthViewModel(application : Application) : AndroidViewModel(application) {
                            }
 
                            override fun onFailure(call: Call<UserResponse>, response: Throwable) {
-                               Log.d("MY_TAG", "second auth")
-                               Log.d("MY_TAG", response.message.toString())
-                               Log.d("MY_TAG", response.toString())
                                navController.navigate("auth/login")
                            }
 

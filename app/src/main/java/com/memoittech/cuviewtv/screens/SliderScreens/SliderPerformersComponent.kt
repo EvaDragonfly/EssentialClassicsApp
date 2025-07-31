@@ -26,6 +26,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.components.MemberOvalItem
+import com.memoittech.cuviewtv.model.Member
+import com.memoittech.cuviewtv.model.Member_Wrapper
 import com.memoittech.cuviewtv.ui.theme.GrayBlue
 import com.memoittech.cuviewtv.viewModel.AppViewModels
 import com.memoittech.cuviewtv.viewModel.MembersViewModel
@@ -40,7 +42,7 @@ fun SliderPerformersComponent (navController: NavHostController, appViewModel: A
         viewModel.getPerformersList( 1,"position", "", 0)
     }
 
-    val performers = viewModel.performers
+    val performers: List<Member> = viewModel.performers?.results ?: emptyList()
 
     Column (modifier = Modifier.fillMaxWidth()){
         Row(modifier = Modifier

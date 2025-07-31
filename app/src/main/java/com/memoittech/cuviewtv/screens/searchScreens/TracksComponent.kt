@@ -29,6 +29,7 @@ import com.memoittech.cuviewtv.ui.theme.GrayBlue
 import com.memoittech.cuviewtv.ui.theme.Violet
 import com.memoittech.cuviewtv.viewModel.AppViewModels
 import com.memoittech.cuviewtv.viewModel.TracksViewModel
+import com.memoittech.cuviewtv.viewModel.VideosViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -42,57 +43,56 @@ import kotlinx.coroutines.launch
 @Composable
 fun TracksComponent(navController: NavHostController , appViewModel: AppViewModels){
 
-    val tracksViewModel : TracksViewModel = viewModel()
-
     var ordering by remember { mutableStateOf("-created_at") }
 
+    val tracksViewModel : TracksViewModel = viewModel()
+
     val listState = rememberLazyListState()
+
+    var isFirstLaunch by remember { mutableStateOf(true) }
+
+    var page by remember { mutableStateOf(0) }
 
     fun onTrackClick(id: Int){
         navController.navigate("track_details/${id}")
     }
 
-    var isFirstLaunch by remember { mutableStateOf(true) }
+    LaunchedEffect(appViewModel.query) {
+        page = 0
+        if (appViewModel.query.length >= 2) {
+            tracksViewModel.getTracksList( ordering, appViewModel.query, 0)
+            isFirstLaunch = false
+        } else if (appViewModel.query.isEmpty()) {
+            if(tracksViewModel.tracks.size == 0 || !isFirstLaunch){
+                tracksViewModel.getTracksList( ordering, "", 0)
+                isFirstLaunch = false
+            }
+        }
+    }
+
+    LaunchedEffect(page) {
+        if (page > 0){
+            tracksViewModel.getTracksList( ordering, appViewModel.query, 1)
+            isFirstLaunch = false
+        }
+    }
 
     LaunchedEffect(Unit) {
+
         // Scroll-based pagination trigger
         launch {
             snapshotFlow { listState.firstVisibleItemIndex }
                 .distinctUntilChanged()
                 .collect { index ->
-//                    if (isFirstLaunch) {
-//                        isFirstLaunch = false
-//                        return@collect
-//                    }
-
                     if (
                         index >= tracksViewModel.tracks.size - 10 &&
                         !tracksViewModel.isLoading
                     ) {
-                        tracksViewModel.getTracksList(ordering, appViewModel.query, 1)
+                        page += 1
                     }
                 }
         }
 
-        // Query change trigger
-        launch {
-            snapshotFlow { appViewModel.query }
-                .debounce(500)
-                .distinctUntilChanged()
-                .collect { value ->
-                    if (isFirstLaunch) {
-                        isFirstLaunch = false
-                        return@collect
-                    }
-
-                    if (value.length >= 3) {
-                        tracksViewModel.getTracksList(ordering, value, 0)
-                    } else if (value.isEmpty()) {
-                        tracksViewModel.getTracksList(ordering, "", 0)
-                    }
-                    listState.scrollToItem(0)
-                }
-        }
     }
 
     Column(

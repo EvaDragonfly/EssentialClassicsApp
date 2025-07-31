@@ -33,6 +33,7 @@ import com.memoittech.cuviewtv.ui.theme.DarkBg2
 import com.memoittech.cuviewtv.ui.theme.GrayBlue
 import com.memoittech.cuviewtv.ui.theme.Violet
 import com.memoittech.cuviewtv.viewModel.AppViewModels
+import com.memoittech.cuviewtv.viewModel.MembersViewModel
 import com.memoittech.cuviewtv.viewModel.VideosViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
@@ -43,56 +44,57 @@ import kotlinx.coroutines.launch
 @Composable
 fun VideosComponent(navController: NavHostController , appViewModel: AppViewModels){
 
-    val videosViewModel : VideosViewModel = viewModel()
-
     var ordering by remember { mutableStateOf("-created_at") }
+
+    val videosViewModel : VideosViewModel = viewModel()
 
     val listState = rememberLazyListState()
 
     var isFirstLaunch by remember { mutableStateOf(true) }
 
+    var page by remember { mutableStateOf(0) }
+
+    LaunchedEffect(appViewModel.query) {
+        page = 0
+        if (appViewModel.query.length >= 2) {
+            videosViewModel.getSearchVideosList( ordering, appViewModel.query, 0)
+            isFirstLaunch = false
+        } else if (appViewModel.query.isEmpty()) {
+            if(videosViewModel.searchVideos.size == 0 || !isFirstLaunch){
+                videosViewModel.getSearchVideosList( ordering, "", 0)
+                isFirstLaunch = false
+            }
+        }
+    }
+
+    LaunchedEffect(page) {
+        if (page > 0){
+            videosViewModel.getSearchVideosList( ordering, appViewModel.query, 1)
+            isFirstLaunch = false
+        }
+    }
 
     LaunchedEffect(Unit) {
+
         // Scroll-based pagination trigger
         launch {
             snapshotFlow { listState.firstVisibleItemIndex }
                 .distinctUntilChanged()
                 .collect { index ->
                     if (
-                        index >= videosViewModel.videos.size/2 - 10 &&
-                        !videosViewModel.isLoading
+                        index >= videosViewModel.searchVideos.size/2 - 10 &&
+                        !videosViewModel.isSearchVideosLoading
                     ) {
-                        videosViewModel.getVideosList(ordering, appViewModel.query, 1)
+                        page += 1
                     }
                 }
         }
 
-        // Query change trigger
-        launch {
-            snapshotFlow { appViewModel.query }
-                .debounce(500)
-                .distinctUntilChanged()
-                .collect { value ->
-                    if (isFirstLaunch) {
-                        isFirstLaunch = false
-                        return@collect
-                    }
-
-                    if (value.length >= 3) {
-                        videosViewModel.getVideosList(ordering, value, 0)
-                    } else if (value.isEmpty()) {
-                        videosViewModel.getVideosList(ordering, "", 0)
-                    }
-
-                    listState.scrollToItem(0)
-                }
-        }
     }
 
 
-
     Column(modifier = Modifier.fillMaxWidth()) {
-        videosViewModel.videos.let {
+        videosViewModel.searchVideos.let {
             LazyColumn (
                 state = listState,
                 modifier = Modifier
@@ -133,7 +135,7 @@ fun VideosComponent(navController: NavHostController , appViewModel: AppViewMode
                     }
                 }
                 item {
-                    if (videosViewModel.isLoading){
+                    if (videosViewModel.isSearchVideosLoading){
                         Text(
                             modifier = Modifier.fillMaxWidth(),
                             text = "Loading...",

@@ -60,7 +60,6 @@ class TracksViewModel : ViewModel(){
         }
 
         viewModelScope.launch {
-            Log.d("MY_TAG", "isloading ap ${isLoading}")
             ApiConstants.retrofit.getTracks(pageSizeTracks, currentOffsetTracks, ordering, q, "Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<TracksResponse>{
                 override fun onResponse(call: Call<TracksResponse>, response: Response<TracksResponse>) {
                     if (!response.isSuccessful) {

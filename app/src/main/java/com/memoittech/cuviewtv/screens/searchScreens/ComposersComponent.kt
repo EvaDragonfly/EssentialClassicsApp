@@ -37,67 +37,71 @@ import kotlinx.coroutines.launch
 @Composable
 fun ComposersComponent(navController: NavHostController, appViewModel: AppViewModels){
 
-    val composersViewModel : MembersViewModel = viewModel()
-
     var ordering by remember { mutableStateOf("-created_at") }
+
+    val composersViewModel : MembersViewModel = viewModel()
 
     val listState = rememberLazyListState()
 
-    fun memberClickHandler(id: Int){
+    var isFirstLaunch by remember { mutableStateOf(true) }
+
+    var page by remember { mutableStateOf(0) }
+
+    fun onMemberClick(id: Int){
         navController.navigate("member_details/${id}")
     }
 
-    var isFirstLaunch by remember { mutableStateOf(true) }
+
+    LaunchedEffect(appViewModel.query) {
+        page = 0
+        if (appViewModel.query.length >= 2) {
+            composersViewModel.getSearchComposerList(0, ordering, appViewModel.query, 0)
+            isFirstLaunch = false
+        } else if (appViewModel.query.isEmpty()) {
+            if(composersViewModel.searchComposers.size == 0 || !isFirstLaunch){
+                composersViewModel.getSearchComposerList(0, ordering, "", 0)
+                isFirstLaunch = false
+            }
+        }
+    }
+
+    LaunchedEffect(page) {
+        if (page > 0){
+            composersViewModel.getSearchComposerList(0, ordering, appViewModel.query, 1)
+            isFirstLaunch = false
+        }
+    }
 
     LaunchedEffect(Unit) {
+
         // Scroll-based pagination trigger
         launch {
             snapshotFlow { listState.firstVisibleItemIndex }
                 .distinctUntilChanged()
                 .collect { index ->
                     if (
-                        index >= composersViewModel.composers.size - 15 &&
-                        !composersViewModel.isComposerLoading
+                        index >= composersViewModel.searchComposers.size - 15 &&
+                        !composersViewModel.isSearchComposerLoading
                     ) {
-                        composersViewModel.getComposerList(0, ordering, appViewModel.query, 1)
+                        page += 1
                     }
                 }
         }
 
-        // Query change trigger
-        launch {
-            snapshotFlow { appViewModel.query }
-                .debounce(500)
-                .distinctUntilChanged()
-                .collect { value ->
-                    if (isFirstLaunch) {
-                        isFirstLaunch = false
-                        return@collect
-                    }
-
-                    if (value.length >= 3) {
-                        composersViewModel.getComposerList(0, ordering, value, 0)
-                    } else if (value.isEmpty()) {
-                        composersViewModel.getComposerList(0, ordering, "", 0)
-                    }
-
-                    listState.scrollToItem(0)
-                }
-        }
     }
 
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-        composersViewModel.composers.let {
+        composersViewModel.searchComposers.let {
             LazyColumn (
                 state = listState
             ){
                 items(items = it){item ->
-                    MemberHorizontalItem(item) { memberClickHandler(item.id) }
+                    MemberHorizontalItem(item) { onMemberClick(item.id) }
                 }
                 item {
-                    if (composersViewModel.isComposerLoading){
+                    if (composersViewModel.isSearchComposerLoading){
                         Text(
                             modifier = Modifier.fillMaxWidth(),
                             text = "Loading...",

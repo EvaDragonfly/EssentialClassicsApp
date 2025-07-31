@@ -1,5 +1,6 @@
 package com.memoittech.cuviewtv.screens.searchScreens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -40,51 +41,55 @@ fun PerformersComponent( navController: NavHostController, appViewModel: AppView
 
     var isFirstLaunch by remember { mutableStateOf(true) }
 
+    var page by remember { mutableStateOf(0) }
+
     fun onMemberClick(id: Int){
         navController.navigate("member_details/${id}")
     }
 
+
+    LaunchedEffect(appViewModel.query) {
+        page = 0
+        if (appViewModel.query.length >= 2) {
+            performersViewModel.getSearchPerformersList(0, ordering, appViewModel.query, 0)
+            isFirstLaunch = false
+        } else if (appViewModel.query.isEmpty()) {
+            if(performersViewModel.searchPerformers.size == 0 || !isFirstLaunch){
+                performersViewModel.getSearchPerformersList(0, ordering, "", 0)
+                isFirstLaunch = false
+            }
+        }
+    }
+
+    LaunchedEffect(page) {
+        if (page > 0){
+            performersViewModel.getSearchPerformersList(0, ordering, appViewModel.query, 1)
+            isFirstLaunch = false
+        }
+    }
+
     LaunchedEffect(Unit) {
+
         // Scroll-based pagination trigger
         launch {
             snapshotFlow { listState.firstVisibleItemIndex }
                 .distinctUntilChanged()
                 .collect { index ->
                     if (
-                        index >= performersViewModel.performers.size - 15 &&
-                        !performersViewModel.isPerformerLoading
+                        index >= performersViewModel.searchPerformers.size - 15 &&
+                        !performersViewModel.isSearchPerformerLoading
                     ) {
-                        performersViewModel.getPerformersList(0, ordering, appViewModel.query, 1)
+                        page += 1
                     }
                 }
         }
 
-        // Query change trigger
-        launch {
-            snapshotFlow { appViewModel.query }
-                .debounce(500)
-                .distinctUntilChanged()
-                .collect { value ->
-                    if (isFirstLaunch) {
-                        isFirstLaunch = false
-                        return@collect
-                    }
-
-                    if (value.length >= 3) {
-                        performersViewModel.getPerformersList(0, ordering, value, 0)
-                    } else if (value.isEmpty()) {
-                        performersViewModel.getPerformersList(0, ordering, "", 0)
-                    }
-
-                    listState.scrollToItem(0)
-                }
-        }
     }
 
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-        performersViewModel.performers.let {
+        performersViewModel.searchPerformers.let {
             LazyColumn(
                 state = listState,
                 modifier = Modifier.fillMaxWidth()
@@ -93,7 +98,7 @@ fun PerformersComponent( navController: NavHostController, appViewModel: AppView
                     MemberHorizontalItem(item) { onMemberClick(item.id) }
                 }
                 item {
-                    if (performersViewModel.isPerformerLoading){
+                    if (performersViewModel.isSearchPerformerLoading){
                         Text(
                             modifier = Modifier.fillMaxWidth(),
                             text = "Loading...",

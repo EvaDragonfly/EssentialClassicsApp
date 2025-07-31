@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.memoittech.cuviewtv.ApiConstants
@@ -16,7 +17,9 @@ import com.memoittech.cuviewtv.model.MemberDetailsData
 import com.memoittech.cuviewtv.model.MemberDetailsResponse
 import com.memoittech.cuviewtv.model.MemberTracksResponse
 import com.memoittech.cuviewtv.model.MemberVideosReponse
+import com.memoittech.cuviewtv.model.MembersData
 import com.memoittech.cuviewtv.model.MembersResponse
+import com.memoittech.cuviewtv.model.MoodTracksResponse
 import com.memoittech.cuviewtv.model.Track
 import com.memoittech.cuviewtv.model.TrackVideo
 import kotlinx.coroutines.launch
@@ -27,8 +30,10 @@ import retrofit2.Response
 
 
 class MembersViewModel : ViewModel(){
-    var performers = mutableStateListOf<Member>()
-    var composers = mutableStateListOf<Member>()
+    var performers by mutableStateOf<MembersData?>(null)
+    var searchPerformers = mutableStateListOf<Member>()
+    var composers by mutableStateOf<MembersData?>(null)
+    var searchComposers = mutableStateListOf<Member>()
     var favouriteMembers = mutableStateListOf<FavouriteMember>()
     var memberTracks =  mutableStateListOf<Track>()
     var membersVideos = mutableStateListOf<TrackVideo>()
@@ -37,6 +42,10 @@ class MembersViewModel : ViewModel(){
     var isComposerLoading by mutableStateOf(false)
         private set
     var isPerformerLoading by mutableStateOf(false)
+        private set
+    var isSearchPerformerLoading by mutableStateOf(false)
+        private set
+    var isSearchComposerLoading by mutableStateOf(false)
         private set
     var isFavMembersLoading by mutableStateOf(false)
         private set
@@ -69,20 +78,13 @@ class MembersViewModel : ViewModel(){
         if (isPerformerLoading) return
         isPerformerLoading = true
 
-        if(index == 0){
-            currentPerformerOffset = 0
-            performers.clear()
-        }
-
         viewModelScope.launch {
-            ApiConstants.retrofit.getPerformers(image_only, pageSizePerformers, currentPerformerOffset, ordering, q, "Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<MembersResponse>{
+            ApiConstants.retrofit.getPerformers(image_only, 10, 0, ordering, q, "Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<MembersResponse>{
                 override fun onResponse(call: Call<MembersResponse>, response: Response<MembersResponse>) {
                     if (!response.isSuccessful) {
                         errorMessage = response.message()
                     } else {
-                        val newPerformers = response.body()?.data?.results ?: emptyList()
-                        performers.addAll(newPerformers)
-                        currentPerformerOffset += newPerformers.size
+                        performers = response.body()?.data
                     }
                     isPerformerLoading = false
                 }
@@ -97,14 +99,75 @@ class MembersViewModel : ViewModel(){
     }
 
 
+    fun getSearchPerformersList(image_only : Int, ordering : String, q : String, index : Int ) {
+
+        if (isSearchPerformerLoading) return
+        isSearchPerformerLoading = true
+
+        if(index == 0){
+            currentPerformerOffset = 0
+            searchPerformers.clear()
+        }
+
+        viewModelScope.launch {
+            ApiConstants.retrofit.getPerformers(image_only, pageSizePerformers, currentPerformerOffset, ordering, q, "Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<MembersResponse>{
+                override fun onResponse(call: Call<MembersResponse>, response: Response<MembersResponse>) {
+                    if (!response.isSuccessful) {
+                        errorMessage = response.message()
+                    } else {
+                        val newPerformers = response.body()?.data?.results ?: emptyList()
+                        searchPerformers.addAll(newPerformers)
+                        currentPerformerOffset += newPerformers.size
+                    }
+                    isSearchPerformerLoading = false
+                }
+
+                override fun onFailure(call: Call<MembersResponse>, response: Throwable) {
+                    isSearchPerformerLoading = false
+                    errorMessage = response.toString()
+                }
+
+            })
+        }
+    }
+
+
     fun getComposerList(image_only : Int, ordering : String, q : String, index : Int) {
 
         if (isComposerLoading) return
         isComposerLoading = true
 
+
+        viewModelScope.launch {
+            ApiConstants.retrofit.getComposers(image_only, 10, 0, ordering, q, "Token ${TokenManager.getToken()}").enqueue(object : retrofit2.Callback<MembersResponse>{
+                override fun onResponse(call: Call<MembersResponse>, response: Response<MembersResponse>) {
+
+                    if (!response.isSuccessful) {
+                        errorMessage = response.message()
+                    } else {
+                        composers = response.body()?.data
+                    }
+                    isComposerLoading = false
+                }
+
+                override fun onFailure(call: Call<MembersResponse>, response: Throwable) {
+                    isComposerLoading = false
+                    errorMessage = response.toString()
+                }
+
+            })
+        }
+    }
+
+
+    fun getSearchComposerList(image_only : Int, ordering : String, q : String, index : Int) {
+
+        if (isSearchComposerLoading) return
+        isSearchComposerLoading = true
+
         if(index == 0){
             currentComposerOffset = 0
-            composers.clear()
+            searchComposers.clear()
         }
 
         viewModelScope.launch {
@@ -115,14 +178,14 @@ class MembersViewModel : ViewModel(){
                         errorMessage = response.message()
                     } else {
                         val newComposers = response.body()?.data?.results ?: emptyList()
-                        composers.addAll(newComposers)
+                        searchComposers.addAll(newComposers)
                         currentComposerOffset += newComposers.size
                     }
-                    isComposerLoading = false
+                    isSearchComposerLoading = false
                 }
 
                 override fun onFailure(call: Call<MembersResponse>, response: Throwable) {
-                    isComposerLoading = false
+                    isSearchComposerLoading = false
                     errorMessage = response.toString()
                 }
 

@@ -26,6 +26,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.components.VideoOvalItem
+import com.memoittech.cuviewtv.model.Member
+import com.memoittech.cuviewtv.model.Video
 import com.memoittech.cuviewtv.ui.theme.GrayBlue
 import com.memoittech.cuviewtv.viewModel.AppViewModels
 import com.memoittech.cuviewtv.viewModel.VideosViewModel
@@ -40,7 +42,7 @@ fun SliderVideosComponent(navController: NavHostController, appViewModel: AppVie
         viewModels.getVideosList( "-created_at", "", 0)
     }
 
-    val videos = viewModels.videos
+    val videos: List<Video> = viewModels.videos?.results ?: emptyList()
 
     Column (modifier = Modifier.fillMaxWidth()){
         Row(modifier = Modifier

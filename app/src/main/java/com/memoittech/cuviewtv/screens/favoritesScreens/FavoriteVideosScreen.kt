@@ -63,7 +63,7 @@ fun FavoriteVideosScreen(navController : NavHostController) {
     LaunchedEffect(listState) {
         snapshotFlow { listState.firstVisibleItemIndex }
             .collect { index ->
-                if (index >= videosViewModel.videos.size/2 - 10  && !videosViewModel.isFavoriteVideosLoading) {
+                if (index >= (videosViewModel.videos?.results?.size?.div(2) ?: 1) - 10  && !videosViewModel.isFavoriteVideosLoading) {
                     videosViewModel.getFavoriteVideos(ordering)
                 }
             }
