@@ -1,9 +1,15 @@
 package com.memoittech.cuviewtv.screens.MoodScreens
 import android.util.Log
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -15,6 +21,7 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
@@ -22,10 +29,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.memoittech.cuviewtv.R
 import com.memoittech.cuviewtv.model.moodList
-import com.memoittech.cuviewtv.ui.theme.DarkBg1
-import com.memoittech.cuviewtv.ui.theme.DarkBg2
-import com.memoittech.cuviewtv.ui.theme.Violet
+import com.memoittech.cuviewtv.viewModel.AppViewModels
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import kotlin.math.*
@@ -33,6 +39,7 @@ import kotlin.math.*
 @Composable
 fun SmoothColorWheel(
     modifier: Modifier = Modifier,
+    appViewModels: AppViewModels,
     onSelect : (Int) -> Unit,
     onZoneSelected: (Int) -> Unit = {}
 ) {
@@ -54,7 +61,7 @@ fun SmoothColorWheel(
     )
 
     var selectedZone by remember { mutableStateOf(-1) }
-    var currentColor by remember { mutableStateOf(Color.Yellow) }
+//    var currentColor by remember { mutableStateOf(Color.Yellow) }
     var selectedAngle by remember { mutableStateOf(0f) }
 
     Box(modifier = modifier) {
@@ -67,7 +74,7 @@ fun SmoothColorWheel(
                             updateSelectedPosition(offset, size, baseColors) { zone, color, angle ->
                                 selectedZone = zone
                                 selectedAngle = angle
-                                currentColor = color
+//                                currentColor = color
                                 onZoneSelected(zone)
                             }
                         },
@@ -75,13 +82,13 @@ fun SmoothColorWheel(
                             updateSelectedPosition(change.position, size, baseColors) { zone, color, angle ->
                                 selectedZone = zone
                                 selectedAngle = angle
-                                currentColor = color
+//                                currentColor = color
                                 onZoneSelected(zone)
                             }
                         },
-                        onDragEnd = {
-                            onSelect(selectedZone)
-                        }
+//                        onDragEnd = {
+//                            onSelect(selectedZone)
+//                        }
                     )
                 }
         ) {
@@ -105,7 +112,7 @@ fun SmoothColorWheel(
 
             // Draw inner circle (hole)
             drawCircle(
-                color = Color(0xFF880E4F), // Dark magenta background
+                color = baseColors[appViewModels.moodIndex], // Dark magenta background
                 radius = innerRadius,
                 center = Offset(centerX, centerY)
             )
@@ -126,7 +133,19 @@ fun SmoothColorWheel(
                 }
             }
         }
-
+        Box(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .size(90.dp) // Icon size
+        ) {
+            Image(
+                painter = painterResource(R.drawable.playericon),
+                contentDescription = "Play",
+                modifier = Modifier.clickable {
+                    onSelect(selectedZone)
+                }
+            )
+        }
     }
 }
 
@@ -180,7 +199,10 @@ private fun lerp(start: Float, end: Float, fraction: Float): Float {
 }
 
 @Composable
-fun ColorWheelExample(navController: NavHostController) {
+fun ColorWheelExample(
+    navController: NavHostController,
+    appViewModels: AppViewModels
+) {
 
     val colors = listOf(
         Color.Red,
@@ -200,7 +222,9 @@ fun ColorWheelExample(navController: NavHostController) {
 
     var selectedZone by remember { mutableStateOf(1) }
 
-    var selectedMoodIndex by remember { mutableStateOf(9) }
+//    var selectedMoodIndex by remember { mutableStateOf(9) }
+
+
 
     val moods  = moodList
 
@@ -211,7 +235,7 @@ fun ColorWheelExample(navController: NavHostController) {
                 .fillMaxSize()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = listOf(colors[(selectedMoodIndex+11)%12], colors[selectedMoodIndex], colors[(selectedMoodIndex+1)%12])
+                        colors = listOf(colors[(appViewModels.moodIndex+11)%12], colors[appViewModels.moodIndex], colors[(appViewModels.moodIndex+1)%12])
                     )
                 )
         ){
@@ -222,20 +246,26 @@ fun ColorWheelExample(navController: NavHostController) {
                 verticalArrangement =  Arrangement.SpaceBetween
             ) {
 
-                Box(
+                Column (
                     modifier = Modifier
-                        .size(200.dp)
-                        .fillMaxWidth()
-                        .align(Alignment.CenterHorizontally),
-                    contentAlignment = Alignment.Center
+//                        .size(200.dp)
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.Bottom,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-
                     Text(
-                        text = moods[selectedMoodIndex].title,
+                        text = "Spin the wheel to change a mood",
+                        color = Color.White,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.W400,
+                        modifier = Modifier.padding(top = 120.dp)
+                    )
+                    Text(
+                        text = moods[appViewModels.moodIndex].title,
                         color = Color.White,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.align(Alignment.BottomCenter)
+                        modifier = Modifier.padding(top = 70.dp)
                     )
                 }
 
@@ -243,13 +273,16 @@ fun ColorWheelExample(navController: NavHostController) {
                     modifier = Modifier
                         .size(300.dp)
                         .padding(16.dp),
+                    appViewModels,
                     onSelect = {
                         val encodedTitle = URLEncoder.encode(moods[it].title, StandardCharsets.UTF_8.toString())
                         navController.navigate("mood_details/${moods[it].id}/$encodedTitle")
                     },
                     onZoneSelected = {
+                        Log.d("MY_TAG", "zone ${selectedZone.toString()}")
+                        Log.d("MY_TAG", "index ${appViewModels.moodIndex.toString()}")
                         selectedZone = it + 1
-                        selectedMoodIndex = it
+                        appViewModels.onMoodChanged(it)
                     },
                 )
 
@@ -262,7 +295,7 @@ fun ColorWheelExample(navController: NavHostController) {
                 ) {
 
                     Text(
-                        text = moods[selectedMoodIndex].title,
+                        text = moods[appViewModels.moodIndex].title,
                         color = Color.White,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,

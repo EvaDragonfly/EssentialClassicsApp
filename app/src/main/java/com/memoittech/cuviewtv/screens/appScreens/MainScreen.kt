@@ -97,7 +97,7 @@ fun MainScreen(
         when (currentTab) {
             "slider" -> OpenScreen(navController, appViewModel, Modifier.padding(padding))
             "search" -> SearchScreen(navController, appViewModel, Modifier.padding(padding))
-            "moods" -> MoodsScreen(navController, Modifier.padding(padding))
+            "moods" -> MoodsScreen(navController, appViewModel, Modifier.padding(padding))
             "favorites" -> FavoritesScreen(navController, Modifier.padding(padding))
         }
     }
